@@ -31,9 +31,24 @@
   let areaHeight = $state(window.innerHeight);
   $effect(() => setArea(areaWidth, areaHeight));
 
+  // Read before anything rewrites the hash: a link such as #/projects/some-slug opens that window
+  // on top of the staged view.
+  const linkedPath = pathFromHash();
+
   onMount(() => {
     for (const { path, x, y } of wm.compact ? stagedPhone : staged) open(path, x, y);
+    if (linkedPath) open(linkedPath);
   });
+
+  // The hash names the window in front, so the address can be shared as a link to it.
+  $effect(() => {
+    const id = wm.activeId;
+    history.replaceState(history.state, '', id ? `#/${id}` : location.pathname + location.search);
+  });
+
+  function pathFromHash(): string {
+    return location.hash.replace(/^#\/?/, '');
+  }
 
   /** The program a window path belongs to, and its argument for `id/*` programs. */
   function resolve(path: string): { program: ProgramDefinition; arg?: string } | undefined {
@@ -81,6 +96,13 @@
     };
   }
 </script>
+
+<svelte:window
+  onhashchange={() => {
+    const path = pathFromHash();
+    if (path) open(path);
+  }}
+/>
 
 <div class="desktop" style:background-image="url({imageUrl('bliss')})">
   <div
