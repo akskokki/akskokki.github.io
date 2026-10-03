@@ -18,10 +18,11 @@ already open, showing who the owner is and what they've made. Desktop icons open
 - **Why XP:** it's the operating system of the owner's childhood, and that nostalgia is the emotional
   core of the site. The reaction to aim for on first load is "oh, this is cool".
 - **It is not an operating system simulator.** Every feature has to earn its place by being useful or
-  delightful *on a personal homepage*. Simulating more of Windows is not a goal, and the "Not now"
+  delightful _on a personal homepage_. Simulating more of Windows is not a goal, and the "Not now"
   list below is as important as the build list.
 
 **This first version is a prototype.**
+
 - Placeholder text, photos and projects everywhere. The owner will fill in real content and decide the
   final layout later.
 - So build the structure well, keep the content trivially replaceable, and don't polish what's
@@ -60,6 +61,7 @@ already open, showing who the owner is and what they've made. Desktop icons open
 
   The site isn't public yet, and the owner may replace any of it with their own later. So the art must
   be **easy to swap and tangled with nothing** (see `src/art/` under Architecture).
+
 - **No sound** anywhere.
 - **No custom accessibility work.** Window contents are ordinary HTML, but don't spend effort on screen
   readers, keyboard navigation of the desktop, or a11y lint warnings (turn those off; see Tooling).
@@ -117,6 +119,7 @@ already open, showing who the owner is and what they've made. Desktop icons open
   - "Visit" and "Source" links that open in a new tab.
 
   Three to five placeholder projects, kept as data in the program's folder.
+
 - **Links:** placeholder links (GitHub, email, …) that open in a new tab.
 - **Photo viewer:** shows a placeholder image.
 - **Note:** shows a few lines of text.
@@ -131,6 +134,7 @@ already open, showing who the owner is and what they've made. Desktop icons open
 ### Links to windows
 
 Each program has a URL-safe id, and the URL hash names the window in front:
+
 - `#/about` opens About.
 - `#/projects/<slug>` opens that project's window.
 - Opening a link focuses or opens that window on top of the staged view.
@@ -200,6 +204,7 @@ src/
 ### `src/desktop.ts`, the single join point
 
 It lists, by hand:
+
 - every program: its id, title, icon name, and default window size and position;
 - whether a program's window has a fixed size;
 - how to load its component, lazily, as `() => import('./programs/about/About.svelte')`, so each
@@ -261,6 +266,7 @@ Adding a program means creating its folder and adding an entry here, nothing els
     TypeScript, so they don't care.
 
 **Dev dependencies:**
+
 - `svelte`
 - `vite`
 - `@sveltejs/vite-plugin-svelte`
@@ -343,6 +349,7 @@ Adding a program means creating its folder and adding an entry here, nothing els
   - `<div id="app">`.
 
 **Deploy** with `.github/workflows/deploy.yml`:
+
 - runs on a push to `main`, plus `workflow_dispatch`;
 - permissions: `contents: read`, `pages: write`, `id-token: write`; a concurrency group `pages`;
 - **build job:**
