@@ -40,21 +40,43 @@ also look at the result in a browser at desktop (~1280 px) and phone (~390 px) w
 
 ## Architecture rules
 
-(Expand this section as the code takes shape; `PLAN.md` has the full design.)
-
 - `src/shell/` is the desktop, windows, taskbar and XP look. It never imports `src/programs/` or
   `src/desktop.ts`; it gets the desktop configuration as props.
 - `src/programs/<name>/` is one program per folder. It imports only `src/kit/`, its own files and npm
-  packages, never the shell, `src/art/` or another program.
+  packages, never the shell, `src/art/` or another program. Keep its files directly in its folder:
+  the lint rule bans every `../` import except `../../kit`.
+- `src/kit/` is everything a program may import, and nothing in it imports the shell, programs or
+  `desktop.ts`.
 - `src/desktop.ts` is the single, hand-written list of programs, icon positions and the staged first
   view. Nothing is auto-discovered.
 - `src/art/` holds every piece of Microsoft placeholder art. Only `src/art/index.ts` imports those
-  files; everything else asks for art by name. Each file's origin is listed in `src/art/README.md`.
+  files (plus `index.html`, for the favicon); everything else asks for art by name. Each file's
+  origin is listed in `src/art/README.md`.
 - Window state lives only in the shell's window manager module. Components call its functions rather
   than changing window state themselves.
 - No global element styles that leak into windows. Programs opt into XP widgets with `kit/xp.css`
   classes.
 - oxlint's `no-restricted-imports` enforces these boundaries and bans `svelte/store`.
+
+### How it fits together
+
+- **Windows are named by path,** and the path is also the link: window `about` is `#/about`. A
+  program whose id ends in `/*`, such as `projects/*`, opens one window per argument:
+  `projects/tiny-weather` opens `Project.svelte` with `arg` set to `tiny-weather`. `Desktop.svelte`
+  resolves paths to programs, opens the staged view (or `stagedPhone` below 640 px), then any window
+  linked in the hash, and keeps the hash naming the window in front.
+- **The program contract** is `ProgramProps` in `kit/index.ts`: a `WindowHandle` (`id`, `setTitle`,
+  `close`, `open(path)`) and the optional `arg`. A program that needs neither can leave its props
+  out. Programs load lazily, one chunk each.
+- **`shell/windows.svelte.ts`** is the window manager: read `wm`, call its functions. It fits windows
+  into the desktop area when drawing them, so stored positions survive a smaller browser window.
+  Below 640 px (`wm.compact`) every window fills the area and nothing is dragged or resized.
+- **Shell components:** `Desktop.svelte` (wallpaper, icons, windows, routing), `Window.svelte`
+  (frame, drag, resize), `Taskbar.svelte` (inert Start button, window buttons, clock),
+  `DesktopIcon.svelte`, and `theme/` (page basics, shared custom properties, Wine Tahoma).
+- **Adding a program:** make `src/programs/<name>/` with its component, add an entry to `programs`
+  in `desktop.ts`, and an icon placement if it should be on the desktop. New Microsoft art goes in
+  `src/art/` with a line in `index.ts` and `README.md`.
 
 ## Conventions
 
@@ -81,6 +103,13 @@ also look at the result in a browser at desktop (~1280 px) and phone (~390 px) w
   files entirely. svelte-check covers markup and component types.
 - **`base: './'` plus hash routing** keeps the build working at a domain root or under a sub-path.
   Don't switch to absolute paths or history-API routing.
+- **Give every component a `<script lang="ts">` block.** svelte-check treats a component without
+  one as JavaScript, and importing it from TypeScript fails with "Could not find a declaration file".
+- **svelte-check ignores `onwarn`,** so the a11y filter is `compilerOptions.warningFilter` in
+  `svelte.config.js`, which both Vite and svelte-check apply.
+- **oxlint's `no-restricted-imports` regexes don't support lookahead,** and fail silently by never
+  matching. Use `group` globs with `!` exceptions instead.
+- **oxfmt formats Markdown too,** including these docs.
 
 ## Git & deploy
 
