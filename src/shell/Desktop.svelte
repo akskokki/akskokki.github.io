@@ -5,6 +5,7 @@
   import type { WindowHandle } from '../kit';
 
   import './theme/theme.css';
+  import Taskbar from './Taskbar.svelte';
   import type { ProgramDefinition, StagedWindow } from './types';
   import Window from './Window.svelte';
   import { closeWindow, deactivate, openWindow, setArea, setTitle, wm } from './windows.svelte';
@@ -77,6 +78,8 @@
       </Window>
     {/each}
   </div>
+
+  <Taskbar />
 </div>
 
 <style>
@@ -89,7 +92,7 @@
 
   .windows {
     position: absolute;
-    inset: 0;
+    inset: 0 0 var(--xp-taskbar-height);
     isolation: isolate;
   }
 

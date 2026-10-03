@@ -95,6 +95,12 @@ export function minimizeWindow(id: string): void {
   if (state.activeId === id) activateTopmost();
 }
 
+/** What a taskbar button does: minimizes the active window, otherwise brings it to the front. */
+export function toggleWindow(id: string): void {
+  if (state.activeId === id && !find(id)?.minimized) minimizeWindow(id);
+  else focusWindow(id);
+}
+
 export function closeWindow(id: string): void {
   state.windows = state.windows.filter((win) => win.id !== id);
   if (state.activeId === id) activateTopmost();
