@@ -174,6 +174,17 @@
     text-overflow: ellipsis;
   }
 
+  /* Too narrow for a readable title (many windows, or a phone): just the icon. */
+  .task {
+    container-type: inline-size;
+  }
+
+  @container (width < 64px) {
+    .task span {
+      display: none;
+    }
+  }
+
   .tray {
     display: flex;
     flex: none;
