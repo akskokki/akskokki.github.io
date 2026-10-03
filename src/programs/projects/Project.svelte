@@ -1,0 +1,96 @@
+<script lang="ts">
+  import type { ProgramProps } from '../../kit';
+
+  import '../../kit/xp.css';
+  import { projects } from './projects';
+
+  let { win, arg }: ProgramProps = $props();
+
+  const project = $derived(projects.find((p) => p.slug === arg));
+
+  $effect(() => {
+    if (project) win.setTitle(project.title);
+  });
+</script>
+
+<div class="project">
+  {#if project}
+    <div class="screenshot">Screenshot of {project.title}</div>
+    <h1>{project.title}</h1>
+    <h2>What it is</h2>
+    <p>{project.whatItIs}</p>
+    <h2>What I did</h2>
+    <p>{project.whatIDid}</p>
+    <ul class="tags">
+      {#each project.tags as tag (tag)}
+        <li>{tag}</li>
+      {/each}
+    </ul>
+    <p class="links">
+      {#if project.visit}
+        <a class="xp-button" href={project.visit} target="_blank" rel="noopener">Visit</a>
+      {/if}
+      {#if project.source}
+        <a class="xp-button" href={project.source} target="_blank" rel="noopener">Source</a>
+      {/if}
+    </p>
+  {:else}
+    <p>There's no project called “{arg}”.</p>
+  {/if}
+</div>
+
+<style>
+  .project {
+    height: 100%;
+    padding: 12px 16px;
+    overflow: auto;
+    background: white;
+  }
+
+  .screenshot {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 9;
+    max-height: 220px;
+    margin: 0 auto 12px;
+    background: repeating-linear-gradient(45deg, #e4e4e4 0 10px, #ececec 10px 20px);
+    color: #777;
+  }
+
+  h1 {
+    margin: 0 0 8px;
+    color: #0c327d;
+    font-size: 18px;
+  }
+
+  h2 {
+    margin: 12px 0 4px;
+    font-size: 11px;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 12px 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tags li {
+    padding: 1px 6px;
+    border: 1px solid #7f9db9;
+    border-radius: 2px;
+    background: #eef3fa;
+  }
+
+  .links {
+    display: flex;
+    gap: 6px;
+  }
+</style>

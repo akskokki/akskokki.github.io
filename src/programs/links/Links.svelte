@@ -1,0 +1,49 @@
+<script lang="ts">
+  import { iconUrl } from '../../kit';
+  import { links } from './links';
+</script>
+
+<ul class="links">
+  {#each links as link (link.url)}
+    <li>
+      <img src={iconUrl('globe', 16)} alt="" />
+      <span class="label">{link.label}</span>
+      <!-- Web links open in a new tab; mailto: links go straight to the mail app. -->
+      <a href={link.url} target={link.url.startsWith('http') ? '_blank' : undefined} rel="noopener">
+        {link.shown}
+      </a>
+    </li>
+  {/each}
+</ul>
+
+<style>
+  .links {
+    height: 100%;
+    margin: 0;
+    padding: 8px;
+    overflow: auto;
+    background: white;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 4px;
+  }
+
+  img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .label {
+    width: 64px;
+    font-weight: bold;
+  }
+
+  a {
+    color: #0000ff;
+  }
+</style>
