@@ -1,0 +1,37 @@
+/* Page basics and shared values only: no element styles that would leak into windows. */
+
+@font-face {
+  font-family: 'Wine Tahoma';
+  src: url('./fonts/wine-tahoma.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Wine Tahoma';
+  src: url('./fonts/wine-tahoma-bold.ttf') format('truetype');
+  font-weight: bold;
+}
+
+:root {
+  --xp-font: Tahoma, 'Wine Tahoma', sans-serif;
+  --xp-font-title: 'Trebuchet MS', Tahoma, 'Wine Tahoma', sans-serif;
+  --xp-desktop: #004e98;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--xp-font);
+  font-size: 11px;
+}

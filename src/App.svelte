@@ -1,5 +1,5 @@
 <script lang="ts">
-  const name = 'world';
+  import Desktop from './shell/Desktop.svelte';
 </script>
 
-<p>Hello {name}</p>
+<Desktop />
