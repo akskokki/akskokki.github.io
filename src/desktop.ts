@@ -94,3 +94,7 @@ export const staged: StagedWindow[] = [
   { path: 'note' },
   { path: 'about' },
 ];
+
+/** On a small screen every window fills the screen, so only About opens; closing it shows the
+ * desktop icons. */
+export const stagedPhone: StagedWindow[] = [{ path: 'about' }];

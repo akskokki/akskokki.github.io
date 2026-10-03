@@ -16,9 +16,11 @@
     icons: readonly IconPlacement[];
     /** Opened on load, back to front. */
     staged: readonly StagedWindow[];
+    /** Opened on load instead of `staged` on a small screen. */
+    stagedPhone: readonly StagedWindow[];
   }
 
-  let { programs, icons, staged }: Props = $props();
+  let { programs, icons, staged, stagedPhone }: Props = $props();
 
   const programsById = $derived(new Map(programs.map((program) => [program.id, program])));
 
@@ -30,7 +32,7 @@
   $effect(() => setArea(areaWidth, areaHeight));
 
   onMount(() => {
-    for (const { path, x, y } of staged) open(path, x, y);
+    for (const { path, x, y } of wm.compact ? stagedPhone : staged) open(path, x, y);
   });
 
   /** The program a window path belongs to, and its argument for `id/*` programs. */
