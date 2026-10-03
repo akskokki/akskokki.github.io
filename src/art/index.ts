@@ -6,6 +6,8 @@ import astronaut from './astronaut.png';
 import bliss from './bliss.jpg';
 import folder16 from './folder-16.png';
 import folder32 from './folder-32.png';
+import gameController16 from './game-controller-16.png';
+import gameController32 from './game-controller-32.png';
 import globe16 from './globe-16.png';
 import globe32 from './globe-32.png';
 import notepad16 from './notepad-16.png';
@@ -21,6 +23,7 @@ const images = { astronaut, bliss, startFlag };
 const icons = {
   application: { 16: application16, 32: application32 },
   folder: { 16: folder16, 32: folder32 },
+  gameController: { 16: gameController16, 32: gameController32 },
   globe: { 16: globe16, 32: globe32 },
   notepad: { 16: notepad16, 32: notepad32 },
   pictureViewer: { 16: pictureViewer16, 32: pictureViewer32 },

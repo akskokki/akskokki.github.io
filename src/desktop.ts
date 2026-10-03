@@ -64,6 +64,17 @@ export const programs: ProgramDefinition[] = [
     height: 170,
     load: () => import('./programs/note/Note.svelte'),
   },
+  {
+    id: 'eight-ball',
+    title: '8-Ball',
+    icon: 'gameController',
+    x: 860,
+    y: 120,
+    width: 300,
+    height: 340,
+    fixedSize: true,
+    load: () => import('./programs/eight-ball/EightBall.svelte'),
+  },
 ];
 
 // XP's default column down the left.
@@ -73,6 +84,7 @@ export const icons: IconPlacement[] = [
   { path: 'links', x: 8, y: 168 },
   { path: 'photo', x: 8, y: 248 },
   { path: 'note', x: 8, y: 328 },
+  { path: 'eight-ball', x: 8, y: 408 },
 ];
 
 /** Opened on load, back to front: the last one is in front. */
