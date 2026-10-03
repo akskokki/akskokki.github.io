@@ -5,20 +5,25 @@
   import type { WindowHandle } from '../kit';
 
   import './theme/theme.css';
+  import DesktopIcon from './DesktopIcon.svelte';
   import Taskbar from './Taskbar.svelte';
-  import type { ProgramDefinition, StagedWindow } from './types';
+  import type { IconPlacement, ProgramDefinition, StagedWindow } from './types';
   import Window from './Window.svelte';
   import { closeWindow, deactivate, openWindow, setArea, setTitle, wm } from './windows.svelte';
 
   interface Props {
     programs: readonly ProgramDefinition[];
+    icons: readonly IconPlacement[];
     /** Opened on load, back to front. */
     staged: readonly StagedWindow[];
   }
 
-  let { programs, staged }: Props = $props();
+  let { programs, icons, staged }: Props = $props();
 
   const programsById = $derived(new Map(programs.map((program) => [program.id, program])));
+
+  // Desktop state, not window state, so it lives here rather than in the window manager.
+  let selectedIcon = $state<string | null>(null);
 
   let areaWidth = $state(window.innerWidth);
   let areaHeight = $state(window.innerHeight);
@@ -58,13 +63,33 @@
 
 <div class="desktop" style:background-image="url({imageUrl('bliss')})">
   <div
-    class="windows"
+    class="area"
     bind:clientWidth={areaWidth}
     bind:clientHeight={areaHeight}
     onpointerdown={(event) => {
-      if (event.target === event.currentTarget) deactivate();
+      if (event.target !== event.currentTarget) return;
+      deactivate();
+      selectedIcon = null;
     }}
   >
+    {#each icons as { program: programId, x, y } (programId)}
+      {@const program = programsById.get(programId)}
+      {#if program}
+        <DesktopIcon
+          icon={program.icon}
+          label={program.title}
+          {x}
+          {y}
+          selected={selectedIcon === programId && wm.activeId === null}
+          onselect={() => {
+            deactivate();
+            selectedIcon = programId;
+          }}
+          onopen={() => open(programId)}
+        />
+      {/if}
+    {/each}
+
     {#each wm.windows as win (win.id)}
       {@const program = programsById.get(win.id)}
       <Window {win}>
@@ -90,7 +115,7 @@
     background: var(--xp-desktop) center / cover no-repeat;
   }
 
-  .windows {
+  .area {
     position: absolute;
     inset: 0 0 var(--xp-taskbar-height);
     isolation: isolate;

@@ -24,3 +24,10 @@ export interface StagedWindow {
   x?: number;
   y?: number;
 }
+
+/** A desktop icon that opens a program, placed by hand. */
+export interface IconPlacement {
+  program: string;
+  x: number;
+  y: number;
+}
