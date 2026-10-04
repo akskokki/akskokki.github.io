@@ -28,7 +28,7 @@ test('projects open from the folder in their own windows, titled by the project'
   await openDesktop(page);
   const folder = windowTitled(page, titleOf('projects'));
 
-  await folder.getByRole('button', { name: first.title }).dblclick();
+  await folder.getByRole('button', { name: first.title }).click();
   const win = windowTitled(page, first.title);
   await expect(win).toHaveClass(/active/);
   await expect(win.getByRole('heading', { name: first.title, level: 1 })).toBeVisible();
@@ -39,7 +39,7 @@ test('projects open from the folder in their own windows, titled by the project'
   // A second project window cascades instead of covering the first exactly. The first may cover
   // the folder, so bring the folder forward from the taskbar.
   await taskButton(page, titleOf('projects')).click();
-  await folder.getByRole('button', { name: second.title }).dblclick();
+  await folder.getByRole('button', { name: second.title }).click();
   const firstBox = await boxOf(win);
   await expect
     .poll(() => boxOf(windowTitled(page, second.title)))
