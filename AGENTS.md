@@ -6,15 +6,15 @@ content, it's a home for small toy programs the owner makes for fun, each in its
 
 Stack: Svelte 5 (runes) + Vite + TypeScript, pnpm, deployed to GitHub Pages as a static site.
 
-**Read `PLAN.md` first.** It describes what to build, the architecture and the "Not now" list.
-Reference material (XP CSS, React XP recreations, screenshots of real XP, placeholder art, fonts) is in
-`../references/`; its `README.md` says where to look for what.
+`README.md` is the overview for people; this file holds the standing rules. Reference material (XP
+CSS, React XP recreations, screenshots of real XP, placeholder art, fonts) is in `../references/`;
+its `README.md` says where to look for what.
 
 ## Principles
 
 - **A homepage, not an OS simulator.** Build only what's useful or delightful on a personal homepage.
-  When something would just recreate more of Windows, leave it out. Check the "Not now" list in
-  `PLAN.md` before adding anything.
+  When something would just recreate more of Windows, leave it out. Check the "Not now" list below
+  before adding anything.
 - **Pseudo-XP.** Recognisably Windows XP, but clean and consistent rather than pixel-perfect. Don't
   match pixels against screenshots.
 - **Minimal stylesheet.** Add a style or value only when the piece that needs it is being built. Take
@@ -23,6 +23,31 @@ Reference material (XP CSS, React XP recreations, screenshots of real XP, placeh
   program's own folder so it's trivial to replace.
 - **The shell and the programs stay separate.** Only `src/desktop.ts` knows both. A program's window
   contents are entirely its own.
+- **Phones get the same site, simplified.** Below 640 px every window fills the screen and the
+  taskbar switches between them. Each program handles a small window its own way; a toy that can't
+  work on a phone may just say "best on a computer".
+- **Ordinary HTML, no accessibility work beyond it:** no screen-reader or keyboard work for the
+  desktop, and a11y lint warnings are off.
+
+## Not now
+
+Out of scope unless the owner asks for it. Don't build these, and don't build hooks "for later"
+either:
+
+- Start menu contents, and any menu that opens from the Start button.
+- Right-click menus.
+- Sound of any kind.
+- Boot, login, shutdown or welcome screens; screensavers; BSOD jokes.
+- System programs and dialogs: Run, Control Panel, Display Properties, Task Manager, file dialogs,
+  message boxes.
+- A file system, Explorer, the Recycle Bin as a working program, dragging icons, saved icon positions.
+- Saving any state between visits (window positions, settings). Every visit starts from the staged
+  view.
+- Programs that live outside windows (such as desktop pets).
+- Embedding other sites in windows.
+- Window animations (minimize/maximize effects).
+- Dark mode, themes, other Luna colour schemes.
+- A separate mobile design, gestures, or app-style navigation.
 
 ## Commands
 
@@ -92,8 +117,8 @@ widths.
   truly needed, make it targeted and give the reason after `--`:
   `// oxlint-disable-next-line rule -- why`, `<!-- svelte-ignore code -- why -->`. `pnpm lint` fails on
   suppressions without a reason.
-- **Accessibility warnings are switched off** on purpose (see `PLAN.md`); don't add suppressions for
-  them.
+- **Accessibility warnings are switched off** on purpose (see Principles); don't add suppressions
+  for them.
 - **Comments say why,** not what. Match the surrounding code's density and style.
 - **Use pointer events** for anything dragged, so mouse and touch share one path.
 - **No sound,** and no `localStorage` state in this version: every visit starts fresh.
