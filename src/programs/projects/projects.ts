@@ -118,6 +118,21 @@ export const projects: Project[] = [
     visit: 'https://bought.app/en/',
   },
   {
+    slug: 'traininghub',
+    title: 'Training Hub',
+    kind: 'personal',
+    where: 'Course project for Eficode',
+    when: '2024',
+    summary: 'Training courses for Eficode staff',
+    logo: helsinkiLogo,
+    whatItIs:
+      "A web app where Eficode's employees find the company's in-house training courses and enrol in them, built for the Software Engineering Project course.",
+    whatIDid:
+      'Seven of us, picking up where another student team had left off, in Scrum sprints with Eficode as our customer. It was my first time on a project this size as part of a team, and nearly everything about it was new: finding our way around code none of us had written, splitting the work so seven people could move at once, and learning to be one useful part of a team rather than working on my own.',
+    tags: ['TypeScript', 'Next.js', 'Docker', 'Cypress', 'Scrum'],
+    source: 'https://github.com/ohtutraininghub/traininghub',
+  },
+  {
     slug: 'sliding-puzzle-solver',
     title: '15 Puzzle Solver',
     kind: 'personal',
