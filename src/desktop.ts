@@ -2,7 +2,9 @@
 // icons, and the layouts that say which windows open first, and where, on each size of screen.
 import type { IconPlacement, Layout, ProgramDefinition } from './shell/types';
 
-// The Projects folder's two widths: its tiles fit two to a row, even with a scrollbar, or one.
+// The Projects folder's two widths: its tiles fit two to a row, even with a scrollbar, or one. Its
+// height shows every project where there's room, or else ends halfway down a row, so it's clear
+// the rest scrolls.
 const projectsWide = 560;
 const projectsNarrow = 320;
 
@@ -98,15 +100,17 @@ export const layouts: Layout[] = [
     },
   },
   {
+    // Laptops up to 1080p. Projects is tall enough for every project, and Photo below it gives up
+    // some height on the shortest screens.
     width: 1280,
     height: 620,
     staged: ['photo', 'projects', 'note', 'about'],
     windows: {
       about: { x: 110, y: 40, width: 560, height: 340 },
-      projects: { x: 700, y: 16, width: projectsWide, height: 320 },
+      projects: { x: 700, y: 16, width: projectsWide, height: 378 },
       'projects/*': { x: 380, y: 40 },
       links: { x: 200, y: 190 },
-      photo: { x: 740, y: 346, width: 380, height: 270 },
+      photo: { x: 740, y: 410, width: 380, height: 270, bottom: 8 },
       note: { x: 360, y: 430 },
       'eight-ball': { x: 820, y: 110 },
     },
@@ -118,7 +122,7 @@ export const layouts: Layout[] = [
     staged: ['projects', 'note', 'about'],
     windows: {
       about: { x: 90, y: 40, width: 480, height: 364 },
-      projects: { x: 590, y: 16, width: projectsNarrow, height: 510 },
+      projects: { x: 590, y: 16, width: projectsNarrow, height: 518 },
       'projects/*': { x: 300, y: 20 },
       links: { x: 180, y: 180 },
       photo: { x: 480, y: 180 },
@@ -133,7 +137,7 @@ export const layouts: Layout[] = [
     staged: ['projects', 'about'],
     windows: {
       about: { x: 90, y: 30, width: 480, height: 364 },
-      projects: { x: 590, y: 8, width: projectsNarrow, height: 464 },
+      projects: { x: 590, y: 8, width: projectsNarrow, height: 453 },
       'projects/*': { x: 300, y: 10 },
       links: { x: 180, y: 150 },
       photo: { x: 480, y: 90 },
@@ -142,13 +146,14 @@ export const layouts: Layout[] = [
     },
   },
   {
-    // Taller than wide, as a tablet held upright: About above a two-column Projects.
+    // Taller than wide, as a tablet held upright: About above a two-column Projects, which shows
+    // every project where there's room and is cut halfway down a row on the shortest screens.
     width: 640,
     height: 710,
     staged: ['projects', 'about'],
     windows: {
       about: { x: 80, y: 16, width: 520, height: 346 },
-      projects: { x: 80, y: 378, width: projectsWide, height: 316 },
+      projects: { x: 80, y: 378, width: projectsWide, height: 378, bottom: 8 },
       'projects/*': { x: 110, y: 60 },
       links: { x: 160, y: 200 },
       photo: { x: 160, y: 220 },
@@ -162,7 +167,7 @@ export const layouts: Layout[] = [
     staged: ['projects', 'about'],
     windows: {
       about: { x: 90, y: 56, width: 520, height: 370 },
-      projects: { x: 80, y: 8, width: projectsWide, height: 340 },
+      projects: { x: 80, y: 8, width: projectsWide, height: 378 },
       'projects/*': { x: 110, y: 8 },
       links: { x: 140, y: 150 },
       photo: { x: 200, y: 100 },
@@ -193,7 +198,7 @@ export const layouts: Layout[] = [
     staged: ['projects', 'about'],
     windows: {
       about: { x: 8, y: 46, width: 344, height: 496, bottom: 8 },
-      projects: { x: 32, y: 8, width: projectsNarrow, height: 440 },
+      projects: { x: 32, y: 8, width: projectsNarrow, height: 453 },
       'projects/*': { x: 8, y: 8, width: 344 },
       links: { x: 8, y: 180, width: 344, height: 150 },
       photo: { x: 8, y: 100, width: 344, height: 280 },
