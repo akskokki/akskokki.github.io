@@ -15,6 +15,11 @@ export interface ProgramDefinition extends Omit<WindowSpec, 'x' | 'y'> {
    * the argument `some-slug`, one window per argument.
    */
   id: string;
+  /**
+   * For an `id/*` program: one window at a time. Opening another argument turns that window to it
+   * where it is, rather than opening another.
+   */
+  single?: boolean;
   load: () => Promise<{ default: ProgramComponent }>;
 }
 

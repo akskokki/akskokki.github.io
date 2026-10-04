@@ -23,7 +23,7 @@ import {
 const [first, second] = projects;
 if (!first || !second) throw new Error('these tests need at least two projects');
 
-test('projects open from the folder in their own windows, titled by the project', async ({
+test('a project opens from the folder in a window titled by it, which the next one replaces', async ({
   page,
 }) => {
   await openDesktop(page);
@@ -37,14 +37,19 @@ test('projects open from the folder in their own windows, titled by the project'
   await expect(links).toHaveCount([first.visit, first.source].filter(Boolean).length);
   for (const link of await links.all()) await expect(link).toHaveAttribute('target', '_blank');
 
-  // A second project window cascades instead of covering the first exactly. The first may cover
-  // the folder, so bring the folder forward from the taskbar.
+  // The next project takes over that window where it is, rather than opening another; it only
+  // moves up if it needs the room. The first may cover the folder, so bring the folder forward
+  // from the taskbar.
+  const firstBox = await boxOf(win);
   await taskButton(page, titleOf('projects')).click();
   await folder.getByRole('button', { name: second.title }).click();
-  const firstBox = await boxOf(win);
-  await expect
-    .poll(() => boxOf(windowTitled(page, second.title)))
-    .toEqual({ ...firstBox, x: firstBox.x + 24, y: firstBox.y + 24 });
+  const next = windowTitled(page, second.title);
+  await expect(next).toHaveClass(/active/);
+  await expect(windowTitled(page, first.title)).toHaveCount(0);
+  await expect(windows(page)).toHaveCount(stagedTitles(page).length + 1);
+  const box = await boxOf(next);
+  expect(box.x).toBe(firstBox.x);
+  expect(box.y).toBeLessThanOrEqual(firstBox.y);
 });
 
 test('a link to a project opens it on top of the staged view', async ({ page }) => {

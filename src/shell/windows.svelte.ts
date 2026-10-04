@@ -130,6 +130,18 @@ export function toggleMaximize(id: string): void {
   if (win && !win.fixedSize) win.maximized = !win.maximized;
 }
 
+/**
+ * Turns a window to another path, keeping its place on screen and in the stack: its contents
+ * start over, under the given title.
+ */
+export function replaceWindow(id: string, path: string, title: string): void {
+  const win = find(id);
+  if (!win) return;
+  win.id = path;
+  win.title = title;
+  if (state.activeId === id) state.activeId = path;
+}
+
 export function setTitle(id: string, title: string): void {
   const win = find(id);
   if (win) win.title = title;

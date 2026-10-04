@@ -19,6 +19,7 @@
     fitWindow,
     moveWindow,
     openWindow,
+    replaceWindow,
     setArea,
     setTitle,
     wm,
@@ -124,6 +125,14 @@
       return;
     }
     const { program, arg } = resolved;
+    const current =
+      program.single &&
+      wm.windows.find((win) => win.id !== path && resolve(win.id)?.program === program);
+    if (current) {
+      replaceWindow(current.id, path, program.title);
+      focusWindow(path);
+      return;
+    }
     const { layout, dx, dy } = picked;
     const placement = layout.windows[program.id];
     const width = placement?.width ?? program.width;
@@ -144,9 +153,22 @@
     });
   }
 
-  async function load(program: ProgramDefinition): Promise<Component<ProgramProps>> {
-    // Passing props to a program that ignores them is harmless.
-    return (await program.load()).default as Component<ProgramProps>;
+  // Each program once it has loaded, so its windows from then on draw at once rather than a frame
+  // later, as when one turns to another argument.
+  const loaded = new Map<ProgramDefinition, Component<ProgramProps>>();
+
+  function load(
+    program: ProgramDefinition,
+  ): Component<ProgramProps> | Promise<Component<ProgramProps>> {
+    return (
+      loaded.get(program) ??
+      program.load().then((module) => {
+        // Passing props to a program that ignores them is harmless.
+        const component = module.default as Component<ProgramProps>;
+        loaded.set(program, component);
+        return component;
+      })
+    );
   }
 
   function handleFor(id: string): WindowHandle {

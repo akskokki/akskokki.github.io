@@ -26,8 +26,9 @@ export const programs: ProgramDefinition[] = [
     load: () => import('./programs/projects/Projects.svelte'),
   },
   {
-    // One window per project, titled by the project itself.
+    // One window for whichever project is open, titled by the project itself.
     id: 'projects/*',
+    single: true,
     title: 'Project',
     icon: 'application',
     width: 500,
