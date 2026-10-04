@@ -1,8 +1,30 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { iconUrl, type ProgramProps, ScrollArea } from '../../kit';
   import { projects } from './projects';
 
   let { win }: ProgramProps = $props();
+
+  // Loads every project's picture while the folder is open, so a project window shows it straight
+  // away rather than a moment after opening. Hidden elements rather than plain fetches, so the
+  // images are decoded and the videos buffered; kept here so the browser doesn't drop them.
+  const preloaded: HTMLElement[] = [];
+  onMount(() => {
+    for (const { screenshot, video } of projects) {
+      if (video) {
+        const element = document.createElement('video');
+        element.preload = 'auto';
+        element.src = element.canPlayType('video/webm') ? video.webm : video.mp4;
+        preloaded.push(element);
+      } else if (screenshot) {
+        const image = new Image();
+        image.src = screenshot;
+        image.decode().catch(() => {});
+        preloaded.push(image);
+      }
+    }
+  });
 
   // Explorer's "Show in Groups" view: a heading per kind, the projects as tiles under it.
   const groups = [
