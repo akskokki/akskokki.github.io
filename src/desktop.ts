@@ -202,14 +202,14 @@ export const layouts: Layout[] = [
   },
   {
     // Phones, tall and then short. Windows are as wide as the screen allows, and Projects' title
-    // bar peeks out above About's.
+    // bar peeks out above About's. On a tall one About is as tall as its contents.
     width: 360,
-    height: 700,
+    height: 550,
     staged: ['projects', 'about'],
     windows: {
-      about: { x: 8, y: 46, width: 344, height: 540 },
-      projects: { x: 32, y: 8, width: projectsNarrow, height: 560 },
-      'projects/*': { x: 8, y: 30, width: 344, height: 660 },
+      about: { x: 8, y: 46, width: 344, height: 496 },
+      projects: { x: 32, y: 8, width: projectsNarrow, height: 490 },
+      'projects/*': { x: 8, y: 8, width: 344 },
       links: { x: 8, y: 240, width: 344, height: 150 },
       photo: { x: 8, y: 160, width: 344, height: 280 },
       note: { x: 20, y: 360, width: 330, height: 180 },
@@ -217,13 +217,14 @@ export const layouts: Layout[] = [
     },
   },
   {
+    // On a short one, About reaches down to the taskbar, filling the height rather than centred.
     width: 360,
     height: 500,
     staged: ['projects', 'about'],
     windows: {
-      about: { x: 8, y: 46, width: 344, height: 446 },
+      about: { x: 8, y: 46, width: 344, bottom: 8 },
       projects: { x: 32, y: 8, width: projectsNarrow, height: 440 },
-      'projects/*': { x: 8, y: 8, width: 344, height: 484 },
+      'projects/*': { x: 8, y: 8, width: 344 },
       links: { x: 8, y: 180, width: 344, height: 150 },
       photo: { x: 8, y: 100, width: 344, height: 280 },
       note: { x: 20, y: 280, width: 330, height: 180 },

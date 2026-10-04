@@ -36,10 +36,12 @@ export function pickLayout(
   }
   if (left > right) [left, right] = [0, layout.width];
   const centred = Math.floor(width / 2 - (left + right) / 2);
+  // Down, a layout with a window that reaches to the taskbar fills the height instead.
+  const stretches = layout.staged.some((path) => layout.windows[path]?.bottom !== undefined);
 
   return {
     layout,
     dx: Math.max(0, Math.min(centred, width - right)),
-    dy: Math.max(0, Math.floor((height - layout.height) / 2)),
+    dy: stretches ? 0 : Math.max(0, Math.floor((height - layout.height) / 2)),
   };
 }

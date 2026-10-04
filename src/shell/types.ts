@@ -31,11 +31,16 @@ interface Placement {
   y: number;
   width?: number;
   height?: number;
+  /** Instead of a height: reaches down to this many px above the taskbar, however tall the screen. */
+  bottom?: number;
 }
 
 /** The first view on screens of one size, and where windows open on them later. */
 export interface Layout {
-  /** The area it's drawn for: the screen above the taskbar. A bigger area centres its windows. */
+  /**
+   * The area it's drawn for: the screen above the taskbar. A bigger area centres its windows, but
+   * not down if one of them reaches to the taskbar: that one stretches instead.
+   */
   width: number;
   height: number;
   /** Opened on load, back to front: the last one is in front. */

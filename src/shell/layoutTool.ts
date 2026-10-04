@@ -39,11 +39,12 @@ export function layoutInfo(
       // Rounded: dragging at a browser zoom other than 100% leaves fractions.
       const r = Math.round;
       const notes = [win.maximized && 'maximized', win.minimized && 'minimized'].filter(Boolean);
-      return `- ${win.id}: x ${r(x - dx)}, y ${r(y - dy)}, ${r(width)}×${r(height)}${notes.length ? ` (${notes.join(', ')})` : ''}`;
+      const gap = r(area.height - y - height);
+      return `- ${win.id}: x ${r(x - dx)}, y ${r(y - dy)}, ${r(width)}×${r(height)}, ${gap} px above the taskbar${notes.length ? ` (${notes.join(', ')})` : ''}`;
     });
   return [
     `Viewport ${window.innerWidth}×${window.innerHeight}, so the area above the taskbar is ${area.width}×${area.height}.`,
-    `It uses the ${layout.width}×${layout.height} layout, moved ${dx} px right and ${dy} px down to centre it.`,
+    `It uses the ${layout.width}×${layout.height} layout, moved ${dx} px right and ${dy} px down to centre it. A window placed with \`bottom\` reaches that far above the taskbar.`,
     'Windows back to front, in the layout’s coordinates (the area’s minus that offset):',
     ...windows,
   ].join('\n');

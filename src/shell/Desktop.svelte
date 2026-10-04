@@ -127,7 +127,10 @@
     const { layout, dx, dy } = picked;
     const placement = layout.windows[program.id];
     const width = placement?.width ?? program.width;
-    const height = placement?.height ?? program.height;
+    const height =
+      placement?.bottom === undefined
+        ? (placement?.height ?? program.height)
+        : areaHeight - placement.bottom - (placement.y + dy);
     // Windows of the same `id/*` program cascade rather than opening on top of each other.
     const prefix = program.id.slice(0, -1);
     const offset = arg ? 24 * wm.windows.filter((win) => win.id.startsWith(prefix)).length : 0;
