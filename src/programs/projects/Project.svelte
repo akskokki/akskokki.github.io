@@ -1,5 +1,8 @@
 <script lang="ts">
   import { iconUrl, type ProgramProps, ScrollArea } from '../../kit';
+  import Kurkkumopo from './Kurkkumopo.svelte';
+  import { logoOf } from './kurkkumopo.svelte';
+  import Logo from './Logo.svelte';
   import { projects } from './projects';
 
   let { win, arg }: ProgramProps = $props();
@@ -15,7 +18,7 @@
   {#if project}
     <!-- Says which kind of project this is, for anyone who came straight from a link. -->
     <div class="kind">
-      <img src={project.logo ?? iconUrl('gameController', 16)} alt="" />
+      <Logo src={logoOf(project) ?? iconUrl('gameController', 16)} height={16} />
       <b>{project.kind === 'work' ? 'Work' : 'Personal'}</b>
       <span>· {project.where}, {project.when}</span>
     </div>
@@ -24,23 +27,32 @@
     <ScrollArea>
       <div class="page">
         {#if project}
-          {#if project.video}
-            <!-- A video rather than a GIF: browsers share one animation between every use of a
-                 GIF, so a reopened window would carry on where the last one was. A video starts
-                 over. -->
-            <video
-              class="screenshot"
-              autoplay
-              loop
-              muted
-              playsinline
-              aria-label="Recording of {project.title}"
-            >
-              <source src={project.video.webm} type="video/webm" />
-              <source src={project.video.mp4} type="video/mp4" />
-            </video>
-          {:else if project.screenshot}
-            <img class="screenshot" src={project.screenshot} alt="Screenshot of {project.title}" />
+          {#if project.video || project.screenshot}
+            <div class="media">
+              {#if project.video}
+                <!-- A video rather than a GIF: browsers share one animation between every use of
+                     a GIF, so a reopened window would carry on where the last one was. A video
+                     starts over. -->
+                <video
+                  class="screenshot"
+                  autoplay
+                  loop
+                  muted
+                  playsinline
+                  aria-label="Recording of {project.title}"
+                >
+                  <source src={project.video.webm} type="video/webm" />
+                  <source src={project.video.mp4} type="video/mp4" />
+                </video>
+              {:else}
+                <img
+                  class="screenshot"
+                  src={project.screenshot}
+                  alt="Screenshot of {project.title}"
+                />
+              {/if}
+              <Kurkkumopo slug={project.slug} />
+            </div>
           {/if}
           <h1>{project.title}</h1>
           <h2>What it is</h2>
@@ -88,11 +100,6 @@
     white-space: nowrap;
   }
 
-  /* As tall as an icon, and as wide as the logo needs: Toska's is a wordmark. */
-  .kind img {
-    height: 16px;
-  }
-
   .kind b {
     color: #0c327d;
   }
@@ -106,11 +113,19 @@
     padding: 12px 16px;
   }
 
+  /* The picture's own box, for the kurkkumopo to hide behind. */
+  .media {
+    position: relative;
+    isolation: isolate;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 12px;
+  }
+
   .screenshot {
     display: block;
     max-width: 100%;
     max-height: 220px;
-    margin: 0 auto 12px;
     border: 1px solid #919b9c;
   }
 

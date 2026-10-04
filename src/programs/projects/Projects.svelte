@@ -2,6 +2,8 @@
   import { onMount } from 'svelte';
 
   import { iconUrl, type ProgramProps, ScrollArea } from '../../kit';
+  import { logoOf } from './kurkkumopo.svelte';
+  import Logo from './Logo.svelte';
   import { projects } from './projects';
 
   let { win }: ProgramProps = $props();
@@ -39,11 +41,16 @@
       {#each groups as group (group.name)}
         <h2>{group.name}</h2>
         <div class="tiles">
-          {#each group.projects as project (project.slug)}
+          {#each group.projects as project, index (project.slug)}
             <!-- One click opens, as in XP's single-click mode: a website's visitors expect that, and
                  the hover highlight shows what will open. -->
             <button class="tile" onclick={() => win.open(`projects/${project.slug}`)}>
-              <img src={project.logo ?? iconUrl('gameController', 32)} alt="" draggable="false" />
+              <Logo
+                src={logoOf(project) ?? iconUrl('gameController', 32)}
+                width={32}
+                height={32}
+                delay={index * 90}
+              />
               <span class="text">
                 <span class="title">{project.title}</span>
                 <span class="detail">{project.where} · {project.when}</span>
@@ -95,13 +102,6 @@
     text-align: left;
     cursor: pointer;
     user-select: none;
-  }
-
-  img {
-    flex: none;
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
   }
 
   .text {

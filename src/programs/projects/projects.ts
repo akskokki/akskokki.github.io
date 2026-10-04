@@ -3,7 +3,7 @@
 // `new URL`s rather than imports, which the tests can't load when they read this file in Node;
 // Vite bundles them all the same.
 
-const toskaLogo = new URL('./toska-logo.svg', import.meta.url).href;
+export const toskaLogo = new URL('./toska-logo.svg', import.meta.url).href;
 
 export interface Project {
   slug: string;
