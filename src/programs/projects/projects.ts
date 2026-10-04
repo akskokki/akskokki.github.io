@@ -1,6 +1,6 @@
 // Each project's slug is its window's address: #/projects/<slug>. The screenshots are from
-// toska.dev and bought.app, the recordings from the student projects' repos, and the University of
-// Helsinki's logo, the course projects' marker, from helsinki.fi. Media are
+// toska.dev and bought.app, the recordings from the projects' repos, the University of Helsinki's
+// logo, the course projects' marker, from helsinki.fi, and Obsidian's from obsidian.md/brand. Media are
 // `new URL`s rather than imports, which the tests can't load when they read this file in Node;
 // Vite bundles them all the same.
 
@@ -116,6 +116,30 @@ export const projects: Project[] = [
       height: 800,
     },
     visit: 'https://bought.app/en/',
+  },
+  {
+    slug: 'obsidian-custom-emojis',
+    title: 'Obsidian Custom Emojis',
+    kind: 'personal',
+    where: 'Obsidian plugin',
+    when: '2026',
+    summary: 'Discord-style emojis in notes',
+    logo: new URL('./obsidian-logo.svg', import.meta.url).href,
+    whatItIs:
+      "A plugin for the note-taking app Obsidian that turns a :shortcode: into your own emoji image as you type, the way Discord and Slack do, while the note itself stays plain text. It's in Obsidian's plugin store as Discord-style Custom Emojis.",
+    whatIDid:
+      'Made it in a day, because I think in Discord emotes by now and missed them in my notes, and the plugins that were there did far more than I wanted. It stays small on purpose: the emojis are images in a folder in your vault, found with fuzzy autocomplete as you type. About 700 people have downloaded it from the store so far.',
+    tags: ['JavaScript', 'Obsidian', 'CodeMirror'],
+    picture: {
+      video: {
+        webm: new URL('./custom-emojis.webm', import.meta.url).href,
+        mp4: new URL('./custom-emojis.mp4', import.meta.url).href,
+      },
+      width: 386,
+      height: 126,
+    },
+    visit: 'https://community.obsidian.md/plugins/custom-emojis',
+    source: 'https://github.com/akskokki/obsidian-custom-emojis',
   },
   {
     slug: 'traininghub',
