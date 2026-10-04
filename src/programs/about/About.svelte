@@ -8,13 +8,15 @@
   <div class="about">
     <img class="photo" src={imageUrl('astronaut')} alt="" />
     <div class="text">
-      <h1>Hi, I'm [Name]</h1>
+      <h1>Hi, I'm Akseli</h1>
       <p>
-        I'm a [placeholder job] based in [placeholder city]. This is placeholder text: a couple of
-        lines about who I am, what I like working on and what I'm looking for.
+        I'm a software engineer in Helsinki. I work at Toska, the University of Helsinki's own
+        development team, on the open-source systems the university runs on: full-stack TypeScript,
+        React, Node.js and PostgreSQL. Before that I built a marketplace app at Bought, an
+        early-stage startup, and I have a BSc in Computer Science from the University of Helsinki.
       </p>
       <p>
-        When I'm not at a computer I'm probably [placeholder hobby]. Have a look around, open some
+        This site is also where I keep small things I make for fun. Have a look around, open some
         windows, and say hello.
       </p>
       <p class="buttons">
