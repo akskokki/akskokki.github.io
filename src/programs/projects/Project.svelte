@@ -140,11 +140,13 @@
     margin: 0 auto 12px;
   }
 
+  /* White until it loads, so the kurkkumopo can't show through. */
   .screenshot {
     display: block;
     width: 100%;
     height: 100%;
     border: 1px solid #919b9c;
+    background: white;
   }
 
   h1 {

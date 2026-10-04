@@ -10,6 +10,12 @@ export const HIDEOUT = hideouts[Math.floor(Math.random() * hideouts.length)]?.sl
 
 export const kurkkumopoUrl = new URL('./kurkkumopo.png', import.meta.url).href;
 
+// Loaded and decoded with the projects, so it's there behind the picture as soon as a window shows
+// it. Kept in a variable so the browser doesn't drop it.
+const preloaded = new Image();
+preloaded.src = kurkkumopoUrl;
+preloaded.decode().catch(() => {});
+
 const state = $state({ found: false });
 
 export const kurkkumopo = {
