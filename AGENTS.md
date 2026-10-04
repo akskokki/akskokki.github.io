@@ -80,7 +80,7 @@ pnpm preview       # serve dist/, http://localhost:4173
 pnpm test          # Playwright end-to-end tests against the build (desktop + phone)
 ```
 
-Before finishing a change, run `pnpm format && pnpm lint && pnpm check && pnpm build && pnpm test`.
+Before finishing a change, run `pnpm format && pnpm lint && pnpm check && pnpm build`. Don't run `pnpm test` locally unless the owner asks: CI runs the end-to-end tests on every push.
 
 For UI changes, also look at the result at desktop (~1280 px) and phone (~390 px) widths. Playwright's headless Chromium is installed: a throwaway script, run from the repo so it resolves `@playwright/test`, can screenshot the dev server; delete it afterwards. The owner often has `pnpm dev` running already, so check port 5173 before starting another. The machine is short on memory: run one browser at a time.
 
