@@ -73,10 +73,9 @@
     white-space: nowrap;
   }
 
+  /* As tall as an icon, and as wide as the logo needs: Toska's is a wordmark. */
   .kind img {
-    width: 16px;
     height: 16px;
-    object-fit: contain;
   }
 
   .kind b {
