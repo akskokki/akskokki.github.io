@@ -138,13 +138,22 @@ widths.
   `svelte.config.js`, which both Vite and svelte-check apply.
 - **oxlint's `no-restricted-imports` regexes don't support lookahead,** and fail silently by never
   matching. Use `group` globs with `!` exceptions instead.
+- **A folder override's `no-restricted-imports` replaces the top-level one** rather than adding to
+  it, so each override in `.oxlintrc.json` repeats the `svelte/store` ban (and the art ban where it
+  applies). A new top-level restriction has to be copied into every override.
+- **The import rules only see imports.** Art reached through `url()` in a `<style>` block or
+  `new URL(…, import.meta.url)` slips past them, so ask `art/index.ts` for it instead.
 - **oxfmt formats Markdown too,** including these docs.
 - **The tests read `desktop.ts` and the projects data** for titles, icons and the staged view, so
-  rearranging content shouldn't break them. Keep them few: each guards a behaviour that could break
-  by accident. Select program contents by role and text, not by their internal classes.
+  rearranging content shouldn't break them. They expect `staged`, `stagedPhone` and `icons` to name
+  plain program ids (`about`), not paths with an argument (`projects/some-slug`), whose titles only
+  the program knows. Keep them few: each guards a behaviour that could break by accident. Select
+  program contents by role and text, not by their internal classes, and the shell's elements
+  through the helpers in `tests/fixtures.ts`, which find them by their place in the shell.
 - **`pnpm test` reuses a server already on port 4173** outside CI, and then skips the build: stop a
-  stray `pnpm preview` first or it tests an old `dist/`. Workers are capped at two because each
-  runs its own Chromium.
+  stray `pnpm preview` first or it tests an old `dist/`. In CI it never builds, and serves the
+  `dist/` the workflow's build step has just made. Workers are capped at two because each runs its
+  own Chromium.
 
 ## Git & deploy
 
