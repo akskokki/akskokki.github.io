@@ -88,6 +88,6 @@
 
   .corner {
     grid-area: 2 / 2;
-    background: #ece9d8;
+    background: var(--xp-window-body);
   }
 </style>

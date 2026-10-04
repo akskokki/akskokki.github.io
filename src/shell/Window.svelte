@@ -335,7 +335,7 @@
     flex: 1;
     min-height: 0;
     overflow: hidden;
-    background: #ece9d8;
+    background: var(--xp-window-body);
   }
 
   .edge {
