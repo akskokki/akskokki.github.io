@@ -209,22 +209,28 @@
 
     {#each wm.windows as win (win.id)}
       {@const resolved = resolve(win.id)}
-      <Window {win}>
-        {#if import.meta.env.DEV && win.id === LAYOUT_TOOL}
+      {#if import.meta.env.DEV && win.id === LAYOUT_TOOL}
+        <Window {win}>
           <LayoutTool
             {layouts}
             {picked}
             area={{ width: areaWidth, height: areaHeight }}
             onreset={restage}
           />
-        {:else if resolved}
-          {#await load(resolved.program) then Program}
+        </Window>
+      {:else if resolved}
+        <!-- Drawn once its program has loaded, so a window never shows empty, and a program that
+             fits its window to its contents does so before it's first seen. -->
+        {#await load(resolved.program) then Program}
+          <Window {win}>
             <Program win={handleFor(win.id)} arg={resolved.arg} />
-          {:catch}
+          </Window>
+        {:catch}
+          <Window {win}>
             <p class="load-error">Couldn't load {resolved.program.title}.</p>
-          {/await}
-        {/if}
-      </Window>
+          </Window>
+        {/await}
+      {/if}
     {/each}
   </div>
 
