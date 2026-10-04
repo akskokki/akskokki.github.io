@@ -3,7 +3,7 @@
 // imports, which the tests can't load when they read this file in Node; Vite bundles them all
 // the same.
 
-const universityLogo = new URL('./university-logo.png', import.meta.url).href;
+const toskaLogo = new URL('./toska-logo.svg', import.meta.url).href;
 
 export interface Project {
   slug: string;
@@ -14,7 +14,7 @@ export interface Project {
   when: string;
   /** A few words under the title in the folder. */
   summary: string;
-  /** Square, shown at 32 and 16 px. Projects without one get the game controller icon. */
+  /** Fitted into a 32 px square, and 16 px in the project window. Without one, the game controller. */
   logo?: string;
   whatItIs: string;
   whatIDid: string;
@@ -32,7 +32,7 @@ export const projects: Project[] = [
     where: 'Toska',
     when: '2026–present',
     summary: 'Registers course completions',
-    logo: universityLogo,
+    logo: toskaLogo,
     whatItIs:
       "The University of Helsinki's tool for registering course completions: teachers send in their course's results, and Suotar turns them into entries in the university's study register. It also checks the completions of the open university's MOOC courses every week.",
     whatIDid:
@@ -48,7 +48,7 @@ export const projects: Project[] = [
     where: 'Toska',
     when: '2026–present',
     summary: 'Course feedback system',
-    logo: universityLogo,
+    logo: toskaLogo,
     whatItIs:
       "The University of Helsinki's course feedback system. Students give feedback on their courses, teachers tailor and read it, and degree programmes follow it across all their courses.",
     whatIDid:
@@ -64,7 +64,7 @@ export const projects: Project[] = [
     where: 'Toska',
     when: '2026–present',
     summary: 'Language Centre course finder',
-    logo: universityLogo,
+    logo: toskaLogo,
     whatItIs:
       "A course finder for the University of Helsinki's Language Centre: students answer a few questions and filter the Centre's courses down to the ones that suit them.",
     whatIDid:
