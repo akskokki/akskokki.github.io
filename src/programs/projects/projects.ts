@@ -1,6 +1,7 @@
-// Each project's slug is its window's address: #/projects/<slug>. The university projects'
-// screenshots are from toska.dev. They're `new URL`s rather than imports, which the tests can't
-// load when they read this file in Node; Vite bundles them all the same.
+// Each project's slug is its window's address: #/projects/<slug>. The screenshots are from
+// toska.dev and bought.app, and the student projects' repos. They're `new URL`s rather than
+// imports, which the tests can't load when they read this file in Node; Vite bundles them all
+// the same.
 
 export interface Project {
   slug: string;
@@ -47,6 +48,17 @@ export const projects: Project[] = [
     screenshot: new URL('./polku.webp', import.meta.url).href,
     visit: 'https://polku.helsinki.fi/',
     source: 'https://github.com/UniversityOfHelsinkiCS/apparaatti',
+  },
+  {
+    slug: 'bought',
+    title: 'Bought',
+    whatItIs:
+      'A marketplace app for secondhand fashion that turns your past online purchases into ready-made listings, and delivers from nearby sellers within hours. I was one of five engineers at the startup.',
+    whatIDid:
+      'Owned the onboarding flow through the expansion into the Baltics, including its localisation and measuring it with PostHog. Found that Baltic users were dropping off at the location step, because the form rejected their postal codes, and shipped a geolocation option that raised completion from about 60% to over 90%.',
+    tags: ['TypeScript', 'React Native', 'Node.js', 'PostgreSQL', 'PostHog'],
+    screenshot: new URL('./bought.webp', import.meta.url).href,
+    visit: 'https://bought.app/en/',
   },
   {
     slug: 'minesweeper',
