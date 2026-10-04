@@ -128,4 +128,5 @@ widths.
 - **Commit and push only when asked.** Small local commits during a task the owner asked for are
   fine; never push without being asked.
 - **Deploy:** `.github/workflows/deploy.yml` runs format check, lint, check, build and the tests,
-  then deploys to GitHub Pages on a push to `main`. The repo isn't on GitHub yet.
+  then deploys to GitHub Pages on a push to `main`. The repo is `akskokki/akskokki.github.io`,
+  served at https://akskokki.github.io/.
