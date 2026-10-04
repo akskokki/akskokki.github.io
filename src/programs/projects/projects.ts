@@ -1,11 +1,21 @@
 // Each project's slug is its window's address: #/projects/<slug>. The screenshots are from
-// toska.dev and bought.app, and the student projects' repos. They're `new URL`s rather than
+// toska.dev and bought.app, and the student projects' repos. Images are `new URL`s rather than
 // imports, which the tests can't load when they read this file in Node; Vite bundles them all
 // the same.
+
+const universityLogo = new URL('./university-logo.png', import.meta.url).href;
 
 export interface Project {
   slug: string;
   title: string;
+  /** Work and personal projects are listed apart, and each project window says which it is. */
+  kind: 'work' | 'personal';
+  where: string;
+  when: string;
+  /** A few words under the title in the folder. */
+  summary: string;
+  /** Square, shown at 32 and 16 px. Projects without one get the game controller icon. */
+  logo?: string;
   whatItIs: string;
   whatIDid: string;
   tags: string[];
@@ -18,6 +28,11 @@ export const projects: Project[] = [
   {
     slug: 'suotar',
     title: 'Suotar',
+    kind: 'work',
+    where: 'Toska',
+    when: '2026–present',
+    summary: 'Registers course completions',
+    logo: universityLogo,
     whatItIs:
       "The University of Helsinki's tool for registering course completions: teachers send in their course's results, and Suotar turns them into entries in the university's study register. It also checks the completions of the open university's MOOC courses every week.",
     whatIDid:
@@ -29,6 +44,11 @@ export const projects: Project[] = [
   {
     slug: 'norppa',
     title: 'Norppa',
+    kind: 'work',
+    where: 'Toska',
+    when: '2026–present',
+    summary: 'Course feedback system',
+    logo: universityLogo,
     whatItIs:
       "The University of Helsinki's course feedback system. Students give feedback on their courses, teachers tailor and read it, and degree programmes follow it across all their courses.",
     whatIDid:
@@ -40,6 +60,11 @@ export const projects: Project[] = [
   {
     slug: 'polku',
     title: 'Polku',
+    kind: 'work',
+    where: 'Toska',
+    when: '2026–present',
+    summary: 'Language Centre course finder',
+    logo: universityLogo,
     whatItIs:
       "A course finder for the University of Helsinki's Language Centre: students answer a few questions and filter the Centre's courses down to the ones that suit them.",
     whatIDid:
@@ -52,6 +77,11 @@ export const projects: Project[] = [
   {
     slug: 'bought',
     title: 'Bought',
+    kind: 'work',
+    where: 'Bought',
+    when: '2025–2026',
+    summary: 'Secondhand fashion app',
+    logo: new URL('./bought-logo.png', import.meta.url).href,
     whatItIs:
       'A marketplace app for secondhand fashion that turns your past online purchases into ready-made listings, and delivers from nearby sellers within hours. I was one of five engineers at the startup.',
     whatIDid:
@@ -63,6 +93,10 @@ export const projects: Project[] = [
   {
     slug: 'minesweeper',
     title: 'Minesweeper',
+    kind: 'personal',
+    where: 'Course project',
+    when: '2022',
+    summary: 'The classic game, in Pygame',
     whatItIs:
       'The classic game, with three difficulty levels, boards of any size and a high-score table. My Software Engineering course project.',
     whatIDid:
@@ -74,6 +108,10 @@ export const projects: Project[] = [
   {
     slug: 'sliding-puzzle-solver',
     title: '15 Puzzle Solver',
+    kind: 'personal',
+    where: 'Course project',
+    when: '2023',
+    summary: 'IDA* search, in Pygame',
     whatItIs:
       'Solves the 15 puzzle in the fewest possible moves, or lets you slide the tiles yourself. My Data Structures and Algorithms course project.',
     whatIDid:

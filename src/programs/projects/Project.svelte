@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type ProgramProps, ScrollArea } from '../../kit';
+  import { iconUrl, type ProgramProps, ScrollArea } from '../../kit';
   import { projects } from './projects';
 
   let { win, arg }: ProgramProps = $props();
@@ -12,41 +12,80 @@
 </script>
 
 <div class="project">
-  <ScrollArea>
-    <div class="page">
-      {#if project}
-        {#if project.screenshot}
-          <img class="screenshot" src={project.screenshot} alt="Screenshot of {project.title}" />
-        {/if}
-        <h1>{project.title}</h1>
-        <h2>What it is</h2>
-        <p>{project.whatItIs}</p>
-        <h2>What I did</h2>
-        <p>{project.whatIDid}</p>
-        <ul class="tags">
-          {#each project.tags as tag (tag)}
-            <li>{tag}</li>
-          {/each}
-        </ul>
-        <p class="links">
-          {#if project.visit}
-            <a class="xp-button" href={project.visit} target="_blank" rel="noopener">Visit</a>
-          {/if}
-          {#if project.source}
-            <a class="xp-button" href={project.source} target="_blank" rel="noopener">Source</a>
-          {/if}
-        </p>
-      {:else}
-        <p>There's no project called “{arg}”.</p>
-      {/if}
+  {#if project}
+    <!-- Says which kind of project this is, for anyone who came straight from a link. -->
+    <div class="kind">
+      <img src={project.logo ?? iconUrl('gameController', 16)} alt="" />
+      <b>{project.kind === 'work' ? 'Work' : 'Personal'}</b>
+      <span>· {project.where}, {project.when}</span>
     </div>
-  </ScrollArea>
+  {/if}
+  <div class="scroll">
+    <ScrollArea>
+      <div class="page">
+        {#if project}
+          {#if project.screenshot}
+            <img class="screenshot" src={project.screenshot} alt="Screenshot of {project.title}" />
+          {/if}
+          <h1>{project.title}</h1>
+          <h2>What it is</h2>
+          <p>{project.whatItIs}</p>
+          <h2>What I did</h2>
+          <p>{project.whatIDid}</p>
+          <ul class="tags">
+            {#each project.tags as tag (tag)}
+              <li>{tag}</li>
+            {/each}
+          </ul>
+          <p class="links">
+            {#if project.visit}
+              <a class="xp-button" href={project.visit} target="_blank" rel="noopener">Visit</a>
+            {/if}
+            {#if project.source}
+              <a class="xp-button" href={project.source} target="_blank" rel="noopener">Source</a>
+            {/if}
+          </p>
+        {:else}
+          <p>There's no project called “{arg}”.</p>
+        {/if}
+      </div>
+    </ScrollArea>
+  </div>
 </div>
 
 <style>
   .project {
+    display: flex;
+    flex-direction: column;
     height: 100%;
     background: white;
+  }
+
+  .kind {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 6px;
+    height: 24px;
+    padding: 0 10px;
+    border-bottom: 1px solid #aca899;
+    background: #ece9d8;
+    white-space: nowrap;
+  }
+
+  .kind img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+
+  .kind b {
+    color: #0c327d;
+  }
+
+  .scroll {
+    flex: 1;
+    min-height: 0;
   }
 
   .page {
