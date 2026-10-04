@@ -3,6 +3,8 @@
 import application16 from './application-16.png';
 import application32 from './application-32.png';
 import bliss from './bliss.jpg';
+import computer16 from './computer-16.png';
+import computer32 from './computer-32.png';
 import folder16 from './folder-16.png';
 import folder32 from './folder-32.png';
 import gameController16 from './game-controller-16.png';
@@ -21,6 +23,7 @@ const images = { bliss, startFlag };
 
 const icons = {
   application: { 16: application16, 32: application32 },
+  computer: { 16: computer16, 32: computer32 },
   folder: { 16: folder16, 32: folder32 },
   gameController: { 16: gameController16, 32: gameController32 },
   globe: { 16: globe16, 32: globe32 },

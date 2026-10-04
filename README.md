@@ -31,7 +31,7 @@ Svelte 5, Vite and TypeScript, built as a static site. Hash routes keep it worki
 - `src/shell/`: the desktop, windows, taskbar and the XP look.
 - `src/programs/`: one folder per program (About, Projects, Links, Photo, Note, a Magic 8-Ball).
 - `src/kit/`: what programs may use, such as XP scrollbars and buttons.
-- `src/desktop.ts`: the hand-written list of programs, desktop icons, and the layouts: which windows open on load, and where, for each size of screen.
+- `src/desktop.ts`: the hand-written list of programs, desktop icons, and the layouts: which windows open on load, and where, for each size of screen. In `pnpm dev`, the Layouts icon in the bottom-right corner opens a tool for arranging them: while it's open, resizing the browser resets to the layout for the new size, and it copies the windows' positions to hand to an agent.
 - `src/art/`: the placeholder art.
 
 The shell and the programs never import each other; only `desktop.ts` knows both. `AGENTS.md` has the details: architecture rules, conventions, and how to add a program.

@@ -77,7 +77,10 @@ export const icons: IconPlacement[] = [
   { path: 'eight-ball', x: 8, y: 408 },
 ];
 
-/** Biggest first: a screen gets the first layout that fits above its taskbar, or the last one. */
+/**
+ * Biggest first: a screen gets the first layout that fits above its taskbar, or the last one. In
+ * `pnpm dev`, the Layouts icon in the bottom-right corner opens a tool for arranging these.
+ */
 export const layouts: Layout[] = [
   {
     width: 1280,

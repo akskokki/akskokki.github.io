@@ -1,16 +1,27 @@
 <script lang="ts">
-  import { type Component, onMount } from 'svelte';
+  import { type Component, onMount, untrack } from 'svelte';
 
   import { imageUrl } from '../art';
   import type { ProgramProps, WindowHandle } from '../kit';
 
   import './theme/theme.css';
   import DesktopIcon from './DesktopIcon.svelte';
-  import { type PickedLayout, pickLayout } from './layout';
+  import { pickLayout } from './layout';
+  import { LAYOUT_TOOL, layoutToolSpec } from './layoutTool';
+  import LayoutTool from './LayoutTool.svelte';
   import Taskbar from './Taskbar.svelte';
   import type { IconPlacement, Layout, ProgramDefinition } from './types';
   import Window from './Window.svelte';
-  import { closeWindow, deactivate, openWindow, setArea, setTitle, wm } from './windows.svelte';
+  import {
+    closeWindow,
+    deactivate,
+    focusWindow,
+    moveWindow,
+    openWindow,
+    setArea,
+    setTitle,
+    wm,
+  } from './windows.svelte';
 
   interface Props {
     programs: readonly ProgramDefinition[];
@@ -32,19 +43,46 @@
   $effect(() => setArea(areaWidth, areaHeight));
 
   // The layout for the screen the site loads on. It's picked once: a browser resized later keeps
-  // it, and its windows are only kept on screen.
-  let picked: PickedLayout;
+  // it, and its windows are only kept on screen; only the dev-only layout tool picks again. This
+  // first pick is a stand-in until `restage` measures the area on mount.
+  let picked = $state.raw(
+    untrack(() => pickLayout(layouts, window.innerWidth, window.innerHeight)),
+  );
 
   // Read before anything rewrites the hash: a link such as #/projects/some-slug opens that window
   // on top of the staged view.
   const linkedPath = pathFromHash();
 
   onMount(() => {
-    // Measured here rather than through the bindings, which only update after the first layout.
-    picked = pickLayout(layouts, area.clientWidth, area.clientHeight);
-    for (const path of picked.layout.staged) open(path);
+    restage();
     if (linkedPath) open(linkedPath);
   });
+
+  const layoutToolOpen = $derived(
+    import.meta.env.DEV && wm.windows.some((win) => win.id === LAYOUT_TOOL),
+  );
+
+  /** Closes every window and opens the staged view of the layout for the area as it is now. */
+  function restage() {
+    // Measured rather than read from the bindings, which only update after the first layout.
+    picked = pickLayout(layouts, area.clientWidth, area.clientHeight);
+    for (const { id } of wm.windows.filter((win) => win.id !== LAYOUT_TOOL)) closeWindow(id);
+    for (const path of picked.layout.staged) open(path);
+    if (layoutToolOpen) {
+      const { x, y } = layoutToolSpec({ width: area.clientWidth, height: area.clientHeight });
+      moveWindow(LAYOUT_TOOL, x, y);
+      focusWindow(LAYOUT_TOOL);
+    }
+  }
+
+  // While the layout tool is open, a resized browser gets its layout's staged view, once the
+  // resizing pauses.
+  let restageTimer: ReturnType<typeof setTimeout> | undefined;
+  function onResize() {
+    if (!layoutToolOpen) return;
+    clearTimeout(restageTimer);
+    restageTimer = setTimeout(restage, 150);
+  }
 
   // The hash names the window in front, so the address can be shared as a link to it.
   $effect(() => {
@@ -68,6 +106,10 @@
   }
 
   function open(path: string) {
+    if (import.meta.env.DEV && path === LAYOUT_TOOL) {
+      openWindow(LAYOUT_TOOL, layoutToolSpec({ width: areaWidth, height: areaHeight }));
+      return;
+    }
     const resolved = resolve(path);
     if (!resolved) {
       console.error(`There's no program for the path "${path}".`);
@@ -110,6 +152,7 @@
     const path = pathFromHash();
     if (path) open(path);
   }}
+  onresize={onResize}
 />
 
 <div class="desktop" style:background-image="url({imageUrl('bliss')})">
@@ -142,10 +185,32 @@
       {/if}
     {/each}
 
+    {#if import.meta.env.DEV}
+      <DesktopIcon
+        icon="computer"
+        label="Layouts"
+        x={areaWidth - 84}
+        y={areaHeight - 80}
+        selected={selectedIcon === LAYOUT_TOOL && wm.activeId === null}
+        onselect={() => {
+          deactivate();
+          selectedIcon = LAYOUT_TOOL;
+        }}
+        onopen={() => open(LAYOUT_TOOL)}
+      />
+    {/if}
+
     {#each wm.windows as win (win.id)}
       {@const resolved = resolve(win.id)}
       <Window {win}>
-        {#if resolved}
+        {#if import.meta.env.DEV && win.id === LAYOUT_TOOL}
+          <LayoutTool
+            {layouts}
+            {picked}
+            area={{ width: areaWidth, height: areaHeight }}
+            onreset={restage}
+          />
+        {:else if resolved}
           {#await load(resolved.program) then Program}
             <Program win={handleFor(win.id)} arg={resolved.arg} />
           {:catch}
