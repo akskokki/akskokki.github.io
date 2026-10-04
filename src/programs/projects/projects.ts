@@ -32,7 +32,8 @@ export interface Project {
  */
 type Picture = { width: number; height: number } & (
   | { screenshot: string }
-  | { video: { webm: string; mp4: string } }
+  /** `still` is the recording's first frame, shown until it can play. */
+  | { video: { webm: string; mp4: string; still: string } }
 );
 
 export const projects: Project[] = [
@@ -134,6 +135,7 @@ export const projects: Project[] = [
       video: {
         webm: new URL('./custom-emojis.webm', import.meta.url).href,
         mp4: new URL('./custom-emojis.mp4', import.meta.url).href,
+        still: new URL('./custom-emojis-still.webp', import.meta.url).href,
       },
       width: 386,
       height: 126,
@@ -173,6 +175,7 @@ export const projects: Project[] = [
       video: {
         webm: new URL('./sliding-puzzle.webm', import.meta.url).href,
         mp4: new URL('./sliding-puzzle.mp4', import.meta.url).href,
+        still: new URL('./sliding-puzzle-still.webp', import.meta.url).href,
       },
       width: 790,
       height: 452,
@@ -196,6 +199,7 @@ export const projects: Project[] = [
       video: {
         webm: new URL('./minesweeper.webm', import.meta.url).href,
         mp4: new URL('./minesweeper.mp4', import.meta.url).href,
+        still: new URL('./minesweeper-still.webp', import.meta.url).href,
       },
       width: 456,
       height: 308,

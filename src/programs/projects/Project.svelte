@@ -50,11 +50,14 @@
               style:aspect-ratio="{width} / {height}"
             >
               {#if 'video' in project.picture}
+                <!-- Its first frame, preloaded with the folder, shows underneath until the video
+                     has a frame of its own, so the box never flashes empty. -->
+                <img class="screenshot" src={project.picture.video.still} alt="" />
                 <!-- A video rather than a GIF: browsers share one animation between every use of
                      a GIF, so a reopened window would carry on where the last one was. A video
                      starts over. -->
                 <video
-                  class="screenshot"
+                  class="screenshot recording"
                   autoplay
                   loop
                   muted
@@ -147,6 +150,13 @@
     height: 100%;
     border: 1px solid #919b9c;
     background: white;
+  }
+
+  /* Over its first frame, which shows through until the video has one. */
+  .recording {
+    position: absolute;
+    inset: 0;
+    background: none;
   }
 
   h1 {

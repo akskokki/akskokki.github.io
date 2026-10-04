@@ -15,16 +15,16 @@
   onMount(() => {
     for (const { picture } of projects) {
       if (!picture) continue;
+      // A recording's still, shown while it starts, counts as its picture here.
+      const image = new Image();
+      image.src = 'video' in picture ? picture.video.still : picture.screenshot;
+      image.decode().catch(() => {});
+      preloaded.push(image);
       if ('video' in picture) {
         const element = document.createElement('video');
         element.preload = 'auto';
         element.src = element.canPlayType('video/webm') ? picture.video.webm : picture.video.mp4;
         preloaded.push(element);
-      } else {
-        const image = new Image();
-        image.src = picture.screenshot;
-        image.decode().catch(() => {});
-        preloaded.push(image);
       }
     }
   });
