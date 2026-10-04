@@ -54,7 +54,7 @@
   h1 {
     margin: 0 0 10px;
     color: #0c327d;
-    font-size: 20px;
+    font-size: 24px;
   }
 
   p {

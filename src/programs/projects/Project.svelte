@@ -117,12 +117,12 @@
   h1 {
     margin: 0 0 8px;
     color: #0c327d;
-    font-size: 18px;
+    font-size: 21px;
   }
 
   h2 {
     margin: 12px 0 4px;
-    font-size: 11px;
+    font-size: inherit;
   }
 
   p {

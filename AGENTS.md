@@ -53,7 +53,7 @@ Out of scope unless the owner asks for it. Don't build these, and don't build ho
 ### Adding a program
 
 1. Make `src/programs/<name>/` with its component. Start from the closest existing one: `eight-ball` for a self-contained toy, `links` or `note` for a scrolling page.
-2. The window body is a box of definite size: give the component's root `height: 100%`. A `ScrollArea` fills its parent. The program inherits Tahoma 11 px and border-box sizing, on XP's beige window background unless it paints its own (most set `background: white`).
+2. The window body is a box of definite size: give the component's root `height: 100%`. A `ScrollArea` fills its parent. The program inherits Tahoma 13 px (XP's Large Fonts size) and border-box sizing, on XP's beige window background unless it paints its own (most set `background: white`).
 3. Add an entry to `programs` in `desktop.ts`. Its `width` and `height` are the whole window, frame and title bar included; `fixedSize: true` stops resizing and maximizing.
 4. Add an icon placement to `icons` if it should be on the desktop. The test that opens every desktop icon then covers it, finding the window by its `desktop.ts` title, so a program on the desktop or in the staged view keeps that title rather than calling `setTitle`.
 5. For an `id/*` program, `arg` is whatever is in the link, so handle one that matches nothing, as `Project.svelte` does. Its `desktop.ts` title is only a stand-in: set the real one with `win.setTitle`.

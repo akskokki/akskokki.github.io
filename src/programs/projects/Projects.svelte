@@ -73,12 +73,12 @@
     padding-bottom: 3px;
     background: linear-gradient(to right, #7a9bd8, transparent) left bottom / 320px 1px no-repeat;
     color: #0c327d;
-    font-size: 11px;
+    font-size: inherit;
   }
 
   .tiles {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 2px 10px;
     margin-bottom: 12px;
   }

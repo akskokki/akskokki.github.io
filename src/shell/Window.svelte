@@ -153,7 +153,7 @@
     flex: none;
     align-items: center;
     gap: 2px;
-    height: 28px;
+    height: 30px;
     margin: 0 -3px;
     padding: 0 5px 0 6px;
     border-radius: 8px 8px 0 0;
@@ -174,7 +174,7 @@
       #abbae3 100%
     );
     color: #d8e4f8;
-    font: bold 13px var(--xp-font-title);
+    font: bold 15px var(--xp-font-title);
     user-select: none;
     touch-action: none;
   }
