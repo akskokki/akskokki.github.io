@@ -58,6 +58,8 @@ widths.
   than changing window state themselves.
 - No global element styles that leak into windows. Programs opt into XP widgets with `kit/xp.css`
   classes.
+- Content that scrolls goes inside kit's `ScrollArea`, which draws XP scrollbars in every browser,
+  rather than `overflow: auto`, whose native scrollbars Firefox can't style.
 - oxlint's `no-restricted-imports` enforces these boundaries and bans `svelte/store`.
 
 ### How it fits together
