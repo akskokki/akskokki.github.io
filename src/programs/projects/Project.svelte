@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ProgramProps } from '../../kit';
+  import { type ProgramProps, ScrollArea } from '../../kit';
 
   import '../../kit/xp.css';
   import { projects } from './projects';
@@ -14,37 +14,43 @@
 </script>
 
 <div class="project">
-  {#if project}
-    <div class="screenshot">Screenshot of {project.title}</div>
-    <h1>{project.title}</h1>
-    <h2>What it is</h2>
-    <p>{project.whatItIs}</p>
-    <h2>What I did</h2>
-    <p>{project.whatIDid}</p>
-    <ul class="tags">
-      {#each project.tags as tag (tag)}
-        <li>{tag}</li>
-      {/each}
-    </ul>
-    <p class="links">
-      {#if project.visit}
-        <a class="xp-button" href={project.visit} target="_blank" rel="noopener">Visit</a>
+  <ScrollArea>
+    <div class="page">
+      {#if project}
+        <div class="screenshot">Screenshot of {project.title}</div>
+        <h1>{project.title}</h1>
+        <h2>What it is</h2>
+        <p>{project.whatItIs}</p>
+        <h2>What I did</h2>
+        <p>{project.whatIDid}</p>
+        <ul class="tags">
+          {#each project.tags as tag (tag)}
+            <li>{tag}</li>
+          {/each}
+        </ul>
+        <p class="links">
+          {#if project.visit}
+            <a class="xp-button" href={project.visit} target="_blank" rel="noopener">Visit</a>
+          {/if}
+          {#if project.source}
+            <a class="xp-button" href={project.source} target="_blank" rel="noopener">Source</a>
+          {/if}
+        </p>
+      {:else}
+        <p>There's no project called “{arg}”.</p>
       {/if}
-      {#if project.source}
-        <a class="xp-button" href={project.source} target="_blank" rel="noopener">Source</a>
-      {/if}
-    </p>
-  {:else}
-    <p>There's no project called “{arg}”.</p>
-  {/if}
+    </div>
+  </ScrollArea>
 </div>
 
 <style>
   .project {
     height: 100%;
-    padding: 12px 16px;
-    overflow: auto;
     background: white;
+  }
+
+  .page {
+    padding: 12px 16px;
   }
 
   .screenshot {

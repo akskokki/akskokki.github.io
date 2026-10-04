@@ -1,28 +1,38 @@
 <script lang="ts">
-  import { iconUrl } from '../../kit';
+  import { iconUrl, ScrollArea } from '../../kit';
   import { links } from './links';
 </script>
 
-<ul class="links">
-  {#each links as link (link.url)}
-    <li>
-      <img src={iconUrl('globe', 16)} alt="" />
-      <span class="label">{link.label}</span>
-      <!-- Web links open in a new tab; mailto: links go straight to the mail app. -->
-      <a href={link.url} target={link.url.startsWith('http') ? '_blank' : undefined} rel="noopener">
-        {link.shown}
-      </a>
-    </li>
-  {/each}
-</ul>
+<div class="links">
+  <ScrollArea>
+    <ul>
+      {#each links as link (link.url)}
+        <li>
+          <img src={iconUrl('globe', 16)} alt="" />
+          <span class="label">{link.label}</span>
+          <!-- Web links open in a new tab; mailto: links go straight to the mail app. -->
+          <a
+            href={link.url}
+            target={link.url.startsWith('http') ? '_blank' : undefined}
+            rel="noopener"
+          >
+            {link.shown}
+          </a>
+        </li>
+      {/each}
+    </ul>
+  </ScrollArea>
+</div>
 
 <style>
   .links {
     height: 100%;
+    background: white;
+  }
+
+  ul {
     margin: 0;
     padding: 8px;
-    overflow: auto;
-    background: white;
     list-style: none;
   }
 

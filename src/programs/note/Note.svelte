@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { ScrollArea } from '../../kit';
+
   // Editable for fun; nothing is saved, so every visit starts with the same note.
   const text = `back in 5 min — have a look around.
 
@@ -7,21 +9,28 @@ and the taskbar switches between them.
 `;
 </script>
 
-<textarea class="note" spellcheck="false" value={text}></textarea>
+<!-- An editable element rather than a textarea: it grows with its text, so the scroll area around
+     it does the scrolling and shows XP's scrollbars. -->
+<div class="note">
+  <ScrollArea>
+    <div class="text" contenteditable="plaintext-only" spellcheck="false">{text}</div>
+  </ScrollArea>
+</div>
 
 <style>
   .note {
-    display: block;
-    width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 2px 4px;
-    border: none;
-    outline: none;
-    resize: none;
     background: white;
+  }
+
+  .text {
+    flex: 1;
+    padding: 2px 4px;
+    outline: none;
     font:
       13px 'Lucida Console',
       monospace;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 </style>

@@ -1,6 +1,7 @@
 // Everything a program may import. Keep this small: it's the whole interface between programs and
 // the shell.
 export { iconUrl, imageUrl } from '../art';
+export { default as ScrollArea } from './ScrollArea.svelte';
 
 /** A program's handle on its own window. */
 export interface WindowHandle {
