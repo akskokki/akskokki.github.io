@@ -5,7 +5,7 @@
 import { type Project, projects, toskaLogo } from './projects';
 
 /** The project whose window the kurkkumopo hides in: a Toska one with a picture, new each visit. */
-const hideouts = projects.filter((p) => p.logo === toskaLogo && (p.screenshot || p.video));
+const hideouts = projects.filter((p) => p.logo === toskaLogo && p.picture);
 export const HIDEOUT = hideouts[Math.floor(Math.random() * hideouts.length)]?.slug;
 
 export const kurkkumopoUrl = new URL('./kurkkumopo.png', import.meta.url).href;

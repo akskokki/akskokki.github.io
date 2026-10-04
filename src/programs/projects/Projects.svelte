@@ -13,15 +13,16 @@
   // images are decoded and the videos buffered; kept here so the browser doesn't drop them.
   const preloaded: HTMLElement[] = [];
   onMount(() => {
-    for (const { screenshot, video } of projects) {
-      if (video) {
+    for (const { picture } of projects) {
+      if (!picture) continue;
+      if ('video' in picture) {
         const element = document.createElement('video');
         element.preload = 'auto';
-        element.src = element.canPlayType('video/webm') ? video.webm : video.mp4;
+        element.src = element.canPlayType('video/webm') ? picture.video.webm : picture.video.mp4;
         preloaded.push(element);
-      } else if (screenshot) {
+      } else {
         const image = new Image();
-        image.src = screenshot;
+        image.src = picture.screenshot;
         image.decode().catch(() => {});
         preloaded.push(image);
       }

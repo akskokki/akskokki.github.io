@@ -16,6 +16,11 @@ export interface WindowHandle {
    * front if it's already open.
    */
   open(path: string): void;
+  /**
+   * Makes the window `height` px taller, or shorter when negative, to fit its contents, as far as
+   * the screen allows. Meant for sizing a window as it opens; does nothing to a maximized one.
+   */
+  fit(height: number): void;
 }
 
 /** What every program component receives. */

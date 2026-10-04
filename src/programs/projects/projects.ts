@@ -19,12 +19,19 @@ export interface Project {
   whatItIs: string;
   whatIDid: string;
   tags: string[];
-  screenshot?: string;
-  /** A looping recording, shown in place of a screenshot. */
-  video?: { webm: string; mp4: string };
+  picture?: Picture;
   visit?: string;
   source?: string;
 }
+
+/**
+ * A screenshot or a looping recording, above the text. Its size in px lets the window make room
+ * for it before it loads.
+ */
+type Picture = { width: number; height: number } & (
+  | { screenshot: string }
+  | { video: { webm: string; mp4: string } }
+);
 
 export const projects: Project[] = [
   {
@@ -40,7 +47,11 @@ export const projects: Project[] = [
     whatIDid:
       'Took sole ownership of it after about three years without active development and with no tests. Wrote integration tests against its existing behaviour, moved it from Node.js 14 to 24 without regressions, and kept building new features.',
     tags: ['JavaScript', 'React', 'Node.js', 'Express', 'PostgreSQL'],
-    screenshot: new URL('./suotar.webp', import.meta.url).href,
+    picture: {
+      screenshot: new URL('./suotar.webp', import.meta.url).href,
+      width: 880,
+      height: 738,
+    },
     source: 'https://github.com/UniversityOfHelsinkiCS/suoritustarkistin',
   },
   {
@@ -56,7 +67,11 @@ export const projects: Project[] = [
     whatIDid:
       "Moved the university-wide survey from fixed questions to versioned ones, so the questions can change every year without altering past years' feedback.",
     tags: ['TypeScript', 'React', 'Node.js', 'PostgreSQL', 'Playwright'],
-    screenshot: new URL('./norppa.webp', import.meta.url).href,
+    picture: {
+      screenshot: new URL('./norppa.webp', import.meta.url).href,
+      width: 880,
+      height: 758,
+    },
     source: 'https://github.com/UniversityOfHelsinkiCS/palaute',
   },
   {
@@ -72,7 +87,11 @@ export const projects: Project[] = [
     whatIDid:
       "Rebuilt the frontend to follow the university's design system, and covered the whole flow with end-to-end tests.",
     tags: ['TypeScript', 'React', 'Node.js', 'Playwright'],
-    screenshot: new URL('./polku.webp', import.meta.url).href,
+    picture: {
+      screenshot: new URL('./polku.webp', import.meta.url).href,
+      width: 617,
+      height: 372,
+    },
     visit: 'https://polku.helsinki.fi/',
     source: 'https://github.com/UniversityOfHelsinkiCS/apparaatti',
   },
@@ -89,7 +108,11 @@ export const projects: Project[] = [
     whatIDid:
       'Owned the onboarding flow through the expansion into the Baltics, including its localisation and measuring it with PostHog. Found that Baltic users were dropping off at the location step, because the form rejected their postal codes, and shipped a geolocation option that raised completion from about 60% to over 90%.',
     tags: ['TypeScript', 'React Native', 'Node.js', 'PostgreSQL', 'PostHog'],
-    screenshot: new URL('./bought.webp', import.meta.url).href,
+    picture: {
+      screenshot: new URL('./bought.webp', import.meta.url).href,
+      width: 880,
+      height: 800,
+    },
     visit: 'https://bought.app/en/',
   },
   {
@@ -104,9 +127,13 @@ export const projects: Project[] = [
     whatIDid:
       'Implemented an IDA* search guided by Manhattan distance and linear conflicts, a Pygame interface, and performance tests: over a thousand scrambled boards showed how deep a solution it finds within a minute.',
     tags: ['Python', 'Pygame', 'IDA*'],
-    video: {
-      webm: new URL('./sliding-puzzle.webm', import.meta.url).href,
-      mp4: new URL('./sliding-puzzle.mp4', import.meta.url).href,
+    picture: {
+      video: {
+        webm: new URL('./sliding-puzzle.webm', import.meta.url).href,
+        mp4: new URL('./sliding-puzzle.mp4', import.meta.url).href,
+      },
+      width: 790,
+      height: 452,
     },
     source: 'https://github.com/akskokki/sliding-puzzle-solver',
   },
@@ -122,9 +149,13 @@ export const projects: Project[] = [
     whatIDid:
       'Built the game logic and a Pygame interface, with unit tests, a coverage report, linting, and documentation of the requirements and the architecture.',
     tags: ['Python', 'Pygame', 'pytest'],
-    video: {
-      webm: new URL('./minesweeper.webm', import.meta.url).href,
-      mp4: new URL('./minesweeper.mp4', import.meta.url).href,
+    picture: {
+      video: {
+        webm: new URL('./minesweeper.webm', import.meta.url).href,
+        mp4: new URL('./minesweeper.mp4', import.meta.url).href,
+      },
+      width: 456,
+      height: 308,
     },
     source: 'https://github.com/akskokki/minesweeper-python',
   },

@@ -16,6 +16,7 @@
     closeWindow,
     deactivate,
     focusWindow,
+    fitWindow,
     moveWindow,
     openWindow,
     setArea,
@@ -150,6 +151,7 @@
       setTitle: (title) => setTitle(id, title),
       close: () => closeWindow(id),
       open: (path) => open(path),
+      fit: (height) => fitWindow(id, height),
     };
   }
 </script>

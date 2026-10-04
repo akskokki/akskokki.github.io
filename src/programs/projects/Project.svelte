@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { iconUrl, type ProgramProps, ScrollArea } from '../../kit';
   import Kurkkumopo from './Kurkkumopo.svelte';
   import { logoOf } from './kurkkumopo.svelte';
@@ -12,6 +14,19 @@
   $effect(() => {
     if (project) win.setTitle(project.title);
   });
+
+  /** The tallest a picture is shown, in px. */
+  const PICTURE_HEIGHT = 220;
+
+  let scroll = $state<HTMLDivElement>();
+  let page = $state<HTMLDivElement>();
+
+  // Opens as tall as the page, rather than the size its layout says, as far as the screen allows.
+  // Before it's first drawn, which the picture's known size allows, and only then, so the window
+  // never changes size under the reader.
+  onMount(() => {
+    if (scroll && page) win.fit(page.offsetHeight - scroll.clientHeight);
+  });
 </script>
 
 <div class="project">
@@ -23,13 +38,18 @@
       <span>· {project.where}, {project.when}</span>
     </div>
   {/if}
-  <div class="scroll">
+  <div class="scroll" bind:this={scroll}>
     <ScrollArea>
-      <div class="page">
+      <div class="page" bind:this={page}>
         {#if project}
-          {#if project.video || project.screenshot}
-            <div class="media">
-              {#if project.video}
+          {#if project.picture}
+            {@const { width, height } = project.picture}
+            <div
+              class="media"
+              style:width="min(100%, {Math.min(width, (PICTURE_HEIGHT * width) / height)}px)"
+              style:aspect-ratio="{width} / {height}"
+            >
+              {#if 'video' in project.picture}
                 <!-- A video rather than a GIF: browsers share one animation between every use of
                      a GIF, so a reopened window would carry on where the last one was. A video
                      starts over. -->
@@ -41,13 +61,13 @@
                   playsinline
                   aria-label="Recording of {project.title}"
                 >
-                  <source src={project.video.webm} type="video/webm" />
-                  <source src={project.video.mp4} type="video/mp4" />
+                  <source src={project.picture.video.webm} type="video/webm" />
+                  <source src={project.picture.video.mp4} type="video/mp4" />
                 </video>
               {:else}
                 <img
                   class="screenshot"
-                  src={project.screenshot}
+                  src={project.picture.screenshot}
                   alt="Screenshot of {project.title}"
                 />
               {/if}
@@ -113,19 +133,17 @@
     padding: 12px 16px;
   }
 
-  /* The picture's own box, for the kurkkumopo to hide behind. */
+  /* The picture's own box, sized before it loads, for the kurkkumopo to hide behind. */
   .media {
     position: relative;
     isolation: isolate;
-    width: fit-content;
-    max-width: 100%;
     margin: 0 auto 12px;
   }
 
   .screenshot {
     display: block;
-    max-width: 100%;
-    max-height: 220px;
+    width: 100%;
+    height: 100%;
     border: 1px solid #919b9c;
   }
 

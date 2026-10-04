@@ -90,7 +90,7 @@ export const layouts: Layout[] = [
     windows: {
       about: { x: 320, y: 50, width: 680, height: 436 },
       projects: { x: 1040, y: 0, width: 620, height: 436 },
-      'projects/*': { x: 700, y: 60, width: 560, height: 640 },
+      'projects/*': { x: 700, y: 60, width: 560 },
       links: { x: 360, y: 300 },
       photo: { x: 1120, y: 490, width: 500, height: 370 },
       note: { x: 520, y: 560, width: 420, height: 210 },
@@ -119,7 +119,7 @@ export const layouts: Layout[] = [
     windows: {
       about: { x: 90, y: 40, width: 480, height: 364 },
       projects: { x: 590, y: 16, width: projectsNarrow, height: 510 },
-      'projects/*': { x: 300, y: 20, height: 540 },
+      'projects/*': { x: 300, y: 20 },
       links: { x: 180, y: 180 },
       photo: { x: 480, y: 180 },
       note: { x: 200, y: 424, width: 340, height: 150 },
@@ -134,7 +134,7 @@ export const layouts: Layout[] = [
     windows: {
       about: { x: 90, y: 30, width: 480, height: 364 },
       projects: { x: 590, y: 8, width: projectsNarrow, height: 464 },
-      'projects/*': { x: 300, y: 10, height: 460 },
+      'projects/*': { x: 300, y: 10 },
       links: { x: 180, y: 150 },
       photo: { x: 480, y: 90 },
       note: { x: 280, y: 300, width: 340, height: 150 },
@@ -178,7 +178,7 @@ export const layouts: Layout[] = [
     windows: {
       about: { x: 90, y: 56, width: 520, height: 370 },
       projects: { x: 80, y: 8, width: projectsWide, height: 340 },
-      'projects/*': { x: 110, y: 8, height: 430 },
+      'projects/*': { x: 110, y: 8 },
       links: { x: 140, y: 150 },
       photo: { x: 200, y: 100 },
       note: { x: 240, y: 240 },
@@ -193,7 +193,7 @@ export const layouts: Layout[] = [
     windows: {
       about: { x: 90, y: 34, width: 520, height: 266 },
       projects: { x: 80, y: 0, width: projectsWide, height: 300 },
-      'projects/*': { x: 110, y: 0, height: 300 },
+      'projects/*': { x: 110, y: 0 },
       links: { x: 160, y: 60 },
       photo: { x: 160, y: 0, height: 300 },
       note: { x: 200, y: 60 },
