@@ -28,15 +28,17 @@ Reference material (XP CSS, React XP recreations, screenshots of real XP, placeh
 
 ```sh
 pnpm dev           # dev server, http://localhost:5173
-pnpm check         # svelte-check (types), fails on any error or warning
+pnpm check         # svelte-check (types) + tsc for tests/, fails on any error or warning
 pnpm lint          # oxlint (incl. type-aware rules) + suppression reasons + knip
 pnpm format        # oxfmt: format everything, sorts imports (format:check only reports)
 pnpm build         # production build into dist/
 pnpm preview       # serve dist/, http://localhost:4173
+pnpm test          # Playwright end-to-end tests against the build (desktop + phone)
 ```
 
-Before finishing a change, run `pnpm format && pnpm lint && pnpm check && pnpm build`. For UI changes,
-also look at the result in a browser at desktop (~1280 px) and phone (~390 px) widths.
+Before finishing a change, run `pnpm format && pnpm lint && pnpm check && pnpm build && pnpm test`.
+For UI changes, also look at the result in a browser at desktop (~1280 px) and phone (~390 px)
+widths.
 
 ## Architecture rules
 
@@ -110,6 +112,12 @@ also look at the result in a browser at desktop (~1280 px) and phone (~390 px) w
 - **oxlint's `no-restricted-imports` regexes don't support lookahead,** and fail silently by never
   matching. Use `group` globs with `!` exceptions instead.
 - **oxfmt formats Markdown too,** including these docs.
+- **The tests read `desktop.ts` and the projects data** for titles, icons and the staged view, so
+  rearranging content shouldn't break them. Keep them few: each guards a behaviour that could break
+  by accident. Select program contents by role and text, not by their internal classes.
+- **`pnpm test` reuses a server already on port 4173** outside CI, and then skips the build: stop a
+  stray `pnpm preview` first or it tests an old `dist/`. Workers are capped at two because each
+  runs its own Chromium.
 
 ## Git & deploy
 
@@ -119,5 +127,5 @@ also look at the result in a browser at desktop (~1280 px) and phone (~390 px) w
 - **Linear history:** rebase or fast-forward, never merge commits.
 - **Commit and push only when asked.** Small local commits during a task the owner asked for are
   fine; never push without being asked.
-- **Deploy:** `.github/workflows/deploy.yml` runs format check, lint, check and build, then deploys to
-  GitHub Pages on a push to `main`. The repo isn't on GitHub yet.
+- **Deploy:** `.github/workflows/deploy.yml` runs format check, lint, check, build and the tests,
+  then deploys to GitHub Pages on a push to `main`. The repo isn't on GitHub yet.
