@@ -74,7 +74,8 @@
         layouts.length,
       );
       moveWindow(LAYOUT_TOOL, x, y);
-      focusWindow(LAYOUT_TOOL);
+      // Back in front, unless it's minimized: focusing would restore it.
+      if (!wm.windows.find((win) => win.id === LAYOUT_TOOL)?.minimized) focusWindow(LAYOUT_TOOL);
     }
   }
 
