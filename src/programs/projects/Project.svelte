@@ -24,7 +24,22 @@
     <ScrollArea>
       <div class="page">
         {#if project}
-          {#if project.screenshot}
+          {#if project.video}
+            <!-- A video rather than a GIF: browsers share one animation between every use of a
+                 GIF, so a reopened window would carry on where the last one was. A video starts
+                 over. -->
+            <video
+              class="screenshot"
+              autoplay
+              loop
+              muted
+              playsinline
+              aria-label="Recording of {project.title}"
+            >
+              <source src={project.video.webm} type="video/webm" />
+              <source src={project.video.mp4} type="video/mp4" />
+            </video>
+          {:else if project.screenshot}
             <img class="screenshot" src={project.screenshot} alt="Screenshot of {project.title}" />
           {/if}
           <h1>{project.title}</h1>

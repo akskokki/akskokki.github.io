@@ -1,7 +1,7 @@
 // Each project's slug is its window's address: #/projects/<slug>. The screenshots are from
-// toska.dev and bought.app, and the student projects' repos. Images are `new URL`s rather than
-// imports, which the tests can't load when they read this file in Node; Vite bundles them all
-// the same.
+// toska.dev and bought.app, and the recordings from the student projects' repos. Media are
+// `new URL`s rather than imports, which the tests can't load when they read this file in Node;
+// Vite bundles them all the same.
 
 const toskaLogo = new URL('./toska-logo.svg', import.meta.url).href;
 
@@ -20,6 +20,8 @@ export interface Project {
   whatIDid: string;
   tags: string[];
   screenshot?: string;
+  /** A looping recording, shown in place of a screenshot. */
+  video?: { webm: string; mp4: string };
   visit?: string;
   source?: string;
 }
@@ -102,7 +104,10 @@ export const projects: Project[] = [
     whatIDid:
       'Built the game logic and a Pygame interface, with unit tests, a coverage report, linting, and documentation of the requirements and the architecture.',
     tags: ['Python', 'Pygame', 'pytest'],
-    screenshot: new URL('./minesweeper.gif', import.meta.url).href,
+    video: {
+      webm: new URL('./minesweeper.webm', import.meta.url).href,
+      mp4: new URL('./minesweeper.mp4', import.meta.url).href,
+    },
     source: 'https://github.com/akskokki/minesweeper-python',
   },
   {
@@ -117,7 +122,10 @@ export const projects: Project[] = [
     whatIDid:
       'Implemented an IDA* search guided by Manhattan distance and linear conflicts, a Pygame interface, and performance tests: over a thousand scrambled boards showed how deep a solution it finds within a minute.',
     tags: ['Python', 'Pygame', 'IDA*'],
-    screenshot: new URL('./sliding-puzzle.gif', import.meta.url).href,
+    video: {
+      webm: new URL('./sliding-puzzle.webm', import.meta.url).href,
+      mp4: new URL('./sliding-puzzle.mp4', import.meta.url).href,
+    },
     source: 'https://github.com/akskokki/sliding-puzzle-solver',
   },
 ];
