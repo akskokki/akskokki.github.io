@@ -1,18 +1,24 @@
 import { icons, programs } from '../src/desktop';
 import {
   activeTitle,
+  activeWindow,
   boxOf,
   desktopIcon,
   drag,
+  edges,
   expect,
   frontTitle,
   openDesktop,
   stagedTitles,
   TASKBAR_HEIGHT,
   taskButton,
+  taskButtons,
   test,
+  titleBar,
   titleOf,
+  windows,
   windowTitled,
+  windowTitles,
 } from './fixtures';
 
 const AREA = { width: 1280, height: 800 - TASKBAR_HEIGHT };
@@ -21,25 +27,25 @@ test('the staged view opens with its front window active and a taskbar button ea
   page,
 }) => {
   await openDesktop(page);
-  await expect(page.locator('.window .title')).toHaveText(stagedTitles);
-  await expect(page.locator('.task')).toHaveText(stagedTitles);
+  await expect(windowTitles(page)).toHaveText(stagedTitles);
+  await expect(taskButtons(page)).toHaveText(stagedTitles);
   await expect(taskButton(page, frontTitle)).toHaveClass(/active/);
 });
 
 // Catches a broken lazy import or desktop.ts entry: each window opens fresh and renders.
 test('every desktop icon opens its program', async ({ page }) => {
   await openDesktop(page);
-  while ((await page.locator('.window').count()) > 0) {
-    await page.locator('.window.active button.close').click();
+  while ((await windows(page).count()) > 0) {
+    await titleBar(activeWindow(page)).locator('.close').click();
   }
   for (const { path } of icons) {
     const title = titleOf(path);
     await desktopIcon(page, title).dblclick();
     const win = windowTitled(page, title);
     await expect(win).toHaveClass(/active/);
-    await expect(win.locator('.body *').first()).toBeVisible();
+    await expect(win.locator(':scope > .body *').first()).toBeVisible();
     await expect(win).not.toContainText("Couldn't load");
-    await win.locator('button.close').click();
+    await titleBar(win).locator('.close').click();
   }
 });
 
@@ -47,7 +53,7 @@ test('dragging a title bar moves the window and keeps it on screen', async ({ pa
   await openDesktop(page);
   const win = windowTitled(page, frontTitle);
   const start = await boxOf(win);
-  const title = await boxOf(win.locator('.title'));
+  const title = await boxOf(titleBar(win).locator('.title'));
   const grip = { x: title.x + 20, y: title.y + title.height / 2 };
 
   await drag(page, grip, 40, 30);
@@ -70,13 +76,13 @@ test('edges and corners resize the window, keeping the opposite side in place', 
   const win = windowTitled(page, frontTitle);
   const start = await boxOf(win);
 
-  const corner = await boxOf(win.locator('.edge.se'));
+  const corner = await boxOf(edges(win, 'se'));
   await drag(page, { x: corner.x + 6, y: corner.y + 6 }, 50, 40);
   await expect
     .poll(() => boxOf(win))
     .toEqual({ ...start, width: start.width + 50, height: start.height + 40 });
 
-  const left = await boxOf(win.locator('.edge.w'));
+  const left = await boxOf(edges(win, 'w'));
   await drag(page, { x: left.x + 3, y: left.y + left.height / 2 }, 30, 0);
   await expect
     .poll(() => boxOf(win))
@@ -93,11 +99,11 @@ test('double-clicking a title bar maximizes the window and restores it', async (
   const win = windowTitled(page, frontTitle);
   const start = await boxOf(win);
 
-  await win.locator('.title').dblclick();
+  await titleBar(win).locator('.title').dblclick();
   await expect.poll(() => boxOf(win)).toEqual({ x: 0, y: 0, ...AREA });
-  await expect(win.locator('.edge')).toHaveCount(0);
+  await expect(edges(win)).toHaveCount(0);
 
-  await win.locator('.title').dblclick();
+  await titleBar(win).locator('.title').dblclick();
   await expect.poll(() => boxOf(win)).toEqual(start);
 });
 
@@ -112,7 +118,7 @@ test('clicking a window behind brings it to the front', async ({ page }) => {
   await desktopIcon(page, other).dblclick();
   const front = windowTitled(page, other);
   await expect(front).toHaveClass(/active/);
-  const otherTitle = await boxOf(front.locator('.title'));
+  const otherTitle = await boxOf(titleBar(front).locator('.title'));
   const target = { x: backBox.x + backBox.width / 2, y: backBox.y + backBox.height / 2 };
   await drag(
     page,
@@ -126,12 +132,15 @@ test('clicking a window behind brings it to the front', async ({ page }) => {
   const titleAt = () =>
     page.evaluate(
       ({ x, y }) =>
-        document.elementFromPoint(x, y)?.closest('.window')?.querySelector('.title')?.textContent,
+        document
+          .elementFromPoint(x, y)
+          ?.closest('.area > .window')
+          ?.querySelector(':scope > .title-bar > .title')?.textContent,
       overlap,
     );
   await expect.poll(titleAt).toBe(other);
 
-  await back.locator('.title').click();
+  await titleBar(back).locator('.title').click();
   await expect(activeTitle(page)).toHaveText(frontTitle);
   await expect.poll(titleAt).toBe(frontTitle);
 });
@@ -145,11 +154,11 @@ test('a fixed-size window can be neither resized nor maximized', async ({ page }
   await desktopIcon(page, fixed.title).dblclick();
   const win = windowTitled(page, fixed.title);
   await expect(win).toHaveClass(/active/);
-  await expect(win.locator('.edge')).toHaveCount(0);
-  await expect(win.locator('button.maximize')).toBeDisabled();
+  await expect(edges(win)).toHaveCount(0);
+  await expect(titleBar(win).locator('.maximize')).toBeDisabled();
 
   const start = await boxOf(win);
-  await win.locator('.title').dblclick();
+  await titleBar(win).locator('.title').dblclick();
   await expect.poll(() => boxOf(win)).toEqual(start);
 });
 

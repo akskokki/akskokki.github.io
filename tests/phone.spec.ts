@@ -1,16 +1,22 @@
 import { icons } from '../src/desktop';
 import {
   activeTitle,
+  activeWindow,
   boxOf,
   desktopIcon,
+  desktopIcons,
+  edges,
   expect,
   openDesktop,
   stagedPhoneTitles,
   TASKBAR_HEIGHT,
   taskButton,
   test,
+  titleBar,
   titleOf,
+  windows,
   windowTitled,
+  windowTitles,
 } from './fixtures';
 
 const AREA = { x: 0, y: 0, width: 390, height: 844 - TASKBAR_HEIGHT };
@@ -20,21 +26,21 @@ test('a phone opens only the phone staged view, filling the screen above the tas
   page,
 }) => {
   await openDesktop(page, '', phoneFront);
-  await expect(page.locator('.window .title')).toHaveText(stagedPhoneTitles);
+  await expect(windowTitles(page)).toHaveText(stagedPhoneTitles);
   const win = windowTitled(page, phoneFront);
   await expect.poll(() => boxOf(win)).toEqual(AREA);
-  await expect(win.locator('.edge')).toHaveCount(0);
-  await expect(win.locator('button.maximize')).toBeDisabled();
+  await expect(edges(win)).toHaveCount(0);
+  await expect(titleBar(win).locator('.maximize')).toBeDisabled();
 });
 
 test('closing the windows shows the icons, and one tap opens an icon filling the screen', async ({
   page,
 }) => {
   await openDesktop(page, '', phoneFront);
-  while ((await page.locator('.window').count()) > 0) {
-    await page.locator('.window.active button.close').tap();
+  while ((await windows(page).count()) > 0) {
+    await titleBar(activeWindow(page)).locator('.close').tap();
   }
-  await expect(page.locator('.icon')).toHaveCount(icons.length);
+  await expect(desktopIcons(page)).toHaveCount(icons.length);
 
   const title = titleOf(icons.at(-1)?.path ?? '');
   await desktopIcon(page, title).tap();
@@ -46,7 +52,7 @@ test('taskbar taps switch between full-screen windows', async ({ page }) => {
   await openDesktop(page, '', phoneFront);
   // Minimize the front window to reach the icons, then open a second window.
   const other = titleOf(icons.find(({ path }) => titleOf(path) !== phoneFront)?.path ?? '');
-  await page.locator('.window.active button.minimize').tap();
+  await titleBar(activeWindow(page)).locator('.minimize').tap();
   await desktopIcon(page, other).tap();
   await expect(activeTitle(page)).toHaveText(other);
 

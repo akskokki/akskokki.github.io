@@ -41,25 +41,58 @@ export async function openDesktop(page: Page, hash = '', front = frontTitle): Pr
   await expect(activeTitle(page)).toHaveText(front);
 }
 
+// The shell's elements are found by where they sit in the shell, not by class alone: a program may
+// use the same class names inside its window (8-Ball has its own `.window`).
+
+export function windows(page: Page): Locator {
+  return page.locator('.area > .window');
+}
+
+export function activeWindow(page: Page): Locator {
+  return page.locator('.area > .window.active');
+}
+
+/** A window's title bar, which holds its title and its minimize, maximize and close buttons. */
+export function titleBar(win: Locator): Locator {
+  return win.locator(':scope > .title-bar');
+}
+
+export function windowTitles(page: Page): Locator {
+  return windows(page).locator(':scope > .title-bar > .title');
+}
+
+/** A window's resize edges, or one of them: `edges(win, 'se')`. */
+export function edges(win: Locator, edge = ''): Locator {
+  return win.locator(`:scope > .edge${edge && `.${edge}`}`);
+}
+
 // Matched exactly: About's "My projects" button would otherwise match "Projects".
 export function windowTitled(page: Page, title: string): Locator {
-  return page
-    .locator('.window')
-    .filter({ has: page.locator('.title').getByText(title, { exact: true }) });
+  return windows(page).filter({
+    has: page.locator(':scope > .title-bar > .title').getByText(title, { exact: true }),
+  });
 }
 
 export function activeTitle(page: Page): Locator {
-  return page.locator('.window.active .title');
+  return titleBar(activeWindow(page)).locator('.title');
+}
+
+export function desktopIcons(page: Page): Locator {
+  return page.locator('.area > .icon');
 }
 
 export function desktopIcon(page: Page, label: string): Locator {
-  return page
-    .locator('.icon')
-    .filter({ has: page.locator('.label').getByText(label, { exact: true }) });
+  return desktopIcons(page).filter({
+    has: page.locator('.label').getByText(label, { exact: true }),
+  });
+}
+
+export function taskButtons(page: Page): Locator {
+  return page.locator('.tasks > .task');
 }
 
 export function taskButton(page: Page, title: string): Locator {
-  return page.locator('.task').filter({ has: page.getByText(title, { exact: true }) });
+  return taskButtons(page).filter({ has: page.getByText(title, { exact: true }) });
 }
 
 export interface Box {

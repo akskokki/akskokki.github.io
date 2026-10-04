@@ -4,6 +4,7 @@ import { icons, staged } from '../src/desktop';
 import { projects } from '../src/programs/projects/projects';
 import {
   activeTitle,
+  activeWindow,
   boxOf,
   expect,
   frontPath,
@@ -12,7 +13,9 @@ import {
   stagedTitles,
   taskButton,
   test,
+  titleBar,
   titleOf,
+  windows,
   windowTitled,
 } from './fixtures';
 
@@ -45,7 +48,7 @@ test('projects open from the folder in their own windows, titled by the project'
 
 test('a link to a project opens it on top of the staged view', async ({ page }) => {
   await openDesktop(page, `#/projects/${first.slug}`, first.title);
-  await expect(page.locator('.window')).toHaveCount(stagedTitles.length + 1);
+  await expect(windows(page)).toHaveCount(stagedTitles.length + 1);
   await expect(page).toHaveURL(new RegExp(`#/projects/${first.slug}$`));
 });
 
@@ -54,7 +57,9 @@ test('the hash follows the window in front, and a new hash opens its window', as
   await expect(page).toHaveURL(new RegExp(`#/${frontPath}$`));
 
   const back = staged[0]?.path ?? '';
-  await windowTitled(page, titleOf(back)).locator('.title').click();
+  await titleBar(windowTitled(page, titleOf(back)))
+    .locator('.title')
+    .click();
   await expect(page).toHaveURL(new RegExp(`#/${back}$`));
 
   const closed = icons.find(({ path }) => !staged.some((s) => s.path === path))?.path ?? '';
@@ -65,7 +70,7 @@ test('the hash follows the window in front, and a new hash opens its window', as
 
 test('a link to a missing project says so', async ({ page }) => {
   await openDesktop(page, '#/projects/no-such-project', titleOf('projects/*'));
-  await expect(page.locator('.window.active')).toContainText('no project called');
+  await expect(activeWindow(page)).toContainText('no project called');
 });
 
 // base: './' must keep the build working under a sub-path, as on GitHub Pages.
