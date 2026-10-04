@@ -50,6 +50,9 @@
 
   function onEdgePointerDown(event: PointerEvent & { currentTarget: HTMLElement }, edge: Edge) {
     if (event.button !== 0) return;
+    // The edges overlap the window's contents, and a press there could start the browser's own
+    // drag of a link underneath, which cancels this one.
+    event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
     resizing = { edge, start: rect, pointerX: event.clientX, pointerY: event.clientY };
   }
