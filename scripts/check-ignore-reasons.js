@@ -1,4 +1,4 @@
-// Every lint or Svelte warning suppression in src/ must say why, after ` -- `.
+// Every lint or Svelte warning suppression in src/ and tests/ must say why, after ` -- `.
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -6,7 +6,10 @@ const directive = /(oxlint-disable|eslint-disable|svelte-ignore)\b/;
 const withReason = / -- \S/;
 
 const offenders = [];
-for (const entry of readdirSync('src', { recursive: true, withFileTypes: true })) {
+const entries = ['src', 'tests'].flatMap((dir) =>
+  readdirSync(dir, { recursive: true, withFileTypes: true }),
+);
+for (const entry of entries) {
   if (!entry.isFile() || !/\.(ts|js|svelte)$/.test(entry.name)) continue;
   const file = join(entry.parentPath, entry.name);
   readFileSync(file, 'utf8')
