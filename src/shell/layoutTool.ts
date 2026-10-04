@@ -36,8 +36,10 @@ export function layoutInfo(
     .toSorted((a, b) => a.z - b.z)
     .map((win) => {
       const { x, y, width, height } = rectOf({ ...win, maximized: false });
+      // Rounded: dragging at a browser zoom other than 100% leaves fractions.
+      const r = Math.round;
       const notes = [win.maximized && 'maximized', win.minimized && 'minimized'].filter(Boolean);
-      return `- ${win.id}: x ${x - dx}, y ${y - dy}, ${width}×${height}${notes.length ? ` (${notes.join(', ')})` : ''}`;
+      return `- ${win.id}: x ${r(x - dx)}, y ${r(y - dy)}, ${r(width)}×${r(height)}${notes.length ? ` (${notes.join(', ')})` : ''}`;
     });
   return [
     `Viewport ${window.innerWidth}×${window.innerHeight}, so the area above the taskbar is ${area.width}×${area.height}.`,
