@@ -3,5 +3,6 @@
   "singleQuote": true,
   "printWidth": 100,
   "sortImports": true,
-  "svelte": true
+  "svelte": true,
+  "proseWrap": "never"
 }

@@ -2,11 +2,7 @@
 
 A personal homepage that looks like a Windows XP desktop, live at <https://akskokki.github.io/>.
 
-A few windows are already open when you arrive, desktop icons open more, and the taskbar switches
-between them. Besides the usual homepage things (about, projects, links), it's a home for small toy
-programs, each in its own window. Every window has its own link, such as
-[`#/projects/tiny-weather`](https://akskokki.github.io/#/projects/tiny-weather). On a phone, windows
-fill the screen.
+A few windows are already open when you arrive, desktop icons open more, and the taskbar switches between them. Besides the usual homepage things (about, projects, links), it's a home for small toy programs, each in its own window. Every window has its own link, such as [`#/projects/tiny-weather`](https://akskokki.github.io/#/projects/tiny-weather). On a phone, windows fill the screen.
 
 The text, photos and projects are placeholders for now.
 
@@ -38,19 +34,14 @@ Svelte 5, Vite and TypeScript, built as a static site. Hash routes keep it worki
 - `src/desktop.ts`: the hand-written list of programs, desktop icons and the windows open on load.
 - `src/art/`: the placeholder art.
 
-The shell and the programs never import each other; only `desktop.ts` knows both. `AGENTS.md` has
-the details: architecture rules, conventions, and how to add a program.
+The shell and the programs never import each other; only `desktop.ts` knows both. `AGENTS.md` has the details: architecture rules, conventions, and how to add a program.
 
 ## Deploying
 
-Every push to `main` runs the checks and tests on GitHub Actions and deploys to GitHub Pages
-(`.github/workflows/deploy.yml`).
+Every push to `main` runs the checks and tests on GitHub Actions and deploys to GitHub Pages (`.github/workflows/deploy.yml`).
 
 ## Credits
 
-- The wallpaper, icons and Start flag are Microsoft's original Windows XP art, used as placeholders.
-  `src/art/README.md` lists where each file came from.
-- The bundled Tahoma is [Wine](https://www.winehq.org/)'s free version, under the LGPL 2.1
-  (`src/shell/theme/fonts/`).
-- Colours and sizes come from [XP.css](https://github.com/botoxparty/XP.css),
-  [winXP](https://github.com/ShizukuIchi/winXP) and [web-xp](https://github.com/aduncandev/web-xp).
+- The wallpaper, icons and Start flag are Microsoft's original Windows XP art, used as placeholders. `src/art/README.md` lists where each file came from.
+- The bundled Tahoma is [Wine](https://www.winehq.org/)'s free version, under the LGPL 2.1 (`src/shell/theme/fonts/`).
+- Colours and sizes come from [XP.css](https://github.com/botoxparty/XP.css), [winXP](https://github.com/ShizukuIchi/winXP) and [web-xp](https://github.com/aduncandev/web-xp).
