@@ -15,7 +15,9 @@
   <ScrollArea>
     <div class="page">
       {#if project}
-        <div class="screenshot">Screenshot of {project.title}</div>
+        {#if project.screenshot}
+          <img class="screenshot" src={project.screenshot} alt="Screenshot of {project.title}" />
+        {/if}
         <h1>{project.title}</h1>
         <h2>What it is</h2>
         <p>{project.whatItIs}</p>
@@ -52,13 +54,11 @@
   }
 
   .screenshot {
-    display: grid;
-    place-items: center;
-    aspect-ratio: 16 / 9;
+    display: block;
+    max-width: 100%;
     max-height: 220px;
     margin: 0 auto 12px;
-    background: repeating-linear-gradient(45deg, #e4e4e4 0 10px, #ececec 10px 20px);
-    color: #777;
+    border: 1px solid #919b9c;
   }
 
   h1 {
