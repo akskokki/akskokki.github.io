@@ -32,9 +32,10 @@ export default defineConfig({
       },
     },
   ],
-  // The tests run against the production build, the way the site is deployed.
+  // The tests run against the production build, the way the site is deployed. CI has just built
+  // it in its own step.
   webServer: {
-    command: 'pnpm build && pnpm preview --port 4173 --strictPort',
+    command: `${ci ? '' : 'pnpm build && '}pnpm preview --port 4173 --strictPort`,
     url: 'http://localhost:4173/',
     reuseExistingServer: !ci,
   },
