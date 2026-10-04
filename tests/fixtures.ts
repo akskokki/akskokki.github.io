@@ -35,7 +35,8 @@ export function titleOf(path: string): string {
 export function stagedPaths(page: Page): readonly string[] {
   const viewport = page.viewportSize();
   if (!viewport) throw new Error('the tests need a fixed viewport');
-  return pickLayout(layouts, viewport.width, viewport.height - TASKBAR_HEIGHT).layout.staged;
+  return pickLayout(layouts, programs, viewport.width, viewport.height - TASKBAR_HEIGHT).layout
+    .staged;
 }
 
 export function stagedTitles(page: Page): string[] {

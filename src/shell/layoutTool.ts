@@ -43,7 +43,7 @@ export function layoutInfo(
     });
   return [
     `Viewport ${window.innerWidth}×${window.innerHeight}, so the area above the taskbar is ${area.width}×${area.height}.`,
-    `It uses the ${layout.width}×${layout.height} layout, centred ${dx} px from the left and ${dy} px from the top.`,
+    `It uses the ${layout.width}×${layout.height} layout, moved ${dx} px right and ${dy} px down to centre it.`,
     'Windows back to front, in the layout’s coordinates (the area’s minus that offset):',
     ...windows,
   ].join('\n');

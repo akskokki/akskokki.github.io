@@ -38,7 +38,7 @@ test('every layout is picked on a screen its size and opens its staged view', as
   const ids = new Set(programs.map((program) => program.id));
   for (const layout of layouts) {
     expect(Object.keys(layout.windows).filter((id) => !ids.has(id))).toEqual([]);
-    expect(pickLayout(layouts, layout.width, layout.height).layout).toBe(layout);
+    expect(pickLayout(layouts, programs, layout.width, layout.height).layout).toBe(layout);
 
     await page.setViewportSize({ width: layout.width, height: layout.height + TASKBAR_HEIGHT });
     await page.goto('about:blank');

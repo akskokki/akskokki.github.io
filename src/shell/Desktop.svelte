@@ -46,7 +46,7 @@
   // it, and its windows are only kept on screen; only the dev-only layout tool picks again. This
   // first pick is a stand-in until `restage` measures the area on mount.
   let picked = $state.raw(
-    untrack(() => pickLayout(layouts, window.innerWidth, window.innerHeight)),
+    untrack(() => pickLayout(layouts, programs, window.innerWidth, window.innerHeight)),
   );
 
   // Read before anything rewrites the hash: a link such as #/projects/some-slug opens that window
@@ -65,7 +65,7 @@
   /** Closes every window and opens the staged view of the layout for the area as it is now. */
   function restage() {
     // Measured rather than read from the bindings, which only update after the first layout.
-    picked = pickLayout(layouts, area.clientWidth, area.clientHeight);
+    picked = pickLayout(layouts, programs, area.clientWidth, area.clientHeight);
     for (const { id } of wm.windows.filter((win) => win.id !== LAYOUT_TOOL)) closeWindow(id);
     for (const path of picked.layout.staged) open(path);
     if (layoutToolOpen) {
