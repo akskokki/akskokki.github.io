@@ -1,7 +1,5 @@
 <script lang="ts">
   import { type ProgramProps, ScrollArea } from '../../kit';
-
-  import '../../kit/xp.css';
   import { projects } from './projects';
 
   let { win, arg }: ProgramProps = $props();

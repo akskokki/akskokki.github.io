@@ -1,8 +1,6 @@
 <script lang="ts">
   import { imageUrl, type ProgramProps, ScrollArea } from '../../kit';
 
-  import '../../kit/xp.css';
-
   let { win }: ProgramProps = $props();
 </script>
 

@@ -1,5 +1,8 @@
 // Everything a program may import. Keep this small: it's the whole interface between programs and
 // the shell.
+// Loaded with every program that imports the kit, so its classes work whichever window opens first.
+import './xp.css';
+
 export { iconUrl, imageUrl } from '../art';
 export { default as ScrollArea } from './ScrollArea.svelte';
 
