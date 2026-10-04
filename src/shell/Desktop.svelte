@@ -69,7 +69,10 @@
     for (const { id } of wm.windows.filter((win) => win.id !== LAYOUT_TOOL)) closeWindow(id);
     for (const path of picked.layout.staged) open(path);
     if (layoutToolOpen) {
-      const { x, y } = layoutToolSpec({ width: area.clientWidth, height: area.clientHeight });
+      const { x, y } = layoutToolSpec(
+        { width: area.clientWidth, height: area.clientHeight },
+        layouts.length,
+      );
       moveWindow(LAYOUT_TOOL, x, y);
       focusWindow(LAYOUT_TOOL);
     }
@@ -107,7 +110,10 @@
 
   function open(path: string) {
     if (import.meta.env.DEV && path === LAYOUT_TOOL) {
-      openWindow(LAYOUT_TOOL, layoutToolSpec({ width: areaWidth, height: areaHeight }));
+      openWindow(
+        LAYOUT_TOOL,
+        layoutToolSpec({ width: areaWidth, height: areaHeight }, layouts.length),
+      );
       return;
     }
     const resolved = resolve(path);

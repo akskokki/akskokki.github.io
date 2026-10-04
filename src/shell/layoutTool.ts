@@ -7,9 +7,13 @@ import { rectOf, type WindowSpec, wm } from './windows.svelte';
 /** The tool's window id, and its path: #/layout-tool reopens it. */
 export const LAYOUT_TOOL = 'layout-tool';
 
-export function layoutToolSpec(area: { width: number; height: number }): WindowSpec {
+export function layoutToolSpec(
+  area: { width: number; height: number },
+  layoutCount: number,
+): WindowSpec {
   const width = 300;
-  const height = 276;
+  // Tall enough to list every layout, at 20 px a row.
+  const height = 152 + 20 * layoutCount;
   // In the bottom-right corner, beside its desktop icon.
   return {
     title: 'Layouts',
