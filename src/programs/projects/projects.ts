@@ -93,24 +93,6 @@ export const projects: Project[] = [
     visit: 'https://bought.app/en/',
   },
   {
-    slug: 'minesweeper',
-    title: 'Minesweeper',
-    kind: 'personal',
-    where: 'Course project',
-    when: '2022',
-    summary: 'The classic game, in Pygame',
-    whatItIs:
-      'The classic game, with three difficulty levels, boards of any size and a high-score table. My Software Engineering course project.',
-    whatIDid:
-      'Built the game logic and a Pygame interface, with unit tests, a coverage report, linting, and documentation of the requirements and the architecture.',
-    tags: ['Python', 'Pygame', 'pytest'],
-    video: {
-      webm: new URL('./minesweeper.webm', import.meta.url).href,
-      mp4: new URL('./minesweeper.mp4', import.meta.url).href,
-    },
-    source: 'https://github.com/akskokki/minesweeper-python',
-  },
-  {
     slug: 'sliding-puzzle-solver',
     title: '15 Puzzle Solver',
     kind: 'personal',
@@ -127,5 +109,23 @@ export const projects: Project[] = [
       mp4: new URL('./sliding-puzzle.mp4', import.meta.url).href,
     },
     source: 'https://github.com/akskokki/sliding-puzzle-solver',
+  },
+  {
+    slug: 'minesweeper',
+    title: 'Minesweeper',
+    kind: 'personal',
+    where: 'Course project',
+    when: '2022',
+    summary: 'The classic game, in Pygame',
+    whatItIs:
+      'The classic game, with three difficulty levels, boards of any size and a high-score table. My Software Engineering course project.',
+    whatIDid:
+      'Built the game logic and a Pygame interface, with unit tests, a coverage report, linting, and documentation of the requirements and the architecture.',
+    tags: ['Python', 'Pygame', 'pytest'],
+    video: {
+      webm: new URL('./minesweeper.webm', import.meta.url).href,
+      mp4: new URL('./minesweeper.mp4', import.meta.url).href,
+    },
+    source: 'https://github.com/akskokki/minesweeper-python',
   },
 ];
