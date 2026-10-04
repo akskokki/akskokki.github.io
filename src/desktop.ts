@@ -142,22 +142,7 @@ export const layouts: Layout[] = [
     },
   },
   {
-    // Tall and narrow, as a tablet held upright: About above a two-column Projects.
-    width: 760,
-    height: 710,
-    staged: ['projects', 'about'],
-    windows: {
-      about: { x: 90, y: 16, width: 520, height: 346 },
-      projects: { x: 190, y: 378, width: projectsWide, height: 316 },
-      'projects/*': { x: 150, y: 60 },
-      links: { x: 200, y: 200 },
-      photo: { x: 240, y: 220 },
-      note: { x: 260, y: 300 },
-      'eight-ball': { x: 330, y: 160 },
-    },
-  },
-  {
-    // The same down to the phones' width, in a column.
+    // Taller than wide, as a tablet held upright: About above a two-column Projects.
     width: 640,
     height: 710,
     staged: ['projects', 'about'],
@@ -201,28 +186,13 @@ export const layouts: Layout[] = [
     },
   },
   {
-    // Phones, tall and then short. Windows are as wide as the screen allows, and Projects' title
-    // bar peeks out above About's. On a tall one About is as tall as its contents.
-    width: 360,
-    height: 550,
-    staged: ['projects', 'about'],
-    windows: {
-      about: { x: 8, y: 46, width: 344, height: 496 },
-      projects: { x: 32, y: 8, width: projectsNarrow, height: 490 },
-      'projects/*': { x: 8, y: 8, width: 344 },
-      links: { x: 8, y: 240, width: 344, height: 150 },
-      photo: { x: 8, y: 160, width: 344, height: 280 },
-      note: { x: 20, y: 360, width: 330, height: 180 },
-      'eight-ball': { x: 30, y: 140 },
-    },
-  },
-  {
-    // On a short one, About reaches down to the taskbar, filling the height rather than centred.
+    // Phones. Windows are as wide as the screen allows, and Projects' title bar peeks out above
+    // About's. About is as tall as its contents, or on a short phone reaches down to the taskbar.
     width: 360,
     height: 500,
     staged: ['projects', 'about'],
     windows: {
-      about: { x: 8, y: 46, width: 344, bottom: 8 },
+      about: { x: 8, y: 46, width: 344, height: 496, bottom: 8 },
       projects: { x: 32, y: 8, width: projectsNarrow, height: 440 },
       'projects/*': { x: 8, y: 8, width: 344 },
       links: { x: 8, y: 180, width: 344, height: 150 },

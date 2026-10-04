@@ -44,7 +44,7 @@ export function layoutInfo(
     });
   return [
     `Viewport ${window.innerWidth}×${window.innerHeight}, so the area above the taskbar is ${area.width}×${area.height}.`,
-    `It uses the ${layout.width}×${layout.height} layout, moved ${dx} px right and ${dy} px down to centre it. A window placed with \`bottom\` reaches that far above the taskbar.`,
+    `It uses the ${layout.width}×${layout.height} layout, moved ${dx} px right and ${dy} px down to centre it. A window placed with \`bottom\` shrinks on a short screen to stay that far above the taskbar.`,
     'Windows back to front, in the layout’s coordinates (the area’s minus that offset):',
     ...windows,
   ].join('\n');

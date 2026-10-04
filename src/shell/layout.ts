@@ -14,7 +14,7 @@ export interface PickedLayout {
  */
 export function pickLayout(
   layouts: readonly Layout[],
-  programs: readonly Pick<ProgramDefinition, 'id' | 'width'>[],
+  programs: readonly Pick<ProgramDefinition, 'id' | 'width' | 'height'>[],
   width: number,
   height: number,
 ): PickedLayout {
@@ -36,12 +36,19 @@ export function pickLayout(
   }
   if (left > right) [left, right] = [0, layout.width];
   const centred = Math.floor(width / 2 - (left + right) / 2);
-  // Down, a layout with a window that reaches to the taskbar fills the height instead.
-  const stretches = layout.staged.some((path) => layout.windows[path]?.bottom !== undefined);
+
+  // Down, it's centred once the windows that shrink on a short screen have their full height.
+  let tallest = layout.height;
+  for (const path of layout.staged) {
+    const placement = layout.windows[path];
+    if (placement?.bottom === undefined) continue;
+    const windowHeight = placement.height ?? programs.find((p) => p.id === path)?.height ?? 0;
+    tallest = Math.max(tallest, placement.y + windowHeight + placement.bottom);
+  }
 
   return {
     layout,
     dx: Math.max(0, Math.min(centred, width - right)),
-    dy: stretches ? 0 : Math.max(0, Math.floor((height - layout.height) / 2)),
+    dy: Math.max(0, Math.floor((height - tallest) / 2)),
   };
 }
