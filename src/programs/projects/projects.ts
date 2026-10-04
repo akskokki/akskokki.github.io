@@ -1,9 +1,11 @@
 // Each project's slug is its window's address: #/projects/<slug>. The screenshots are from
-// toska.dev and bought.app, and the recordings from the student projects' repos. Media are
+// toska.dev and bought.app, the recordings from the student projects' repos, and the University of
+// Helsinki's logo, the course projects' marker, from helsinki.fi. Media are
 // `new URL`s rather than imports, which the tests can't load when they read this file in Node;
 // Vite bundles them all the same.
 
 export const toskaLogo = new URL('./toska-logo.svg', import.meta.url).href;
+const helsinkiLogo = new URL('./helsinki-logo.svg', import.meta.url).href;
 
 export interface Project {
   slug: string;
@@ -122,6 +124,7 @@ export const projects: Project[] = [
     where: 'Course project',
     when: '2023',
     summary: 'IDA* search, in Pygame',
+    logo: helsinkiLogo,
     whatItIs:
       'Solves the 15 puzzle in the fewest possible moves, or lets you slide the tiles yourself. My Data Structures and Algorithms course project.',
     whatIDid:
@@ -144,6 +147,7 @@ export const projects: Project[] = [
     where: 'Course project',
     when: '2022',
     summary: 'The classic game, in Pygame',
+    logo: helsinkiLogo,
     whatItIs:
       'The classic game, with three difficulty levels, boards of any size and a high-score table. My Software Engineering course project.',
     whatIDid:
