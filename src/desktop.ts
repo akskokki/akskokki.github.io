@@ -83,6 +83,21 @@ export const icons: IconPlacement[] = [
  */
 export const layouts: Layout[] = [
   {
+    // Big screens, wider than 1080p: the same windows, larger and with room around them.
+    width: 2000,
+    height: 870,
+    staged: ['photo', 'projects', 'note', 'about'],
+    windows: {
+      about: { x: 320, y: 50, width: 680, height: 436 },
+      projects: { x: 1040, y: 0, width: 620, height: 436 },
+      'projects/*': { x: 700, y: 60, width: 560, height: 640 },
+      links: { x: 360, y: 300 },
+      photo: { x: 1120, y: 490, width: 500, height: 370 },
+      note: { x: 520, y: 560, width: 420, height: 210 },
+      'eight-ball': { x: 1120, y: 260 },
+    },
+  },
+  {
     width: 1280,
     height: 620,
     staged: ['photo', 'projects', 'note', 'about'],
