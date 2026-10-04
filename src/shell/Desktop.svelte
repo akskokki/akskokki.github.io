@@ -53,7 +53,8 @@
   /** The program a window path belongs to, and its argument for `id/*` programs. */
   function resolve(path: string): { program: ProgramDefinition; arg?: string } | undefined {
     const program = programsById.get(path);
-    if (program) return { program };
+    // `projects/*` itself names no window, only the pattern for its arguments.
+    if (program && !program.id.endsWith('/*')) return { program };
     const slash = path.indexOf('/');
     const withArg = slash > 0 && programsById.get(`${path.slice(0, slash)}/*`);
     if (withArg && slash < path.length - 1) return { program: withArg, arg: path.slice(slash + 1) };
