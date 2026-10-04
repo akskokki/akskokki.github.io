@@ -3,7 +3,7 @@
 // Loaded with every program that imports the kit, so its classes work whichever window opens first.
 import './xp.css';
 
-export { iconUrl, imageUrl } from '../art';
+export { iconUrl } from '../art';
 export { default as ScrollArea } from './ScrollArea.svelte';
 
 /** A program's handle on its own window. */

@@ -1,12 +1,13 @@
 <script lang="ts">
-  import { imageUrl, type ProgramProps, ScrollArea } from '../../kit';
+  import { type ProgramProps, ScrollArea } from '../../kit';
+  import avatar from './avatar.png';
 
   let { win }: ProgramProps = $props();
 </script>
 
 <ScrollArea>
   <div class="about">
-    <img class="photo" src={imageUrl('astronaut')} alt="" />
+    <img class="photo" src={avatar} alt="" />
     <div class="text">
       <h1>Hi, I'm Akseli</h1>
       <p>

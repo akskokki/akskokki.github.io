@@ -1,5 +1,3 @@
-// The LinkedIn address is still a placeholder.
-
 export interface Link {
   label: string;
   url: string;
@@ -8,6 +6,10 @@ export interface Link {
 
 export const links: Link[] = [
   { label: 'GitHub', url: 'https://github.com/akskokki', shown: 'github.com/akskokki' },
-  { label: 'LinkedIn', url: 'https://www.linkedin.com/', shown: 'linkedin.com/in/[username]' },
+  {
+    label: 'LinkedIn',
+    url: 'https://www.linkedin.com/in/akselikokki',
+    shown: 'linkedin.com/in/akselikokki',
+  },
   { label: 'Email', url: 'mailto:akseli.kokki@gmail.com', shown: 'akseli.kokki@gmail.com' },
 ];

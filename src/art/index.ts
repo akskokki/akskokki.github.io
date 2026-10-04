@@ -2,7 +2,6 @@
 // means swapping its file or changing its line here.
 import application16 from './application-16.png';
 import application32 from './application-32.png';
-import astronaut from './astronaut.png';
 import bliss from './bliss.jpg';
 import folder16 from './folder-16.png';
 import folder32 from './folder-32.png';
@@ -18,7 +17,7 @@ import startFlag from './start-flag.png';
 import users16 from './users-16.png';
 import users32 from './users-32.png';
 
-const images = { astronaut, bliss, startFlag };
+const images = { bliss, startFlag };
 
 const icons = {
   application: { 16: application16, 32: application32 },

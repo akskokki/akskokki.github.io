@@ -4,7 +4,7 @@ A personal homepage that looks like a Windows XP desktop, live at <https://aksko
 
 A few windows are already open when you arrive, desktop icons open more, and the taskbar switches between them. Besides the usual homepage things (about, projects, links), it's a home for small toy programs, each in its own window. Every window has its own link, such as [`#/projects/minesweeper`](https://akskokki.github.io/#/projects/minesweeper). On a phone, windows fill the screen.
 
-The about text and projects are real; the photo, the note, the LinkedIn link and the XP art are still placeholders.
+The about text and projects are real; the Photo window, the note and the XP art are still placeholders.
 
 ## Running it
 
