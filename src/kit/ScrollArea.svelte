@@ -19,11 +19,17 @@
     scrollHeight: 0,
   });
 
-  const vertical = $derived(metrics.scrollHeight > metrics.height);
+  let vertical = $state(false);
   const horizontal = $derived(metrics.scrollWidth > metrics.width);
 
   function measure() {
     if (!viewport) return;
+    // Whether the contents need the bar is judged with the viewport at its full width, reaching
+    // under the bar for a moment. The bar narrows the viewport, which can make contents shorter
+    // (a picture scaled to fit), and judging by that would show and hide the bar forever.
+    if (vertical) viewport.style.gridColumn = '1 / -1';
+    vertical = viewport.scrollHeight > viewport.clientHeight;
+    viewport.style.gridColumn = '';
     metrics = {
       top: viewport.scrollTop,
       left: viewport.scrollLeft,
@@ -32,6 +38,11 @@
       scrollWidth: viewport.scrollWidth,
       scrollHeight: viewport.scrollHeight,
     };
+  }
+
+  // Scrolling moves the bars but can't change whether they're needed.
+  function onscroll() {
+    if (viewport) metrics = { ...metrics, top: viewport.scrollTop, left: viewport.scrollLeft };
   }
 
   $effect(() => {
@@ -45,7 +56,7 @@
 </script>
 
 <div class="scroll-area">
-  <div class="viewport" bind:this={viewport} onscroll={measure}>
+  <div class="viewport" bind:this={viewport} {onscroll}>
     <div class="content" bind:this={content}>
       {@render children()}
     </div>
