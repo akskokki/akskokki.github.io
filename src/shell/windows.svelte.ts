@@ -9,10 +9,16 @@ export interface Rect {
   height: number;
 }
 
-export interface WindowState extends Rect {
-  id: string;
+/** What a window opens with. */
+export interface WindowSpec extends Rect {
   title: string;
   icon: IconName;
+  /** The window can't be resized or maximized. */
+  fixedSize?: boolean;
+}
+
+export interface WindowState extends WindowSpec {
+  id: string;
   fixedSize: boolean;
   minimized: boolean;
   maximized: boolean;
@@ -69,9 +75,25 @@ export function setArea(width: number, height: number): void {
 }
 
 /** Opens a window, or brings it to the front if one with this id is already open. */
-export function openWindow(spec: Omit<WindowState, 'minimized' | 'maximized' | 'z'>): void {
-  if (!find(spec.id)) state.windows.push({ ...spec, minimized: false, maximized: false, z: 0 });
-  focusWindow(spec.id);
+export function openWindow(id: string, spec: WindowSpec): void {
+  if (!find(id)) {
+    // Picked field by field: the spec may be a larger object, such as a program's definition.
+    const { title, icon, x, y, width, height, fixedSize = false } = spec;
+    state.windows.push({
+      id,
+      title,
+      icon,
+      x,
+      y,
+      width,
+      height,
+      fixedSize,
+      minimized: false,
+      maximized: false,
+      z: 0,
+    });
+  }
+  focusWindow(id);
 }
 
 /** Brings a window to the front and makes it active, restoring it if it's minimized. */

@@ -1,27 +1,19 @@
 import type { Component } from 'svelte';
 
-import type { IconName } from '../art';
 import type { ProgramProps } from '../kit';
+import type { WindowSpec } from './windows.svelte';
 
 /** A program's component. Programs that don't use their props can leave them out. */
 type ProgramComponent = Component<ProgramProps> | Component<Record<string, never>>;
 
-/** One program as `desktop.ts` lists it. */
-export interface ProgramDefinition {
+/** One program as `desktop.ts` lists it: its window's defaults, plus how to load it. */
+export interface ProgramDefinition extends WindowSpec {
   /**
    * URL-safe and unique; also the window's path in links (`#/about`). An id ending in `/*`, such as
    * `projects/*`, is a program opened with an argument: `projects/some-slug` opens its window with
    * the argument `some-slug`, one window per argument.
    */
   id: string;
-  title: string;
-  icon: IconName;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  /** The window can't be resized or maximized. */
-  fixedSize?: boolean;
   load: () => Promise<{ default: ProgramComponent }>;
 }
 

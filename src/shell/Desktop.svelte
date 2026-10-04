@@ -71,15 +71,10 @@
     // Windows of the same `id/*` program cascade rather than opening on top of each other.
     const prefix = program.id.slice(0, -1);
     const offset = arg ? 24 * wm.windows.filter((win) => win.id.startsWith(prefix)).length : 0;
-    openWindow({
-      id: path,
-      title: program.title,
-      icon: program.icon,
+    openWindow(path, {
+      ...program,
       x: (x ?? program.x) + offset,
       y: (y ?? program.y) + offset,
-      width: program.width,
-      height: program.height,
-      fixedSize: program.fixedSize ?? false,
     });
   }
 
