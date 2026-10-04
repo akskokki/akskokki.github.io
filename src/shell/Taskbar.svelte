@@ -18,7 +18,7 @@
 </script>
 
 <div class="taskbar">
-  <!-- Inert on purpose: the Start menu is on the plan's "Not now" list. -->
+  <!-- Inert on purpose: the Start menu is on AGENTS.md's "Not now" list. -->
   <button class="start">
     <img src={imageUrl('startFlag')} alt="" draggable="false" />
     start
