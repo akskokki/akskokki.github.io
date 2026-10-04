@@ -27,15 +27,14 @@
 
   const rect = $derived(rectOf(win));
   const active = $derived(wm.activeId === win.id);
-  const filled = $derived(win.maximized || wm.compact);
-  const canResize = $derived(!win.fixedSize && !filled);
+  const canResize = $derived(!win.fixedSize && !win.maximized);
 
   // Plain variables, not state: only the pointer handlers read them.
   let dragOffset: { x: number; y: number } | null = null;
   let resizing: { edge: Edge; start: Rect; pointerX: number; pointerY: number } | null = null;
 
   function onTitlePointerDown(event: PointerEvent & { currentTarget: HTMLElement }) {
-    if (event.button !== 0 || filled || isOnButton(event)) return;
+    if (event.button !== 0 || win.maximized || isOnButton(event)) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     dragOffset = { x: event.clientX - rect.x, y: event.clientY - rect.y };
   }
@@ -45,7 +44,7 @@
   }
 
   function onTitleDoubleClick(event: MouseEvent) {
-    if (!wm.compact && !isOnButton(event)) toggleMaximize(win.id);
+    if (!isOnButton(event)) toggleMaximize(win.id);
   }
 
   function onEdgePointerDown(event: PointerEvent & { currentTarget: HTMLElement }, edge: Edge) {
@@ -71,7 +70,7 @@
 <div
   class="window"
   class:active
-  class:filled
+  class:maximized={win.maximized}
   hidden={win.minimized}
   style:left="{rect.x}px"
   style:top="{rect.y}px"
@@ -94,7 +93,7 @@
     <button
       class={win.maximized ? 'restore' : 'maximize'}
       title={win.maximized ? 'Restore' : 'Maximize'}
-      disabled={win.fixedSize || wm.compact}
+      disabled={win.fixedSize}
       onclick={() => toggleMaximize(win.id)}
     ></button>
     <button class="close" title="Close" onclick={() => closeWindow(win.id)}></button>
@@ -139,7 +138,7 @@
       inset 3px 3px #0855dd;
   }
 
-  .window.filled {
+  .window.maximized {
     padding: 0;
     border-radius: 0;
   }
@@ -202,7 +201,7 @@
     text-shadow: 1px 1px #0f1089;
   }
 
-  .filled .title-bar {
+  .maximized .title-bar {
     margin: 0;
     border-radius: 0;
   }
@@ -341,6 +340,13 @@
   .edge {
     position: absolute;
     touch-action: none;
+  }
+
+  /* Edges a few pixels wide are too fine for a finger: on a touch screen, maximize instead. */
+  @media (pointer: coarse) {
+    .edge {
+      display: none;
+    }
   }
 
   .n,

@@ -1,4 +1,5 @@
-import { icons, programs } from '../src/desktop';
+import { icons, layouts, programs } from '../src/desktop';
+import { pickLayout } from '../src/shell/layout';
 import {
   activeTitle,
   activeWindow,
@@ -27,9 +28,23 @@ test('the staged view opens with its front window active and a taskbar button ea
   page,
 }) => {
   await openDesktop(page);
-  await expect(windowTitles(page)).toHaveText(stagedTitles);
-  await expect(taskButtons(page)).toHaveText(stagedTitles);
-  await expect(taskButton(page, frontTitle)).toHaveClass(/active/);
+  await expect(windowTitles(page)).toHaveText(stagedTitles(page));
+  await expect(taskButtons(page)).toHaveText(stagedTitles(page));
+  await expect(taskButton(page, frontTitle(page))).toHaveClass(/active/);
+});
+
+// Catches a misspelt path in a layout, and a layout that a bigger one listed before it hides.
+test('every layout is picked on a screen its size and opens its staged view', async ({ page }) => {
+  const ids = new Set(programs.map((program) => program.id));
+  for (const layout of layouts) {
+    expect(Object.keys(layout.windows).filter((id) => !ids.has(id))).toEqual([]);
+    expect(pickLayout(layouts, layout.width, layout.height).layout).toBe(layout);
+
+    await page.setViewportSize({ width: layout.width, height: layout.height + TASKBAR_HEIGHT });
+    await page.goto('about:blank');
+    await openDesktop(page);
+    await expect(windowTitles(page)).toHaveText(stagedTitles(page));
+  }
 });
 
 // Catches a broken lazy import or desktop.ts entry: each window opens fresh and renders.
@@ -51,7 +66,7 @@ test('every desktop icon opens its program', async ({ page }) => {
 
 test('dragging a title bar moves the window and keeps it on screen', async ({ page }) => {
   await openDesktop(page);
-  const win = windowTitled(page, frontTitle);
+  const win = windowTitled(page, frontTitle(page));
   const start = await boxOf(win);
   const title = await boxOf(titleBar(win).locator('.title'));
   const grip = { x: title.x + 20, y: title.y + title.height / 2 };
@@ -73,7 +88,7 @@ test('edges and corners resize the window, keeping the opposite side in place', 
   page,
 }) => {
   await openDesktop(page);
-  const win = windowTitled(page, frontTitle);
+  const win = windowTitled(page, frontTitle(page));
   const start = await boxOf(win);
 
   const corner = await boxOf(edges(win, 'se'));
@@ -96,7 +111,7 @@ test('edges and corners resize the window, keeping the opposite side in place', 
 
 test('double-clicking a title bar maximizes the window and restores it', async ({ page }) => {
   await openDesktop(page);
-  const win = windowTitled(page, frontTitle);
+  const win = windowTitled(page, frontTitle(page));
   const start = await boxOf(win);
 
   await titleBar(win).locator('.title').dblclick();
@@ -110,11 +125,12 @@ test('double-clicking a title bar maximizes the window and restores it', async (
 // A real bug: new windows never got a stacking order, so clicking one didn't bring it forward.
 test('clicking a window behind brings it to the front', async ({ page }) => {
   await openDesktop(page);
-  const back = windowTitled(page, frontTitle);
+  const back = windowTitled(page, frontTitle(page));
   const backBox = await boxOf(back);
 
   // Open a second window and drag it so it covers the middle of the first.
-  const other = icons.map(({ path }) => titleOf(path)).find((title) => title !== frontTitle) ?? '';
+  const other =
+    icons.map(({ path }) => titleOf(path)).find((title) => title !== frontTitle(page)) ?? '';
   await desktopIcon(page, other).dblclick();
   const front = windowTitled(page, other);
   await expect(front).toHaveClass(/active/);
@@ -141,8 +157,8 @@ test('clicking a window behind brings it to the front', async ({ page }) => {
   await expect.poll(titleAt).toBe(other);
 
   await titleBar(back).locator('.title').click();
-  await expect(activeTitle(page)).toHaveText(frontTitle);
-  await expect.poll(titleAt).toBe(frontTitle);
+  await expect(activeTitle(page)).toHaveText(frontTitle(page));
+  await expect.poll(titleAt).toBe(frontTitle(page));
 });
 
 test('a fixed-size window can be neither resized nor maximized', async ({ page }) => {
@@ -164,7 +180,7 @@ test('a fixed-size window can be neither resized nor maximized', async ({ page }
 
 test('a taskbar button focuses its window, then minimizes and restores it', async ({ page }) => {
   await openDesktop(page);
-  const title = stagedTitles[0] ?? '';
+  const title = stagedTitles(page)[0] ?? '';
   const win = windowTitled(page, title);
   const button = taskButton(page, title);
 
@@ -174,7 +190,7 @@ test('a taskbar button focuses its window, then minimizes and restores it', asyn
   await button.click();
   await expect(win).toBeHidden();
   await expect(button).not.toHaveClass(/active/);
-  await expect(activeTitle(page)).toHaveText(frontTitle);
+  await expect(activeTitle(page)).toHaveText(frontTitle(page));
 
   await button.click();
   await expect(win).toBeVisible();

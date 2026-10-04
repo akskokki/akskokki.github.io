@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 
-import { icons, staged } from '../src/desktop';
+import { icons } from '../src/desktop';
 import { projects } from '../src/programs/projects/projects';
 import {
   activeTitle,
@@ -10,6 +10,7 @@ import {
   frontPath,
   frontTitle,
   openDesktop,
+  stagedPaths,
   stagedTitles,
   taskButton,
   test,
@@ -48,21 +49,21 @@ test('projects open from the folder in their own windows, titled by the project'
 
 test('a link to a project opens it on top of the staged view', async ({ page }) => {
   await openDesktop(page, `#/projects/${first.slug}`, first.title);
-  await expect(windows(page)).toHaveCount(stagedTitles.length + 1);
+  await expect(windows(page)).toHaveCount(stagedTitles(page).length + 1);
   await expect(page).toHaveURL(new RegExp(`#/projects/${first.slug}$`));
 });
 
 test('the hash follows the window in front, and a new hash opens its window', async ({ page }) => {
   await openDesktop(page);
-  await expect(page).toHaveURL(new RegExp(`#/${frontPath}$`));
+  await expect(page).toHaveURL(new RegExp(`#/${frontPath(page)}$`));
 
-  const back = staged[0]?.path ?? '';
+  const back = stagedPaths(page)[0] ?? '';
   await titleBar(windowTitled(page, titleOf(back)))
     .locator('.title')
     .click();
   await expect(page).toHaveURL(new RegExp(`#/${back}$`));
 
-  const closed = icons.find(({ path }) => !staged.some((s) => s.path === path))?.path ?? '';
+  const closed = icons.find(({ path }) => !stagedPaths(page).includes(path))?.path ?? '';
   await page.evaluate((path) => (location.hash = `#/${path}`), closed);
   await expect(activeTitle(page)).toHaveText(titleOf(closed));
   await expect(page).toHaveURL(new RegExp(`#/${closed}$`));
@@ -86,5 +87,5 @@ test('the build works when served under a sub-path', async ({ page }) => {
   );
   await page.goto(`/sub/#/projects/${first.slug}`);
   await expect(activeTitle(page)).toHaveText(first.title);
-  await expect(windowTitled(page, frontTitle)).toBeVisible();
+  await expect(windowTitled(page, frontTitle(page))).toBeVisible();
 });

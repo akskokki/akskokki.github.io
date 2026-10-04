@@ -2,7 +2,7 @@
 
 A personal homepage that looks like a Windows XP desktop, live at <https://akskokki.github.io/>.
 
-A few windows are already open when you arrive, desktop icons open more, and the taskbar switches between them. Besides the usual homepage things (about, projects, links), it's a home for small toy programs, each in its own window. Every window has its own link, such as [`#/projects/minesweeper`](https://akskokki.github.io/#/projects/minesweeper). On a phone, windows fill the screen.
+A few windows are already open when you arrive, desktop icons open more, and the taskbar switches between them. Besides the usual homepage things (about, projects, links), it's a home for small toy programs, each in its own window. Every window has its own link, such as [`#/projects/minesweeper`](https://akskokki.github.io/#/projects/minesweeper). Smaller screens get their own layouts with fewer windows, phones included.
 
 The about text and projects are real; the Photo window, the note and the XP art are still placeholders.
 
@@ -31,7 +31,7 @@ Svelte 5, Vite and TypeScript, built as a static site. Hash routes keep it worki
 - `src/shell/`: the desktop, windows, taskbar and the XP look.
 - `src/programs/`: one folder per program (About, Projects, Links, Photo, Note, a Magic 8-Ball).
 - `src/kit/`: what programs may use, such as XP scrollbars and buttons.
-- `src/desktop.ts`: the hand-written list of programs, desktop icons and the windows open on load.
+- `src/desktop.ts`: the hand-written list of programs, desktop icons, and the layouts: which windows open on load, and where, for each size of screen.
 - `src/art/`: the placeholder art.
 
 The shell and the programs never import each other; only `desktop.ts` knows both. `AGENTS.md` has the details: architecture rules, conventions, and how to add a program.

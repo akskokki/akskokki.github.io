@@ -1,14 +1,16 @@
-// The one file that knows both the shell and the programs: which programs exist, where their
-// windows open, the desktop icons, and what the first view looks like.
-import type { IconPlacement, ProgramDefinition, StagedWindow } from './shell/types';
+// The one file that knows both the shell and the programs: which programs exist, the desktop
+// icons, and the layouts that say which windows open first, and where, on each size of screen.
+import type { IconPlacement, Layout, ProgramDefinition } from './shell/types';
+
+// The Projects folder's two widths: its tiles fit two to a row, even with a scrollbar, or one.
+const projectsWide = 560;
+const projectsNarrow = 320;
 
 export const programs: ProgramDefinition[] = [
   {
     id: 'about',
     title: 'About me',
     icon: 'users',
-    x: 150,
-    y: 60,
     width: 560,
     height: 340,
     load: () => import('./programs/about/About.svelte'),
@@ -17,9 +19,7 @@ export const programs: ProgramDefinition[] = [
     id: 'projects',
     title: 'Projects',
     icon: 'folder',
-    x: 740,
-    y: 30,
-    width: 580,
+    width: projectsWide,
     height: 325,
     load: () => import('./programs/projects/Projects.svelte'),
   },
@@ -28,8 +28,6 @@ export const programs: ProgramDefinition[] = [
     id: 'projects/*',
     title: 'Project',
     icon: 'application',
-    x: 420,
-    y: 50,
     width: 500,
     height: 540,
     load: () => import('./programs/projects/Project.svelte'),
@@ -38,8 +36,6 @@ export const programs: ProgramDefinition[] = [
     id: 'links',
     title: 'Links',
     icon: 'globe',
-    x: 240,
-    y: 200,
     width: 400,
     height: 145,
     load: () => import('./programs/links/Links.svelte'),
@@ -48,8 +44,6 @@ export const programs: ProgramDefinition[] = [
     id: 'photo',
     title: 'Photo',
     icon: 'pictureViewer',
-    x: 780,
-    y: 390,
     width: 400,
     height: 300,
     load: () => import('./programs/photo/Photo.svelte'),
@@ -58,8 +52,6 @@ export const programs: ProgramDefinition[] = [
     id: 'note',
     title: 'Note',
     icon: 'notepad',
-    x: 400,
-    y: 470,
     width: 360,
     height: 180,
     load: () => import('./programs/note/Note.svelte'),
@@ -68,8 +60,6 @@ export const programs: ProgramDefinition[] = [
     id: 'eight-ball',
     title: '8-Ball',
     icon: 'gameController',
-    x: 860,
-    y: 120,
     width: 300,
     height: 340,
     fixedSize: true,
@@ -87,14 +77,139 @@ export const icons: IconPlacement[] = [
   { path: 'eight-ball', x: 8, y: 408 },
 ];
 
-/** Opened on load, back to front: the last one is in front. */
-export const staged: StagedWindow[] = [
-  { path: 'photo' },
-  { path: 'projects' },
-  { path: 'note' },
-  { path: 'about' },
+/** Biggest first: a screen gets the first layout that fits above its taskbar, or the last one. */
+export const layouts: Layout[] = [
+  {
+    width: 1280,
+    height: 620,
+    staged: ['photo', 'projects', 'note', 'about'],
+    windows: {
+      about: { x: 110, y: 40, width: 560, height: 340 },
+      projects: { x: 700, y: 16, width: projectsWide, height: 320 },
+      'projects/*': { x: 380, y: 40 },
+      links: { x: 200, y: 190 },
+      photo: { x: 740, y: 346, width: 380, height: 270 },
+      note: { x: 360, y: 430 },
+      'eight-ball': { x: 820, y: 110 },
+    },
+  },
+  {
+    // About and Projects side by side, Projects tall enough for every project, the note below.
+    width: 920,
+    height: 580,
+    staged: ['projects', 'note', 'about'],
+    windows: {
+      about: { x: 90, y: 40, width: 480, height: 364 },
+      projects: { x: 590, y: 16, width: projectsNarrow, height: 510 },
+      'projects/*': { x: 300, y: 20, height: 540 },
+      links: { x: 180, y: 180 },
+      photo: { x: 480, y: 180 },
+      note: { x: 200, y: 424, width: 340, height: 150 },
+      'eight-ball': { x: 560, y: 100 },
+    },
+  },
+  {
+    // The same, without the note, for screens too short for it.
+    width: 920,
+    height: 480,
+    staged: ['projects', 'about'],
+    windows: {
+      about: { x: 90, y: 30, width: 480, height: 364 },
+      projects: { x: 590, y: 8, width: projectsNarrow, height: 464 },
+      'projects/*': { x: 300, y: 10, height: 460 },
+      links: { x: 180, y: 150 },
+      photo: { x: 480, y: 90 },
+      note: { x: 280, y: 300, width: 340, height: 150 },
+      'eight-ball': { x: 560, y: 60 },
+    },
+  },
+  {
+    // Tall and narrow, as a tablet held upright: About above a two-column Projects.
+    width: 760,
+    height: 710,
+    staged: ['projects', 'about'],
+    windows: {
+      about: { x: 90, y: 16, width: 520, height: 346 },
+      projects: { x: 190, y: 378, width: projectsWide, height: 316 },
+      'projects/*': { x: 150, y: 60 },
+      links: { x: 200, y: 200 },
+      photo: { x: 240, y: 220 },
+      note: { x: 260, y: 300 },
+      'eight-ball': { x: 330, y: 160 },
+    },
+  },
+  {
+    // The same down to the phones' width, in a column.
+    width: 640,
+    height: 710,
+    staged: ['projects', 'about'],
+    windows: {
+      about: { x: 80, y: 16, width: 520, height: 346 },
+      projects: { x: 80, y: 378, width: projectsWide, height: 316 },
+      'projects/*': { x: 110, y: 60 },
+      links: { x: 160, y: 200 },
+      photo: { x: 160, y: 220 },
+      note: { x: 200, y: 300 },
+      'eight-ball': { x: 260, y: 160 },
+    },
+  },
+  {
+    width: 640,
+    height: 440,
+    staged: ['projects', 'about'],
+    windows: {
+      about: { x: 90, y: 56, width: 520, height: 370 },
+      projects: { x: 80, y: 8, width: projectsWide, height: 340 },
+      'projects/*': { x: 110, y: 8, height: 430 },
+      links: { x: 140, y: 150 },
+      photo: { x: 200, y: 100 },
+      note: { x: 240, y: 240 },
+      'eight-ball': { x: 300, y: 60 },
+    },
+  },
+  {
+    // Wide but short, as a phone held sideways or a browser with its devtools along the bottom.
+    width: 640,
+    height: 300,
+    staged: ['projects', 'about'],
+    windows: {
+      about: { x: 90, y: 34, width: 520, height: 266 },
+      projects: { x: 80, y: 0, width: projectsWide, height: 300 },
+      'projects/*': { x: 110, y: 0, height: 300 },
+      links: { x: 160, y: 60 },
+      photo: { x: 160, y: 0, height: 300 },
+      note: { x: 200, y: 60 },
+      'eight-ball': { x: 260, y: 0 },
+    },
+  },
+  {
+    // Phones, tall and then short. Windows are as wide as the screen allows, and Projects' title
+    // bar peeks out above About's.
+    width: 360,
+    height: 700,
+    staged: ['projects', 'about'],
+    windows: {
+      about: { x: 8, y: 46, width: 344, height: 540 },
+      projects: { x: 32, y: 8, width: projectsNarrow, height: 560 },
+      'projects/*': { x: 8, y: 30, width: 344, height: 660 },
+      links: { x: 8, y: 240, width: 344, height: 150 },
+      photo: { x: 8, y: 160, width: 344, height: 280 },
+      note: { x: 20, y: 360, width: 330, height: 180 },
+      'eight-ball': { x: 30, y: 140 },
+    },
+  },
+  {
+    width: 360,
+    height: 500,
+    staged: ['projects', 'about'],
+    windows: {
+      about: { x: 8, y: 46, width: 344, height: 446 },
+      projects: { x: 32, y: 8, width: projectsNarrow, height: 440 },
+      'projects/*': { x: 8, y: 8, width: 344, height: 484 },
+      links: { x: 8, y: 180, width: 344, height: 150 },
+      photo: { x: 8, y: 100, width: 344, height: 280 },
+      note: { x: 20, y: 280, width: 330, height: 180 },
+      'eight-ball': { x: 30, y: 80 },
+    },
+  },
 ];
-
-/** On a small screen every window fills the screen, so only About opens; closing it shows the
- * desktop icons. */
-export const stagedPhone: StagedWindow[] = [{ path: 'about' }];

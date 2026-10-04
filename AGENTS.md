@@ -12,7 +12,7 @@ If a request conflicts with these rules or with what the references show, ask ra
 - **Pseudo-XP.** Recognisably Windows XP, but clean and consistent rather than pixel-perfect. Copy values (colours, gradients, sizes) from `../references/`, not files; no CSS library. Add styles only for what's being built.
 - **The owner decides the content.** Text, photos, projects and the desktop layout are placeholders the owner will replace. Keep content in data or in the program's own folder so that's trivial, and leave `[Name]`-style placeholders alone rather than inventing details.
 - **The shell and the programs stay separate.** Only `src/desktop.ts` knows both. A program's window contents are entirely its own, and needn't look like XP.
-- **Phones get the same site, simplified** (see `wm.compact` below). Each program handles a small window its own way; a toy that can't work on a phone may just say "best on a computer".
+- **Phones get the same desktop,** with floating windows, just smaller and fewer (see layouts below). Each program handles a small window its own way; a toy that can't work on a phone may just say "best on a computer".
 - **Ordinary HTML, no accessibility work beyond it:** no screen-reader or keyboard work for the desktop. Svelte's a11y warnings are filtered out in `svelte.config.js` on purpose.
 
 ## Not now
@@ -37,14 +37,15 @@ Out of scope unless the owner asks for it. Don't build these, and don't build ho
 - `src/shell/` is the desktop, windows, taskbar and XP look. It never imports `src/programs/` or `src/desktop.ts`; `App.svelte` passes it the desktop configuration as props.
 - `src/programs/<name>/` is one program per folder. It imports only `src/kit/`, its own files and npm packages, never the shell, `src/art/` or another program. Keep its files directly in its folder: the lint rule bans every `../` import except `../../kit`.
 - `src/kit/` is everything a program may import (the program contract, art by name, `ScrollArea`, `xp.css`), and nothing in it imports the shell, programs or `desktop.ts`.
-- `src/desktop.ts` is the single, hand-written list of programs, desktop icons and the staged first view. Nothing is auto-discovered.
+- `src/desktop.ts` is the single, hand-written list of programs, desktop icons and layouts. Nothing is auto-discovered.
 - `src/art/` holds the Microsoft placeholder art and nothing else. Only `src/art/index.ts` imports those files (plus `index.html`, for the favicon); everything else asks for art by name. Each file's origin is listed in `src/art/README.md`.
 - oxlint's `no-restricted-imports` enforces these boundaries.
 
 ### How it fits together
 
-- **Windows are named by path,** and the path is also the link: window `about` is `#/about`. A program whose id ends in `/*`, such as `projects/*`, opens one window per argument: `projects/minesweeper` opens `Project.svelte` with `arg` set to `minesweeper`. `Desktop.svelte` resolves paths to programs, opens the staged view (or `stagedPhone` below 640 px), then any window linked in the hash, and keeps the hash naming the window in front. Hash routing and `base: './'` keep the build working at any address; don't switch to history-API routing or absolute paths.
-- **The window manager, `shell/windows.svelte.ts`,** is the only place window state lives. Components read `wm` and call its functions; they never change window state themselves. Below 640 px (`wm.compact`) every window fills the area and nothing is dragged or resized.
+- **Windows are named by path,** and the path is also the link: window `about` is `#/about`. A program whose id ends in `/*`, such as `projects/*`, opens one window per argument: `projects/minesweeper` opens `Project.svelte` with `arg` set to `minesweeper`. `Desktop.svelte` resolves paths to programs, opens the staged view, then any window linked in the hash, and keeps the hash naming the window in front. Hash routing and `base: './'` keep the build working at any address; don't switch to history-API routing or absolute paths.
+- **Layouts decide where windows open.** `layouts` in `desktop.ts` holds one per screen size, biggest first, each drawn for an area (the screen above the taskbar) of a given size. On load the site picks the first that fits (`shell/layout.ts`), or the last, centres it in the area, and opens its `staged` windows. Its `windows` say where each program opens, then and later, at the program's own size unless the layout gives one. A program a layout leaves out opens in the middle. The layout is picked once: resizing the browser afterwards only keeps windows on screen.
+- **The window manager, `shell/windows.svelte.ts`,** is the only place window state lives. Components read `wm` and call its functions; they never change window state themselves. On a touch screen windows have no resize edges, too fine for a finger; maximize fills the screen instead.
 - **The program contract** is `ProgramProps` in `kit/index.ts`: a `WindowHandle` (`id`, `setTitle`, `close`, `open(path)`) and the optional `arg`. A program that needs neither can leave its props out. Keep the handle small, and grow it only when a program needs more.
 - **A program's lifetime:** it loads lazily, as its own chunk, when its window first opens. A minimized window stays mounted, only hidden, so its timers and animation loops keep running; closing the window destroys the program, so clean up in `$effect` teardowns.
 - **Styles:** shell chrome uses scoped styles plus custom properties from `shell/theme/theme.css` (fonts, colours, taskbar height). The only global rules are that file's page basics: border-box sizing and the body font. Don't add global element styles; they would leak into every program. Programs opt into XP widgets with `kit/xp.css` classes (`xp-button`); add a class there when a program needs a new widget.
@@ -54,8 +55,8 @@ Out of scope unless the owner asks for it. Don't build these, and don't build ho
 
 1. Make `src/programs/<name>/` with its component. Start from the closest existing one: `eight-ball` for a self-contained toy, `links` or `note` for a scrolling page.
 2. The window body is a box of definite size: give the component's root `height: 100%`. A `ScrollArea` fills its parent. The program inherits Tahoma 13 px (XP's Large Fonts size) and border-box sizing, on XP's beige window background unless it paints its own (most set `background: white`).
-3. Add an entry to `programs` in `desktop.ts`. Its `width` and `height` are the whole window, frame and title bar included; `fixedSize: true` stops resizing and maximizing.
-4. Add an icon placement to `icons` if it should be on the desktop. The test that opens every desktop icon then covers it, finding the window by its `desktop.ts` title, so a program on the desktop or in the staged view keeps that title rather than calling `setTitle`.
+3. Add an entry to `programs` in `desktop.ts`. Its `width` and `height` are the whole window, frame and title bar included; `fixedSize: true` stops resizing and maximizing. Give it a place in each layout's `windows`, or it opens in the middle of the screen.
+4. Add an icon placement to `icons` if it should be on the desktop. The test that opens every desktop icon then covers it, finding the window by its `desktop.ts` title, so a program on the desktop or in a staged view keeps that title rather than calling `setTitle`.
 5. For an `id/*` program, `arg` is whatever is in the link, so handle one that matches nothing, as `Project.svelte` does. Its `desktop.ts` title is only a stand-in: set the real one with `win.setTitle`.
 6. New Microsoft art goes in `src/art/` with a line in `index.ts` and `README.md`. The program's own images go in its own folder.
 
@@ -91,7 +92,7 @@ For UI changes, also look at the result at desktop (~1280 px) and phone (~390 px
 - **oxlint's `no-restricted-imports` regexes don't support lookahead,** and fail silently by never matching. Use `group` globs with `!` exceptions instead.
 - **A folder override's `no-restricted-imports` replaces the top-level one** rather than adding to it, so each override in `.oxlintrc.json` repeats the `svelte/store` ban (and the art ban where it applies). A new top-level restriction has to be copied into every override.
 - **The import rules only see imports.** Art reached through `url()` in a `<style>` block or `new URL(…, import.meta.url)` slips past them, so ask `art/index.ts` for it instead.
-- **The tests read `desktop.ts` and the projects data** for titles, icons and the staged view, so rearranging content shouldn't break them. They expect `staged`, `stagedPhone` and `icons` to name plain program ids (`about`), not paths with an argument (`projects/some-slug`), whose titles only the program knows.
+- **The tests read `desktop.ts` and the projects data** for titles, icons and each viewport's staged view, so rearranging content shouldn't break them. They expect each layout's `staged` and `icons` to name plain program ids (`about`), not paths with an argument (`projects/some-slug`), whose titles only the program knows.
 - **`pnpm test` reuses a server already on port 4173** outside CI, and then skips the build: stop a stray `pnpm preview` first or it tests an old `dist/`.
 
 ## Git & deploy

@@ -6,37 +6,43 @@
 
   import './theme/theme.css';
   import DesktopIcon from './DesktopIcon.svelte';
+  import { type PickedLayout, pickLayout } from './layout';
   import Taskbar from './Taskbar.svelte';
-  import type { IconPlacement, ProgramDefinition, StagedWindow } from './types';
+  import type { IconPlacement, Layout, ProgramDefinition } from './types';
   import Window from './Window.svelte';
   import { closeWindow, deactivate, openWindow, setArea, setTitle, wm } from './windows.svelte';
 
   interface Props {
     programs: readonly ProgramDefinition[];
     icons: readonly IconPlacement[];
-    /** Opened on load, back to front. */
-    staged: readonly StagedWindow[];
-    /** Opened on load instead of `staged` on a small screen. */
-    stagedPhone: readonly StagedWindow[];
+    /** Biggest first; see `pickLayout`. */
+    layouts: readonly Layout[];
   }
 
-  let { programs, icons, staged, stagedPhone }: Props = $props();
+  let { programs, icons, layouts }: Props = $props();
 
   const programsById = $derived(new Map(programs.map((program) => [program.id, program])));
 
   // Desktop state, not window state, so it lives here rather than in the window manager.
   let selectedIcon = $state<string | null>(null);
 
+  let area: HTMLElement;
   let areaWidth = $state(window.innerWidth);
   let areaHeight = $state(window.innerHeight);
   $effect(() => setArea(areaWidth, areaHeight));
+
+  // The layout for the screen the site loads on. It's picked once: a browser resized later keeps
+  // it, and its windows are only kept on screen.
+  let picked: PickedLayout;
 
   // Read before anything rewrites the hash: a link such as #/projects/some-slug opens that window
   // on top of the staged view.
   const linkedPath = pathFromHash();
 
   onMount(() => {
-    for (const { path, x, y } of wm.compact ? stagedPhone : staged) open(path, x, y);
+    // Measured here rather than through the bindings, which only update after the first layout.
+    picked = pickLayout(layouts, area.clientWidth, area.clientHeight);
+    for (const path of picked.layout.staged) open(path);
     if (linkedPath) open(linkedPath);
   });
 
@@ -61,20 +67,26 @@
     return undefined;
   }
 
-  function open(path: string, x?: number, y?: number) {
+  function open(path: string) {
     const resolved = resolve(path);
     if (!resolved) {
       console.error(`There's no program for the path "${path}".`);
       return;
     }
     const { program, arg } = resolved;
+    const { layout, dx, dy } = picked;
+    const placement = layout.windows[program.id];
+    const width = placement?.width ?? program.width;
+    const height = placement?.height ?? program.height;
     // Windows of the same `id/*` program cascade rather than opening on top of each other.
     const prefix = program.id.slice(0, -1);
     const offset = arg ? 24 * wm.windows.filter((win) => win.id.startsWith(prefix)).length : 0;
     openWindow(path, {
       ...program,
-      x: (x ?? program.x) + offset,
-      y: (y ?? program.y) + offset,
+      x: (placement ? placement.x + dx : Math.round((areaWidth - width) / 2)) + offset,
+      y: (placement ? placement.y + dy : Math.round((areaHeight - height) / 2)) + offset,
+      width,
+      height,
     });
   }
 
@@ -103,6 +115,7 @@
 <div class="desktop" style:background-image="url({imageUrl('bliss')})">
   <div
     class="area"
+    bind:this={area}
     bind:clientWidth={areaWidth}
     bind:clientHeight={areaHeight}
     onpointerdown={(event) => {

@@ -28,8 +28,6 @@ export interface WindowState extends WindowSpec {
 
 export type Edge = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 
-// Below this width every window fills the screen, and nothing is dragged or resized.
-const COMPACT_WIDTH = 640;
 const MIN_WIDTH = 160;
 const MIN_HEIGHT = 80;
 
@@ -50,16 +48,13 @@ export const wm = {
   get activeId(): string | null {
     return state.activeId;
   },
-  get compact(): boolean {
-    return state.area.width < COMPACT_WIDTH;
-  },
 };
 
 /** Where a window is drawn. Stored rects are kept as set and fitted into the area only here, so a
  * window squeezed by a smaller browser window gets its place back when the browser grows again. */
 export function rectOf(win: Readonly<WindowState>): Rect {
   const { width: areaWidth, height: areaHeight } = state.area;
-  if (win.maximized || wm.compact) return { x: 0, y: 0, width: areaWidth, height: areaHeight };
+  if (win.maximized) return { x: 0, y: 0, width: areaWidth, height: areaHeight };
   const width = win.fixedSize ? win.width : Math.min(win.width, areaWidth);
   const height = win.fixedSize ? win.height : Math.min(win.height, areaHeight);
   return {

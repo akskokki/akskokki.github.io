@@ -1,6 +1,7 @@
 import { test as base, expect, type Locator, type Page } from '@playwright/test';
 
-import { programs, staged, stagedPhone } from '../src/desktop';
+import { layouts, programs } from '../src/desktop';
+import { pickLayout } from '../src/shell/layout';
 
 export { expect };
 
@@ -30,13 +31,27 @@ export function titleOf(path: string): string {
   return program.title;
 }
 
-export const stagedTitles = staged.map(({ path }) => titleOf(path));
-export const stagedPhoneTitles = stagedPhone.map(({ path }) => titleOf(path));
-export const frontPath = staged.at(-1)?.path ?? '';
-export const frontTitle = titleOf(frontPath);
+/** What the staged view opens on this page's screen, back to front, as desktop.ts's layouts say. */
+export function stagedPaths(page: Page): readonly string[] {
+  const viewport = page.viewportSize();
+  if (!viewport) throw new Error('the tests need a fixed viewport');
+  return pickLayout(layouts, viewport.width, viewport.height - TASKBAR_HEIGHT).layout.staged;
+}
+
+export function stagedTitles(page: Page): string[] {
+  return stagedPaths(page).map(titleOf);
+}
+
+export function frontPath(page: Page): string {
+  return stagedPaths(page).at(-1) ?? '';
+}
+
+export function frontTitle(page: Page): string {
+  return titleOf(frontPath(page));
+}
 
 /** Loads the site and waits for the staged view's front window. */
-export async function openDesktop(page: Page, hash = '', front = frontTitle): Promise<void> {
+export async function openDesktop(page: Page, hash = '', front = frontTitle(page)): Promise<void> {
   await page.goto(`/${hash}`);
   await expect(activeTitle(page)).toHaveText(front);
 }

@@ -7,8 +7,9 @@ import {
   desktopIcons,
   edges,
   expect,
+  frontTitle,
   openDesktop,
-  stagedPhoneTitles,
+  stagedTitles,
   TASKBAR_HEIGHT,
   taskButton,
   test,
@@ -17,26 +18,45 @@ import {
   windows,
   windowTitled,
   windowTitles,
+  type Box,
 } from './fixtures';
 
 const AREA = { x: 0, y: 0, width: 390, height: 844 - TASKBAR_HEIGHT };
-const phoneFront = stagedPhoneTitles.at(-1) ?? '';
 
-test('a phone opens only the phone staged view, filling the screen above the taskbar', async ({
+/** Windows on a phone float like on a computer: inside the screen, with the desktop around them. */
+function expectFloating(box: Box) {
+  expect(box.x).toBeGreaterThan(0);
+  expect(box.y).toBeGreaterThan(0);
+  expect(box.x + box.width).toBeLessThan(AREA.width);
+  expect(box.y + box.height).toBeLessThan(AREA.height);
+}
+
+test("a phone opens its layout's windows inside the screen, without resize edges", async ({
   page,
 }) => {
-  await openDesktop(page, '', phoneFront);
-  await expect(windowTitles(page)).toHaveText(stagedPhoneTitles);
-  const win = windowTitled(page, phoneFront);
-  await expect.poll(() => boxOf(win)).toEqual(AREA);
-  await expect(edges(win)).toHaveCount(0);
-  await expect(titleBar(win).locator('.maximize')).toBeDisabled();
+  await openDesktop(page);
+  await expect(windowTitles(page)).toHaveText(stagedTitles(page));
+  const win = windowTitled(page, frontTitle(page));
+  expectFloating(await boxOf(win));
+  for (const edge of await edges(win).all()) await expect(edge).toBeHidden();
 });
 
-test('closing the windows shows the icons, and one tap opens an icon filling the screen', async ({
+test('maximize fills the screen above the taskbar, and restore puts the window back', async ({
   page,
 }) => {
-  await openDesktop(page, '', phoneFront);
+  await openDesktop(page);
+  const win = windowTitled(page, frontTitle(page));
+  const start = await boxOf(win);
+
+  await titleBar(win).locator('.maximize').tap();
+  await expect.poll(() => boxOf(win)).toEqual(AREA);
+
+  await titleBar(win).locator('.restore').tap();
+  await expect.poll(() => boxOf(win)).toEqual(start);
+});
+
+test('closing the windows shows the icons, and one tap opens an icon', async ({ page }) => {
+  await openDesktop(page);
   while ((await windows(page).count()) > 0) {
     await titleBar(activeWindow(page)).locator('.close').tap();
   }
@@ -45,21 +65,26 @@ test('closing the windows shows the icons, and one tap opens an icon filling the
   const title = titleOf(icons.at(-1)?.path ?? '');
   await desktopIcon(page, title).tap();
   await expect(activeTitle(page)).toHaveText(title);
-  await expect.poll(() => boxOf(windowTitled(page, title))).toEqual(AREA);
+  expectFloating(await boxOf(windowTitled(page, title)));
 });
 
-test('taskbar taps switch between full-screen windows', async ({ page }) => {
-  await openDesktop(page, '', phoneFront);
-  // Minimize the front window to reach the icons, then open a second window.
-  const other = titleOf(icons.find(({ path }) => titleOf(path) !== phoneFront)?.path ?? '');
-  await titleBar(activeWindow(page)).locator('.minimize').tap();
+test('taskbar taps switch between windows', async ({ page }) => {
+  await openDesktop(page);
+  const front = frontTitle(page);
+  // Minimize every window to reach the icons, then open one that isn't open yet.
+  const other = titleOf(
+    icons.find(({ path }) => !stagedTitles(page).includes(titleOf(path)))?.path ?? '',
+  );
+  while ((await activeWindow(page).count()) > 0) {
+    await titleBar(activeWindow(page)).locator('.minimize').tap();
+  }
   await desktopIcon(page, other).tap();
   await expect(activeTitle(page)).toHaveText(other);
 
-  await taskButton(page, phoneFront).tap();
-  await expect(activeTitle(page)).toHaveText(phoneFront);
+  await taskButton(page, front).tap();
+  await expect(activeTitle(page)).toHaveText(front);
 
-  await taskButton(page, phoneFront).tap();
-  await expect(windowTitled(page, phoneFront)).toBeHidden();
+  await taskButton(page, front).tap();
+  await expect(windowTitled(page, front)).toBeHidden();
   await expect(activeTitle(page)).toHaveText(other);
 });
