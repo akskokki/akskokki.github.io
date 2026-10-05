@@ -13,6 +13,8 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:4173/',
     trace: 'retain-on-failure',
+    // Skips the windows' entrance on load, so they're measured where they end up.
+    contextOptions: { reducedMotion: 'reduce' },
   },
   projects: [
     {

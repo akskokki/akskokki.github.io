@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+  import { type Snippet, untrack } from 'svelte';
 
   import { iconUrl } from '../art';
   import {
@@ -18,10 +18,15 @@
 
   interface Props {
     win: Readonly<WindowState>;
+    /** Its turn in the entrance on load, when the staged windows pop in one after another. */
+    entrance?: number;
     children: Snippet;
   }
 
-  let { win, children }: Props = $props();
+  let { win, entrance, children }: Props = $props();
+
+  // Read as it mounts: the entrance plays once.
+  const turn = untrack(() => entrance);
 
   const EDGES: Edge[] = ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'];
 
@@ -71,12 +76,14 @@
   class="window"
   class:active
   class:maximized={win.maximized}
+  class:entering={turn !== undefined}
   hidden={win.minimized}
   style:left="{rect.x}px"
   style:top="{rect.y}px"
   style:width="{rect.width}px"
   style:height="{rect.height}px"
   style:z-index={win.z}
+  style:--turn={turn}
   onpointerdowncapture={() => focusWindow(win.id)}
 >
   <div
@@ -136,6 +143,23 @@
       inset 2px 2px #166aee,
       inset -3px -3px #003bda,
       inset 3px 3px #0855dd;
+  }
+
+  .window.entering {
+    animation: enter 0.22s ease-out calc(var(--turn) * 70ms) backwards;
+  }
+
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .window.entering {
+      animation: none;
+    }
   }
 
   .window.maximized {

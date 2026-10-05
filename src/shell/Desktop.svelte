@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type Component, onMount, untrack } from 'svelte';
+  import { type Component, onMount, tick, untrack } from 'svelte';
   import { fade } from 'svelte/transition';
 
   import { imageUrl } from '../art';
@@ -56,10 +56,29 @@
   // on top of the staged view.
   const linkedPath = pathFromHash();
 
+  // Windows wait for Wine Tahoma, which index.html preloads, so their text doesn't show in another
+  // font first, but for a second at most.
+  const fonts = Promise.race([
+    Promise.all(['13px', 'bold 13px'].map((font) => document.fonts.load(`${font} "Wine Tahoma"`))),
+    new Promise((done) => setTimeout(done, 1000)),
+  ]).catch(() => {});
+
+  // On load, the staged windows pop in one after another, in taskbar order, and a linked one last.
+  // Only while they mount: windows opened later just appear.
+  let entering = $state(true);
+
+  function entranceOf(path: string): number | undefined {
+    if (!entering) return undefined;
+    const index = picked.layout.staged.indexOf(path);
+    return index === -1 ? picked.layout.staged.length : index;
+  }
+
   onMount(async () => {
     // A linked window's program loads alongside the staged ones, so it opens with them.
     await Promise.all([restage(), linkedPath && preload(programOf(linkedPath))]);
     if (linkedPath) open(linkedPath);
+    await tick();
+    entering = false;
     // Then every other program, once the page has loaded, so a window opened later doesn't wait on
     // the network, and still opens after a deploy has replaced the files it was loaded from.
     await afterLoad();
@@ -93,9 +112,9 @@
     // Measured rather than read from the bindings, which only update after the first layout.
     picked = pickLayout(layouts, programs, area.clientWidth, area.clientHeight);
     const { staged, stack = [] } = picked.layout;
-    // Every staged program loads before any window opens, so the view appears at once rather than
-    // window by window as each program arrives.
-    await Promise.all(staged.map((path) => preload(programOf(path))));
+    // Every staged program loads, with the fonts, before any window opens, so the view enters in
+    // order rather than window by window as each program arrives.
+    await Promise.all([fonts, ...staged.map((path) => preload(programOf(path)))]);
     // A newer restage started while this one loaded, so the view is that one's to open.
     if (run !== restages) return;
     for (const { id } of wm.windows.filter((win) => win.id !== LAYOUT_TOOL)) closeWindow(id);
@@ -300,7 +319,7 @@
         <!-- Drawn once its program has loaded, so a window never shows empty, and a program that
              fits its window to its contents does so before it's first seen. -->
         {#await load(resolved.program) then Program}
-          <Window {win}>
+          <Window {win} entrance={entranceOf(win.id)}>
             <Program win={handleFor(win.id)} arg={resolved.arg} />
           </Window>
         {:catch}
