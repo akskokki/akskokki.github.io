@@ -2,6 +2,7 @@
 // found, it drives off and takes the place of Toska's logo throughout the projects until the page
 // reloads. The egg is this file and Kurkkumopo.svelte: the rest of the program only asks it which
 // logo to show, and gives it somewhere to hide.
+import { afterLoad } from '../../kit';
 import { type Project, projects, toskaLogo } from './projects';
 
 /** The project whose window the kurkkumopo hides in: a Toska one with a picture, new each visit. */
@@ -10,11 +11,15 @@ export const HIDEOUT = hideouts[Math.floor(Math.random() * hideouts.length)]?.sl
 
 export const kurkkumopoUrl = new URL('./kurkkumopo.webp', import.meta.url).href;
 
-// Loaded and decoded with the projects, so it's there behind the picture as soon as a window shows
-// it. Kept in a variable so the browser doesn't drop it.
+// Loaded and decoded once the page has, with the projects' pictures, so it's there behind the
+// picture as soon as a window shows it. Kept in a variable so the browser doesn't drop it.
 const preloaded = new Image();
-preloaded.src = kurkkumopoUrl;
-preloaded.decode().catch(() => {});
+void afterLoad()
+  .then(() => {
+    preloaded.src = kurkkumopoUrl;
+    return preloaded.decode();
+  })
+  .catch(() => {});
 
 const state = $state({ found: false });
 

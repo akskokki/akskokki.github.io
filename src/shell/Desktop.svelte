@@ -3,6 +3,7 @@
 
   import { imageUrl } from '../art';
   import type { ProgramProps, WindowHandle } from '../kit';
+  import { afterLoad } from '../kit/afterLoad';
 
   import './theme/theme.css';
   import DesktopIcon from './DesktopIcon.svelte';
@@ -56,8 +57,12 @@
 
   onMount(async () => {
     // A linked window's program loads alongside the staged ones, so it opens with them.
-    await Promise.all([restage(), linkedPath && preload(linkedPath)]);
+    await Promise.all([restage(), linkedPath && preload(programOf(linkedPath))]);
     if (linkedPath) open(linkedPath);
+    // Then every other program, once the page has loaded, so a window opened later doesn't wait on
+    // the network, and still opens after a deploy has replaced the files it was loaded from.
+    await afterLoad();
+    await Promise.all(programs.map(preload));
   });
 
   const layoutToolOpen = $derived(
@@ -74,7 +79,7 @@
     const { staged, stack = [] } = picked.layout;
     // Every staged program loads before any window opens, so the view appears at once rather than
     // window by window as each program arrives.
-    await Promise.all(staged.map(preload));
+    await Promise.all(staged.map((path) => preload(programOf(path))));
     // A newer restage started while this one loaded, so the view is that one's to open.
     if (run !== restages) return;
     for (const { id } of wm.windows.filter((win) => win.id !== LAYOUT_TOOL)) closeWindow(id);
@@ -175,17 +180,20 @@
   }
 
   /**
-   * Loads the program a path opens, so its window draws as soon as it opens. A program that fails
-   * to load still gets its window, which says so.
+   * Loads a program, so its windows draw as soon as they open. A program that fails to load still
+   * gets its window, which says so.
    */
-  async function preload(path: string): Promise<void> {
-    const resolved = resolve(programs, path);
-    if (!resolved) return;
+  async function preload(program: ProgramDefinition | undefined): Promise<void> {
+    if (!program) return;
     try {
-      await load(resolved.program);
+      await load(program);
     } catch {
       // Its window shows the failure.
     }
+  }
+
+  function programOf(path: string): ProgramDefinition | undefined {
+    return resolve(programs, path)?.program;
   }
 
   function handleFor(id: string): WindowHandle {

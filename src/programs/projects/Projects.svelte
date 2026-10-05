@@ -1,18 +1,17 @@
-<script lang="ts">
-  import { onMount } from 'svelte';
-
-  import { iconUrl, type ProgramProps, ScrollArea } from '../../kit';
-  import { logoOf } from './kurkkumopo.svelte';
-  import Logo from './Logo.svelte';
+<script module lang="ts">
+  import { afterLoad } from '../../kit';
   import { projects } from './projects';
 
-  let { win }: ProgramProps = $props();
+  // Every project's picture, loaded once the page has, so a project window shows it straight away
+  // rather than a moment after opening, without holding up the first view. Hidden elements rather
+  // than plain fetches, so the images are decoded and the videos buffered; kept here so the browser
+  // doesn't drop them. Once per visit, however often the folder opens.
+  let preloaded: HTMLElement[] | undefined;
 
-  // Loads every project's picture while the folder is open, so a project window shows it straight
-  // away rather than a moment after opening. Hidden elements rather than plain fetches, so the
-  // images are decoded and the videos buffered; kept here so the browser doesn't drop them.
-  const preloaded: HTMLElement[] = [];
-  onMount(() => {
+  async function preload() {
+    await afterLoad();
+    if (preloaded) return;
+    preloaded = [];
     for (const { picture } of projects) {
       if (!picture) continue;
       // A recording's still, shown while it starts, counts as its picture here.
@@ -27,7 +26,19 @@
         preloaded.push(element);
       }
     }
-  });
+  }
+</script>
+
+<script lang="ts">
+  import { onMount } from 'svelte';
+
+  import { iconUrl, type ProgramProps, ScrollArea } from '../../kit';
+  import { logoOf } from './kurkkumopo.svelte';
+  import Logo from './Logo.svelte';
+
+  let { win }: ProgramProps = $props();
+
+  onMount(preload);
 
   // Explorer's "Show in Groups" view: a heading per kind, the projects as tiles under it.
   const groups = [

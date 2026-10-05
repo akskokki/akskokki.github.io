@@ -4,6 +4,7 @@
 import './xp.css';
 
 export { iconUrl } from '../art';
+export { afterLoad } from './afterLoad';
 export { default as ScrollArea } from './ScrollArea.svelte';
 
 /** A program's handle on its own window. */
