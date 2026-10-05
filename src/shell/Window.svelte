@@ -1,8 +1,9 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+  import { type Snippet, untrack } from 'svelte';
 
   import { iconUrl } from '../art';
   import { popIn } from './entrance';
+  import { flies, type Flight, fly } from './flight';
   import {
     closeWindow,
     type Edge,
@@ -31,6 +32,44 @@
   const rect = $derived(rectOf(win));
   const active = $derived(wm.activeId === win.id);
   const canResize = $derived(!win.fixedSize && !win.maximized);
+
+  /** As tall as `.title-bar` below. */
+  const TITLE_BAR_HEIGHT = 30;
+
+  // Minimizing and restoring, the title bar flies between the window and its taskbar button.
+  let flight = $state<Flight | null>(null);
+  // Restoring, the window shows once its title bar has landed.
+  let landing = $state(false);
+  let wasMinimized: boolean | undefined;
+
+  // Before the DOM updates, so a restored window stays hidden from the start.
+  $effect.pre(() => {
+    const minimized = win.minimized;
+    if (wasMinimized !== undefined && minimized !== wasMinimized) untrack(() => takeOff(minimized));
+    wasMinimized = minimized;
+  });
+
+  function takeOff(minimizing: boolean) {
+    const task = document.querySelector(`[data-task="${CSS.escape(win.id)}"]`);
+    if (!task || !flies()) {
+      flight = null;
+      landing = false;
+      return;
+    }
+    const { x, y, width } = rectOf(win);
+    const caption = { x, y, width, height: TITLE_BAR_HEIGHT };
+    const { left, top, width: buttonWidth, height } = task.getBoundingClientRect();
+    const button = { x: left, y: top, width: buttonWidth, height };
+    landing = !minimizing;
+    flight = {
+      from: minimizing ? caption : button,
+      to: minimizing ? button : caption,
+      onland: () => {
+        flight = null;
+        landing = false;
+      },
+    };
+  }
 
   // Plain variables, not state: only the pointer handlers read them.
   let dragOffset: { x: number; y: number } | null = null;
@@ -74,7 +113,7 @@
   class="window"
   class:active
   class:maximized={win.maximized}
-  hidden={win.minimized}
+  hidden={win.minimized || landing}
   style:left="{rect.x}px"
   style:top="{rect.y}px"
   style:width="{rect.width}px"
@@ -119,6 +158,18 @@
     {/each}
   {/if}
 </div>
+
+{#if flight}
+  <!-- Anew for each flight, which starts from the button or the window whatever the last one did. -->
+  {#key flight}
+    <div class="flight active" use:fly={flight}>
+      <div class="title-bar">
+        <img class="icon" src={iconUrl(win.icon, 16)} alt="" draggable="false" />
+        <span class="title">{win.title}</span>
+      </div>
+    </div>
+  {/key}
+{/if}
 
 <style>
   /* Values from winXP (frame, title gradients, buttons) and XP.css (frame shading, title text). */
@@ -208,6 +259,17 @@
   .maximized .title-bar {
     margin: 0;
     border-radius: 0;
+  }
+
+  /* The title bar alone, without its buttons, cut short rather than squeezed as it shrinks. */
+  .flight {
+    position: fixed;
+    pointer-events: none;
+  }
+
+  .flight .title-bar {
+    height: 100%;
+    margin: 0;
   }
 
   .icon {

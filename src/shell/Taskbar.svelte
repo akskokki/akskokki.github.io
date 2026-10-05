@@ -32,6 +32,7 @@
     {#each wm.windows as win (win.id)}
       <button
         class="task"
+        data-task={win.id}
         class:active={wm.activeId === win.id && !win.minimized}
         title={win.title}
         onclick={() => toggleWindow(win.id)}
