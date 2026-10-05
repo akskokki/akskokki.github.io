@@ -47,7 +47,7 @@ interface Placement {
 export interface Layout {
   /**
    * The smallest area it's drawn for: the screen above the taskbar. A bigger area first gives
-   * windows that shrink (`bottom`) their full height, then centres the windows.
+   * windows that shrink (`bottom`) their full height, then centres the staged windows.
    */
   width: number;
   height: number;

@@ -43,17 +43,18 @@ export function pickLayout(
   if (left > right) [left, right] = [0, layout.width];
   const centred = Math.floor(width / 2 - (left + right) / 2);
 
-  // Down, it's centred once the windows that shrink on a short screen have their full height.
-  let tallest = layout.height;
+  // Down, they're centred too, the ones that shrink on a short screen at their full height.
+  let top = Infinity;
+  let bottom = -Infinity;
   for (const { program, placement } of staged) {
-    if (placement.bottom === undefined) continue;
-    const windowHeight = placement.height ?? program.height;
-    tallest = Math.max(tallest, placement.y + windowHeight + placement.bottom);
+    top = Math.min(top, placement.y);
+    bottom = Math.max(bottom, placement.y + (placement.height ?? program.height));
   }
+  if (top > bottom) [top, bottom] = [0, layout.height];
 
   return {
     layout,
     dx: Math.max(0, Math.min(centred, width - right)),
-    dy: Math.max(0, Math.floor((height - tallest) / 2)),
+    dy: Math.max(0, Math.floor(height / 2 - (top + bottom) / 2)),
   };
 }
