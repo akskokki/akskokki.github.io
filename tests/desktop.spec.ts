@@ -159,7 +159,7 @@ test('clicking a window behind brings it to the front', async ({ page }) => {
           ?.querySelector(':scope > .title-bar > .title')?.textContent,
       overlap,
     );
-  await expect.poll(titleAt).toBe(other);
+  await expect.poll(titleAt).toBe(titleOf(other));
 
   await titleBar(back).locator('.title').click();
   await expect(activeTitle(page)).toHaveText(frontTitle(page));
