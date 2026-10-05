@@ -1,6 +1,6 @@
 <script lang="ts">
   import { iconUrl, imageUrl } from '../art';
-  import { entrance } from './entrance';
+  import { slideIn } from './entrance';
   import { toggleWindow, wm } from './windows.svelte';
 
   /** A window's turn in the entrance on load, which its button pops in with. */
@@ -35,7 +35,7 @@
         class:active={wm.activeId === win.id && !win.minimized}
         title={win.title}
         onclick={() => toggleWindow(win.id)}
-        use:entrance={turnOf(win.id)}
+        use:slideIn={turnOf(win.id)}
       >
         <img src={iconUrl(win.icon, 16)} alt="" draggable="false" />
         <span>{win.title}</span>
@@ -138,12 +138,14 @@
     min-width: 0;
   }
 
+  /* Clipped, so its icon and title don't spill out while it slides open. */
   .task {
     display: flex;
     flex: 0 1 150px;
     align-items: center;
     gap: 6px;
     min-width: 0;
+    overflow: hidden;
     height: 22px;
     padding: 0 8px;
     border-radius: 2px;

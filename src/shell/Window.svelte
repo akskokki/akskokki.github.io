@@ -2,7 +2,7 @@
   import type { Snippet } from 'svelte';
 
   import { iconUrl } from '../art';
-  import { entrance } from './entrance';
+  import { popIn } from './entrance';
   import {
     closeWindow,
     type Edge,
@@ -81,7 +81,7 @@
   style:height="{rect.height}px"
   style:z-index={win.z}
   onpointerdowncapture={() => focusWindow(win.id)}
-  use:entrance={turn}
+  use:popIn={turn}
 >
   <div
     class="title-bar"
