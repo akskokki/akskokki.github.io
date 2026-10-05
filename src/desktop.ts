@@ -93,7 +93,8 @@ export const layouts: Layout[] = [
     // Big screens, wider than 1080p: the same windows, larger and with room around them.
     width: 2000,
     height: 870,
-    staged: ['photos/clouds.png', 'photos/clouds2.png', 'projects', 'notepad/now.txt', 'about'],
+    staged: ['about', 'projects', 'notepad/now.txt', 'photos/clouds.png', 'photos/clouds2.png'],
+    stack: ['photos/clouds.png', 'photos/clouds2.png', 'projects', 'notepad/now.txt', 'about'],
     windows: {
       about: { x: 320, y: 50, width: 680, height: 436 },
       projects: { x: 1040, y: 0, width: 620, height: 436 },
@@ -111,7 +112,8 @@ export const layouts: Layout[] = [
     // gives up some height on the shortest screens.
     width: 1280,
     height: 620,
-    staged: ['photos/clouds.png', 'photos/clouds2.png', 'projects', 'notepad/now.txt', 'about'],
+    staged: ['about', 'projects', 'notepad/now.txt', 'photos/clouds.png', 'photos/clouds2.png'],
+    stack: ['photos/clouds.png', 'photos/clouds2.png', 'projects', 'notepad/now.txt', 'about'],
     windows: {
       about: { x: 110, y: 40, width: 560, height: 340 },
       projects: { x: 700, y: 16, width: projectsWide, height: 378 },
@@ -128,7 +130,8 @@ export const layouts: Layout[] = [
     // About and Projects side by side, Projects tall enough for every project, the note below.
     width: 920,
     height: 580,
-    staged: ['projects', 'notepad/now.txt', 'about'],
+    staged: ['about', 'projects', 'notepad/now.txt'],
+    stack: ['projects', 'notepad/now.txt', 'about'],
     windows: {
       about: { x: 90, y: 40, width: 480, height: 364 },
       projects: { x: 590, y: 16, width: projectsNarrow, height: 518 },
@@ -143,7 +146,8 @@ export const layouts: Layout[] = [
     // The same, without the note, for screens too short for it.
     width: 920,
     height: 480,
-    staged: ['projects', 'about'],
+    staged: ['about', 'projects'],
+    stack: ['projects', 'about'],
     windows: {
       about: { x: 90, y: 30, width: 480, height: 364 },
       projects: { x: 590, y: 8, width: projectsNarrow, height: 453 },
@@ -159,7 +163,8 @@ export const layouts: Layout[] = [
     // every project where there's room and is cut halfway down a row on the shortest screens.
     width: 640,
     height: 710,
-    staged: ['projects', 'about'],
+    staged: ['about', 'projects'],
+    stack: ['projects', 'about'],
     windows: {
       about: { x: 80, y: 16, width: 520, height: 346 },
       projects: { x: 80, y: 378, width: projectsWide, height: 378, bottom: 8 },
@@ -173,7 +178,8 @@ export const layouts: Layout[] = [
   {
     width: 640,
     height: 440,
-    staged: ['projects', 'about'],
+    staged: ['about', 'projects'],
+    stack: ['projects', 'about'],
     windows: {
       about: { x: 90, y: 56, width: 520, height: 370 },
       projects: { x: 80, y: 8, width: projectsWide, height: 378 },
@@ -188,7 +194,8 @@ export const layouts: Layout[] = [
     // Wide but short, as a phone held sideways or a browser with its devtools along the bottom.
     width: 640,
     height: 300,
-    staged: ['projects', 'about'],
+    staged: ['about', 'projects'],
+    stack: ['projects', 'about'],
     windows: {
       about: { x: 90, y: 34, width: 520, height: 266 },
       projects: { x: 80, y: 0, width: projectsWide, height: 300 },
@@ -204,7 +211,8 @@ export const layouts: Layout[] = [
     // About's. About is as tall as its contents, or on a short phone reaches down to the taskbar.
     width: 360,
     height: 500,
-    staged: ['projects', 'about'],
+    staged: ['about', 'projects'],
+    stack: ['projects', 'about'],
     windows: {
       about: { x: 8, y: 46, width: 344, height: 496, bottom: 8 },
       projects: { x: 32, y: 8, width: projectsNarrow, height: 453 },

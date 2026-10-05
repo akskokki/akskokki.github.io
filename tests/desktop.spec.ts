@@ -4,12 +4,14 @@ import { resolve } from '../src/shell/paths';
 import {
   activeTitle,
   activeWindow,
+  backPath,
   boxOf,
   desktopIcon,
   drag,
   edges,
   expect,
   frontTitle,
+  labelOf,
   openDesktop,
   stagedTitles,
   TASKBAR_HEIGHT,
@@ -17,7 +19,6 @@ import {
   taskButtons,
   test,
   titleBar,
-  labelOf,
   titleOf,
   windows,
   windowTitled,
@@ -184,7 +185,7 @@ test('a fixed-size window can be neither resized nor maximized', async ({ page }
 
 test('a taskbar button focuses its window, then minimizes and restores it', async ({ page }) => {
   await openDesktop(page);
-  const title = stagedTitles(page)[0] ?? '';
+  const title = titleOf(backPath(page));
   const win = windowTitled(page, title);
   const button = taskButton(page, title);
 

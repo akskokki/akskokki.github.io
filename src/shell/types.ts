@@ -51,8 +51,13 @@ export interface Layout {
    */
   width: number;
   height: number;
-  /** Window paths opened on load, back to front: the last one is in front. */
+  /**
+   * Window paths opened on load, in the order the taskbar shows them. They stack in that order too,
+   * the last one in front, unless `stack` says otherwise.
+   */
   staged: readonly string[];
+  /** The staged windows back to front, when that's not the order they open in: the last is active. */
+  stack?: readonly string[];
   /**
    * Where each program's windows open, by program id, or by a window's own path to place it apart
    * from the rest of its program's windows. One left out opens in the middle.

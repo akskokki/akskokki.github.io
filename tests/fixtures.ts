@@ -41,20 +41,32 @@ export function labelOf(path: string): string {
   return paths.labelOf(resolve(path));
 }
 
-/** What the staged view opens on this page's screen, back to front, as desktop.ts's layouts say. */
-export function stagedPaths(page: Page): readonly string[] {
+/** The layout this page's screen gets, as desktop.ts's layouts say. */
+function layoutOf(page: Page) {
   const viewport = page.viewportSize();
   if (!viewport) throw new Error('the tests need a fixed viewport');
-  return pickLayout(layouts, programs, viewport.width, viewport.height - TASKBAR_HEIGHT).layout
-    .staged;
+  return pickLayout(layouts, programs, viewport.width, viewport.height - TASKBAR_HEIGHT).layout;
+}
+
+/** What the staged view opens on this page's screen, in the order the taskbar shows it. */
+export function stagedPaths(page: Page): readonly string[] {
+  return layoutOf(page).staged;
 }
 
 export function stagedTitles(page: Page): string[] {
   return stagedPaths(page).map(titleOf);
 }
 
+/** The staged window in front, and active, on this page's screen. */
 export function frontPath(page: Page): string {
-  return stagedPaths(page).at(-1) ?? '';
+  const layout = layoutOf(page);
+  return (layout.stack ?? layout.staged).at(-1) ?? '';
+}
+
+/** The staged window at the back on this page's screen. */
+export function backPath(page: Page): string {
+  const layout = layoutOf(page);
+  return (layout.stack ?? layout.staged)[0] ?? '';
 }
 
 export function frontTitle(page: Page): string {

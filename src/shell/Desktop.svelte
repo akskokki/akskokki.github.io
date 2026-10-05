@@ -54,8 +54,9 @@
   // on top of the staged view.
   const linkedPath = pathFromHash();
 
-  onMount(() => {
-    restage();
+  onMount(async () => {
+    // A linked window's program loads alongside the staged ones, so it opens with them.
+    await Promise.all([restage(), linkedPath && preload(linkedPath)]);
     if (linkedPath) open(linkedPath);
   });
 
@@ -64,11 +65,21 @@
   );
 
   /** Closes every window and opens the staged view of the layout for the area as it is now. */
-  function restage() {
+  let restages = 0;
+
+  async function restage() {
+    const run = ++restages;
     // Measured rather than read from the bindings, which only update after the first layout.
     picked = pickLayout(layouts, programs, area.clientWidth, area.clientHeight);
+    const { staged, stack = [] } = picked.layout;
+    // Every staged program loads before any window opens, so the view appears at once rather than
+    // window by window as each program arrives.
+    await Promise.all(staged.map(preload));
+    // A newer restage started while this one loaded, so the view is that one's to open.
+    if (run !== restages) return;
     for (const { id } of wm.windows.filter((win) => win.id !== LAYOUT_TOOL)) closeWindow(id);
-    for (const path of picked.layout.staged) open(path);
+    for (const path of staged) open(path);
+    for (const path of stack) focusWindow(path);
     if (layoutToolOpen) {
       const { x, y } = layoutToolSpec(
         { width: area.clientWidth, height: area.clientHeight },
@@ -161,6 +172,20 @@
         return component;
       })
     );
+  }
+
+  /**
+   * Loads the program a path opens, so its window draws as soon as it opens. A program that fails
+   * to load still gets its window, which says so.
+   */
+  async function preload(path: string): Promise<void> {
+    const resolved = resolve(programs, path);
+    if (!resolved) return;
+    try {
+      await load(resolved.program);
+    } catch {
+      // Its window shows the failure.
+    }
   }
 
   function handleFor(id: string): WindowHandle {

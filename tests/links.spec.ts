@@ -5,6 +5,7 @@ import { projects } from '../src/programs/projects/projects';
 import {
   activeTitle,
   activeWindow,
+  backPath,
   boxOf,
   expect,
   frontPath,
@@ -62,7 +63,7 @@ test('the hash follows the window in front, and a new hash opens its window', as
   await openDesktop(page);
   await expect(page).toHaveURL(new RegExp(`#/${frontPath(page)}$`));
 
-  const back = stagedPaths(page)[0] ?? '';
+  const back = backPath(page);
   await titleBar(windowTitled(page, titleOf(back)))
     .locator('.title')
     .click();
