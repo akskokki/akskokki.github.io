@@ -1,6 +1,6 @@
-// XP's minimize and restore: the window vanishes, or waits to appear, while a copy of its title bar
-// flies between where it is and its taskbar button, as with XP's "Animate windows when minimizing
-// and maximizing".
+// XP's minimize, maximize and restore: a copy of the window's title bar flies from where it is to
+// where it will be, between the window and its taskbar button or between its two sizes, as with
+// XP's "Animate windows when minimizing and maximizing".
 import type { Rect } from './windows.svelte';
 
 /** The flight, in ms, at a steady speed as XP's. */
@@ -12,7 +12,7 @@ export interface Flight {
   onland: () => void;
 }
 
-/** For someone who'd rather have less motion, windows minimize and restore at once. */
+/** For someone who'd rather have less motion, windows minimize, maximize and restore at once. */
 export function flies(): boolean {
   return !matchMedia('(prefers-reduced-motion: reduce)').matches;
 }

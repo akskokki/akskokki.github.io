@@ -29,46 +29,69 @@
 
   const EDGES: Edge[] = ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'];
 
-  const rect = $derived(rectOf(win));
-  const active = $derived(wm.activeId === win.id);
-  const canResize = $derived(!win.fixedSize && !win.maximized);
-
   /** As tall as `.title-bar` below. */
   const TITLE_BAR_HEIGHT = 30;
 
-  // Minimizing and restoring, the title bar flies between the window and its taskbar button.
+  // Minimizing, maximizing and restoring, the title bar flies from where it was to where it will be,
+  // as with XP's "Animate windows when minimizing and maximizing": between the window and its
+  // taskbar button, or between the window's two sizes.
   let flight = $state<Flight | null>(null);
-  // Restoring, the window shows once its title bar has landed.
+  // Meanwhile, a window being restored from the taskbar waits hidden, and one being maximized or
+  // restored from that stays as it was.
   let landing = $state(false);
-  let wasMinimized: boolean | undefined;
+  let held = $state<{ rect: Rect; maximized: boolean } | null>(null);
+  let was: { minimized: boolean; maximized: boolean } | undefined;
 
-  // Before the DOM updates, so a restored window stays hidden from the start.
+  const rect = $derived(held?.rect ?? rectOf(win));
+  const maximized = $derived(held?.maximized ?? win.maximized);
+  const active = $derived(wm.activeId === win.id);
+  const canResize = $derived(!win.fixedSize && !win.maximized);
+
+  // Before the DOM updates, so the window waits from the start.
   $effect.pre(() => {
-    const minimized = win.minimized;
-    if (wasMinimized !== undefined && minimized !== wasMinimized) untrack(() => takeOff(minimized));
-    wasMinimized = minimized;
+    const now = { minimized: win.minimized, maximized: win.maximized };
+    const before = was;
+    if (before) {
+      untrack(() => {
+        if (!flies()) land();
+        else if (now.minimized !== before.minimized) toTaskbar(now.minimized);
+        else if (now.maximized !== before.maximized) resize(before.maximized);
+      });
+    }
+    was = now;
   });
 
-  function takeOff(minimizing: boolean) {
+  function toTaskbar(minimizing: boolean) {
     const task = document.querySelector(`[data-task="${CSS.escape(win.id)}"]`);
-    if (!task || !flies()) {
-      flight = null;
-      landing = false;
-      return;
+    if (!task) return land();
+    const { left, top, width, height } = task.getBoundingClientRect();
+    const button = { x: left, y: top, width, height };
+    const caption = captionOf(rectOf(win));
+    if (minimizing) takeOff(caption, button);
+    else {
+      landing = true;
+      takeOff(button, caption);
     }
-    const { x, y, width } = rectOf(win);
-    const caption = { x, y, width, height: TITLE_BAR_HEIGHT };
-    const { left, top, width: buttonWidth, height } = task.getBoundingClientRect();
-    const button = { x: left, y: top, width: buttonWidth, height };
-    landing = !minimizing;
-    flight = {
-      from: minimizing ? caption : button,
-      to: minimizing ? button : caption,
-      onland: () => {
-        flight = null;
-        landing = false;
-      },
-    };
+  }
+
+  function resize(wasMaximized: boolean) {
+    const before = rectOf({ ...win, maximized: wasMaximized });
+    held = { rect: before, maximized: wasMaximized };
+    takeOff(captionOf(before), captionOf(rectOf(win)));
+  }
+
+  function takeOff(from: Rect, to: Rect) {
+    flight = { from, to, onland: land };
+  }
+
+  function land() {
+    flight = null;
+    landing = false;
+    held = null;
+  }
+
+  function captionOf({ x, y, width }: Rect): Rect {
+    return { x, y, width, height: TITLE_BAR_HEIGHT };
   }
 
   // Plain variables, not state: only the pointer handlers read them.
@@ -112,7 +135,7 @@
 <div
   class="window"
   class:active
-  class:maximized={win.maximized}
+  class:maximized
   hidden={win.minimized || landing}
   style:left="{rect.x}px"
   style:top="{rect.y}px"
@@ -160,7 +183,7 @@
 </div>
 
 {#if flight}
-  <!-- Anew for each flight, which starts from the button or the window whatever the last one did. -->
+  <!-- Anew for each flight, which starts from where the window was whatever the last one did. -->
   {#key flight}
     <div class="flight active" use:fly={flight}>
       <div class="title-bar">
