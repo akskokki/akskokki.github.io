@@ -1,75 +1,65 @@
 # AGENTS.md
 
-A personal homepage that looks like a Windows XP desktop: windows already open on load, desktop icons that open more, and a taskbar. Besides the homepage content, it's a home for small toy programs the owner makes for fun, each in its own window. Svelte 5 + Vite + TypeScript with pnpm, a static site on GitHub Pages.
+A personal homepage that looks like a Windows XP desktop: windows already open on load, desktop icons that open more, and a taskbar. It's also a home for small toy programs the owner makes for fun, each in its own window. Svelte 5 + Vite + TypeScript with pnpm, a static site on GitHub Pages.
 
-`README.md` is the overview for people; this file holds the standing rules. XP reference material (XP.css, two React XP recreations with Microsoft's art, Wine's Tahoma) is in `../references/`; its `README.md` says where to look for what.
-
-If a request conflicts with these rules or with what the references show, ask rather than guess.
+`README.md` is the overview for people; this file holds the standing rules. XP reference material (XP.css, two React XP recreations with Microsoft's art, Wine's Tahoma) is in `../references/`, whose `README.md` says where to look for what. If a request conflicts with these rules or the references, ask rather than guess.
 
 ## Principles
 
-- **A homepage, not an OS simulator.** Build only what's useful or delightful on a personal homepage. When something would just recreate more of Windows, leave it out, and check "Not now" below.
+- **A homepage, not an OS simulator.** Build only what's useful or delightful on a personal homepage. When something would just recreate more of Windows, leave it out (see "Not now").
 - **Pseudo-XP.** Recognisably Windows XP, but clean and consistent rather than pixel-perfect. Copy values (colours, gradients, sizes) from `../references/`, not files; no CSS library. Add styles only for what's being built.
-- **The owner decides the content.** Text, photos, projects and the desktop layout are placeholders the owner will replace. Keep content in data or in the program's own folder so that's trivial, and leave `[Name]`-style placeholders alone rather than inventing details.
-- **The shell and the programs stay separate.** Only `src/desktop.ts` knows both. A program's window contents are entirely its own, and needn't look like XP.
-- **Phones get the same desktop,** with floating windows, just smaller and fewer (see layouts below). Each program handles a small window its own way; a toy that can't work on a phone may just say "best on a computer".
-- **Ordinary HTML, no accessibility work beyond it:** no screen-reader or keyboard work for the desktop. Svelte's a11y warnings are filtered out in `svelte.config.js` on purpose.
+- **The owner writes the content:** text, photos, projects and layouts. Don't invent details. Keep content in data or in the program's own folder.
+- **Phones get the same desktop,** floating windows and all, just smaller and fewer. Each program handles a small window its own way; a toy that can't work on a phone may just say "best on a computer".
+- **Ordinary HTML, no accessibility work beyond it:** no screen-reader or keyboard work for the desktop. That's why `svelte.config.js` filters out Svelte's a11y warnings.
 
 ## Not now
 
-Out of scope unless the owner asks for it. Don't build these, and don't build hooks "for later" either:
+Out of scope unless the owner asks for it. Don't build these, or hooks "for later":
 
-- Start menu contents, and any menu that opens from the Start button.
-- Right-click menus.
+- The Start menu or any other menu, right-click menus included.
 - Sound of any kind.
 - Boot, login, shutdown or welcome screens; screensavers; BSOD jokes.
-- System programs and dialogs: Run, Control Panel, Display Properties, Task Manager, file dialogs, message boxes.
-- A file system, Explorer, the Recycle Bin as a working program, dragging icons, saved icon positions.
+- System programs and dialogs (Run, Control Panel, Task Manager, file dialogs, message boxes), a file system or Explorer, a working Recycle Bin, dragging icons.
 - Saving any state between visits (`localStorage`, window positions, settings). Every visit starts from the staged view.
-- Programs that live outside windows (such as desktop pets).
-- Embedding other sites in windows.
-- Window animations other than XP's own minimize and maximize.
-- Dark mode, themes, other Luna colour schemes.
-- A separate mobile design, gestures, or app-style navigation.
+- Programs that live outside windows (such as desktop pets), and other sites embedded in windows.
+- Window animations beyond the entrance on load and XP's own minimize and maximize.
+- Dark mode, themes, other Luna colour schemes, or a separate mobile design with gestures or app-style navigation.
 
 ## Architecture
 
 - `src/shell/` is the desktop, windows, taskbar and XP look. It never imports `src/programs/` or `src/desktop.ts`; `App.svelte` passes it the desktop configuration as props.
-- `src/programs/<name>/` is one program per folder. It imports only `src/kit/`, its own files and npm packages, never the shell, `src/art/` or another program. Keep its files directly in its folder: the lint rule bans every `../` import except `../../kit`.
-- `src/kit/` is everything a program may import (the program contract, art by name, `ScrollArea`, `afterLoad`, `xp.css`), and nothing in it imports the shell, programs or `desktop.ts`.
+- `src/programs/<name>/` is one program per folder, with its files directly in it. It imports only `src/kit/` (as `../../kit`), its own files and npm packages. Its window contents are entirely its own, and needn't look like XP.
+- `src/kit/` is everything a program may import: the program contract, art by name, `ScrollArea`, `afterLoad` and `xp.css`. It imports nothing from the shell, programs or `desktop.ts`.
 - `src/desktop.ts` is the single, hand-written list of programs, desktop icons and layouts. Nothing is auto-discovered.
-- `src/art/` holds the Microsoft placeholder art and nothing else. Only `src/art/index.ts` imports those files; everything else asks for art by name. Each file's origin is listed in `src/art/README.md`.
+- `src/art/` holds the Microsoft art and nothing else. Only `src/art/index.ts` imports those files; everything else asks for art by name. Each file's origin is in `src/art/README.md`.
 - oxlint's `no-restricted-imports` enforces these boundaries.
 
 ### How it fits together
 
-- **Windows are named by path,** and the path is also the link: window `about` is `#/about`. A program whose id ends in `/*`, such as `projects/*`, opens one window per argument: `projects/minesweeper` opens `Project.svelte` with `arg` set to `minesweeper`. With `single: true` in `desktop.ts`, as Projects has, it has one window instead, which opening another argument turns to that one where it is, starting the program over. `shell/paths.ts` names windows the XP way: a window with an argument is titled `now.txt - Notepad` until its program sets a title, or just `clouds.png` if the program's title is empty, and its desktop icon is labelled with the argument. Notepad (`notepad/*`) opens the `.txt` files in its folder by name, and the photo viewer (`photos/*`) the pictures in its, so another file needs only the file, plus an icon or a staged spot if it should have one. `Desktop.svelte` resolves paths to programs, opens the staged view, then any window linked in the hash, and keeps the hash naming the window in front. Hash routing and `base: './'` keep the build working at any address; don't switch to history-API routing or absolute paths.
-- **Layouts decide where windows open.** `layouts` in `desktop.ts` holds one per screen size, biggest first, each drawn for an area (the screen above the taskbar) of a given size. On load the site picks the first that fits (`shell/layout.ts`), or the last, and opens its `staged` windows. A bigger area centres the staged windows on the screen, though never left into the icons or off the right edge. Its `windows` say where each program opens, then and later, at the program's own size unless the layout gives one. A window placed with `bottom` shrinks on a screen too short for its height, to stay that many px above the taskbar, so one layout covers a range of heights instead of needing another for shorter screens; a taller area gives it its full height before centring. A program can still fit its window to its contents as it opens (`win.fit`), as a project does. A program a layout leaves out opens in the middle. The layout is picked once: resizing the browser afterwards only keeps windows on screen. In `pnpm dev` only, a Layouts icon in the desktop's bottom-right corner opens the layout tool (`shell/LayoutTool.svelte`, `shell/layoutTool.ts`), a window of the shell's own rather than a program. While it's open, resizing the browser restages the layout for the new size, and it lists the layouts with the one in use selected. Its Copy layout button copies the screen size, that layout and every window's position in its coordinates: the owner arranges windows by hand and pastes that in to have a layout updated. None of it reaches the production build.
-- **The window manager, `shell/windows.svelte.ts`,** is the only place window state lives. Components read `wm` and call its functions; they never change window state themselves. On a touch screen windows have no resize edges, too fine for a finger; maximize fills the screen instead. Minimizing, maximizing and restoring fly a copy of the title bar to where the window will be, as XP did (`shell/flight.ts`). Like the entrance on load (`shell/entrance.ts`), that's skipped for anyone who'd rather have less motion, as the tests ask to be.
-- **The program contract** is `ProgramProps` in `kit/index.ts`: a `WindowHandle` (`id`, `setTitle`, `close`, `open(path)`, `fit(height)`) and the optional `arg`. A program that needs neither can leave its props out. Keep the handle small, and grow it only when a program needs more.
-- **A program's lifetime:** a program the layouts stage comes with the page: `desktop.ts` imports it, so the first view waits on no other file. Any other loads as its own file once the page has loaded, or when its window opens if that's sooner, and its window is drawn once it has: a program that fits its window to its contents should do it as it mounts, before it's first seen. A minimized window stays mounted, only hidden, so its timers and animation loops keep running; closing the window destroys the program, so clean up in `$effect` teardowns.
-- **The first view loads first.** Only what the staged view needs loads with the page. Everything that might be wanted later loads once the page has, when it holds nothing up: kit's `afterLoad()` resolves then. The shell then loads every program, so no window waits on the network when it opens, and a program preloads its own media the same way, as the Projects folder does its projects' pictures and recordings.
-- **Styles:** shell chrome uses scoped styles plus custom properties from `shell/theme/theme.css` (fonts, colours, taskbar height). The only global rules are that file's page basics: border-box sizing and the body font. Don't add global element styles; they would leak into every program. Programs opt into XP widgets with `kit/xp.css` classes (`xp-button`); add a class there when a program needs a new widget.
-- **Scrolling content goes inside kit's `ScrollArea`,** which draws XP scrollbars in every browser, rather than `overflow: auto`, whose native scrollbars Firefox can't style.
+- **Windows are named by path, and the path is also the link:** window `about` is `#/about`. A program whose id ends in `/*` opens one window per argument (`projects/some-slug` opens `Project.svelte` with `arg` set to `some-slug`), or, with `single: true`, one window that a new argument turns over in place. `shell/paths.ts` titles windows the XP way (`now.txt - Notepad`, or just `clouds.png` when the program's title is empty) and labels their icons; a program can set its own title with `win.setTitle`. Notepad and the photo viewer open the files in their folders by name, so another file needs only the file, plus an icon or a staged spot if it should have one. Keep the hash routing and `base: './'`, which keep the build working at any address.
+- **Layouts decide where windows open.** `layouts` in `desktop.ts` has one per screen size, biggest first. On load, the first that fits the area above the taskbar is picked (`shell/layout.ts`), or the last, and its `staged` windows open, centred on a bigger screen. Its `windows` place each program, then and whenever it opens later; a program left out opens in the middle. A window placed with `bottom` shrinks on a short screen to stay that many px above the taskbar. The layout is picked once: resizing the browser afterwards only keeps windows on screen. In `pnpm dev` only, the Layouts icon in the bottom-right corner opens the layout tool (`shell/LayoutTool.svelte`). Its Copy layout button copies the screen size, the layout and every window's position: the owner arranges windows by hand and pastes that in to have a layout updated. Read a paste as the intent, not as exact numbers.
+- **`shell/windows.svelte.ts` holds all window state.** Components read `wm` and call its functions; they never change window state themselves. Touch screens get no resize edges, too fine for a finger; maximize fills the screen instead. Minimizing, maximizing and restoring fly a copy of the title bar to where the window will be, as XP did (`shell/flight.ts`). That and the entrance on load (`shell/entrance.ts`) are skipped for anyone who'd rather have less motion, as the tests ask to be.
+- **The program contract** is `ProgramProps` in `kit/index.ts`: a `WindowHandle` (`id`, `setTitle`, `close`, `open(path)`, `fit(by)`) and the optional `arg`. Grow the handle only when a program needs more.
+- **The first view loads first.** The programs a layout stages come with the page, through `withPage`'s glob in `desktop.ts`. The rest load as their own files once the page has loaded, or when their window opens if that's sooner, and a window is drawn once its program has loaded, so a program that fits its window with `win.fit` should do it as it mounts. Anything else that might be wanted later loads after kit's `afterLoad()`, as Projects preloads its pictures and recordings.
+- **A minimized window stays mounted,** only hidden, so its timers and animation loops keep running. Closing the window destroys the program, so clean up in `$effect` teardowns.
+- **Styles:** shell chrome uses scoped styles and the custom properties in `shell/theme/theme.css`. That file's page basics (border-box sizing, the body font) are the only global rules: global element styles would leak into every program. Programs opt into XP widgets with `kit/xp.css` classes (`xp-button`); add a class there when a program needs a new widget. Scrolling content goes in kit's `ScrollArea`, which draws XP scrollbars in every browser, Firefox included.
 
 ### Adding a program
 
-1. Make `src/programs/<name>/` with its component. Start from the closest existing one: `eight-ball` for a self-contained toy, `links` or `notepad` for a scrolling page.
-2. The window body is a box of definite size: give the component's root `height: 100%`. A `ScrollArea` fills its parent. The program inherits Tahoma 13 px (XP's Large Fonts size) and border-box sizing, on XP's beige window background unless it paints its own (most set `background: white`).
-3. Add an entry to `programs` in `desktop.ts`. Its `width` and `height` are the whole window, frame and title bar included; `fixedSize: true` stops resizing and maximizing. Give it a place in each layout's `windows`, or it opens in the middle of the screen. Its `load` imports it as its own file, unless a layout stages it: then it comes with the page through `withPage`'s glob in `desktop.ts`, as About does.
-4. Add an icon placement to `icons` if it should be on the desktop. The test that opens every desktop icon then covers it, finding the window by the title `shell/paths.ts` gives it, so a program on the desktop or in a staged view keeps that title rather than calling `setTitle`.
-5. For an `id/*` program, `arg` is whatever is in the link, so handle one that matches nothing, as `Project.svelte` does. Its `desktop.ts` title is only a stand-in: set the real one with `win.setTitle`.
-6. New Microsoft art goes in `src/art/` with a line in `index.ts` and `README.md`. The program's own images go in its own folder.
+1. Make `src/programs/<name>/`, starting from the closest existing program: `eight-ball` for a self-contained toy, `links` or `notepad` for a scrolling page. The window body has a definite size, so give the component's root `height: 100%`. It inherits Tahoma 13 px on XP's beige, unless it paints its own background (most use white).
+2. Add it to `programs` in `desktop.ts`. Its `width` and `height` are the whole window, title bar included; `fixedSize: true` stops resizing and maximizing. Give it a place in each layout, or it opens in the middle. Its `load` imports it as its own file, or through `withPage` if a layout stages it.
+3. Add it to `icons` if it belongs on the desktop. The test that opens every icon finds the window by the title `shell/paths.ts` gives it, so such a program keeps that title.
+4. For an `id/*` program, handle an `arg` that matches nothing, as `Project.svelte` does, and set the real title with `win.setTitle`.
+5. Microsoft art goes in `src/art/` with a line in `index.ts` and `README.md`; the program's own images go in its folder.
 
 ## Conventions
 
-- **Svelte 5 syntax only:** runes (`$state`, `$derived`, `$effect`, `$props`), event attributes (`onclick`), and snippets with `{@render}`. Shared reactive modules use the `.svelte.ts` extension.
-- **Give every component a `<script lang="ts">` block.** svelte-check treats a component without one as JavaScript, and importing it from TypeScript fails with "Could not find a declaration file".
-- **Fix rather than suppress.** Keep svelte-check and oxlint free of warnings. If a suppression is truly needed, make it targeted and give the reason after `--`: `// oxlint-disable-next-line rule -- why` or `<!-- svelte-ignore code -- why -->`.
-- **Comments say why,** not what. Match the surrounding code's density and style.
+- **Svelte 5 only:** runes, event attributes (`onclick`) and snippets. Shared reactive modules use `.svelte.ts`. Give every component a `<script lang="ts">` block, or svelte-check treats it as JavaScript and importing it from TypeScript fails.
+- **Fix rather than suppress.** Keep svelte-check and oxlint free of warnings. A suppression that's truly needed is targeted and gives its reason after `--`: `// oxlint-disable-next-line rule -- why` or `<!-- svelte-ignore code -- why -->`.
+- **Comments say why,** not what, matching the surrounding code's density and style.
 - **Use pointer events** for anything dragged, so mouse and touch share one path.
-- **Images are WebP:** lossless where a PNG would be (icons, pixel art, logos), lossy where a JPEG would be (photos). Logos can be SVG; recordings are WebM and MP4 with a WebP still. The exceptions keep a name or support: the tab icons are PNG, and the cloud pictures keep their `.png` names, which are also their windows' titles.
-- **Tests:** a few Playwright end-to-end tests, each guarding a behaviour that could break by accident (window management, links, the phone layout). No tests for simple or visual things like scrollbars: checking those by hand is enough. There's no unit test setup; don't add one unless asked. Select program contents by role and text, and the shell's elements through the helpers in `tests/fixtures.ts`.
+- **Images are WebP:** lossless for icons, pixel art and logos, lossy for photos. Logos can be SVG; recordings are WebM and MP4 with a WebP still. The tab icons stay PNG, and the cloud pictures keep their `.png` names, which are also their window titles.
+- **Tests** are a few Playwright end-to-end tests, each guarding a behaviour that could break by accident; nothing purely visual, and no unit tests unless asked. Select program contents by role and text, and the shell's elements through the helpers in `tests/fixtures.ts`.
 
 ## Commands
 
@@ -83,24 +73,22 @@ pnpm preview       # serve dist/, http://localhost:4173
 pnpm test          # Playwright end-to-end tests against the build (desktop + phone)
 ```
 
-Before finishing a change, run `pnpm format && pnpm lint && pnpm check && pnpm build`. Don't run `pnpm test` locally unless the owner asks: CI runs the end-to-end tests on every push.
+Before finishing a change, run `pnpm format && pnpm lint && pnpm check && pnpm build`. Don't run `pnpm test` locally unless the owner asks: CI runs it on every push.
 
-For UI changes, also look at the result at desktop (~1280 px) and phone (~390 px) widths. Playwright's headless Chromium is installed: a throwaway script, run from the repo so it resolves `@playwright/test`, can screenshot the dev server; delete it afterwards. The owner often has `pnpm dev` running already, so check port 5173 before starting another. The machine is short on memory: run one browser at a time.
+For UI changes, look at the result at desktop (~1280 px) and phone (~390 px) widths: a throwaway Playwright script, run from the repo so it resolves `@playwright/test`, can screenshot the dev server; delete it afterwards. The owner often has `pnpm dev` running, so check port 5173 before starting another. The machine is short on memory: run one browser at a time.
 
 ## Gotchas
 
-- **TypeScript stays on the major version svelte-check supports** (6.x as of writing). Don't upgrade until svelte-check's peer dependencies allow it.
-- **oxlint only sees `<script>` blocks** in `.svelte` files, and its type-aware rules skip `.svelte` files entirely. svelte-check covers markup and component types, including unused variables.
-- **oxlint's `no-restricted-imports` regexes don't support lookahead,** and fail silently by never matching. Use `group` globs with `!` exceptions instead.
-- **A folder override's `no-restricted-imports` replaces the top-level one** rather than adding to it, so each override in `.oxlintrc.json` repeats the `svelte/store` ban (and the art ban where it applies). A new top-level restriction has to be copied into every override.
+- **TypeScript stays on the major version svelte-check supports** (6.x as of writing).
+- **oxlint only sees `<script>` blocks** in `.svelte` files, and its type-aware rules skip them entirely; svelte-check covers the rest.
+- **oxlint's `no-restricted-imports`:** regexes with lookahead silently never match, so use `group` globs with `!` exceptions. A folder override replaces the top-level rule rather than adding to it, so each override in `.oxlintrc.json` repeats the shared bans.
 - **The import rules only see imports.** Art reached through `url()` in a `<style>` block or `new URL(…, import.meta.url)` slips past them, so ask `art/index.ts` for it instead.
-- **`desktop.ts` and the projects data must load in Node,** where the tests read them: no imports of `.svelte` files or media at their top level, which Node can't parse. That's why programs come through `load` and media through `new URL`. `pnpm exec playwright test --list` loads the tests without running them, a quick check after changing either file.
-- **The tests read `desktop.ts` and the projects data** for titles, icons and each viewport's staged view, so rearranging content shouldn't break them. They work out titles and icon labels with `shell/paths.ts`, as the site does, so a path with an argument can be staged or on the desktop only if its program keeps that title: `notepad/now.txt` can, but not `projects/some-slug`, whose title only the program knows.
-- **`pnpm test` reuses a server already on port 4173** outside CI, and then skips the build: stop a stray `pnpm preview` first or it tests an old `dist/`.
+- **The tests read `desktop.ts` and the projects data in Node** for titles, icons and each viewport's staged view, so neither may import `.svelte` files or media at its top level: programs come through `load`, media through `new URL`. `pnpm exec playwright test --list` checks they still load without running anything. A path with an argument can be staged or on the desktop only if its program keeps the `paths.ts` title: `notepad/now.txt` can, `projects/some-slug` can't.
+- **`pnpm test` outside CI reuses a server already on port 4173** and skips the build, so stop a stray `pnpm preview` first or it tests an old `dist/`.
 
 ## Git & deploy
 
-- **Commit messages:** Conventional Commits with lowercase subjects (`feat: add taskbar clock`, `fix: keep windows on screen`), and no body unless something important can't fit in the subject.
+- **Commit messages:** Conventional Commits with lowercase subjects (`feat: add taskbar clock`), and no body unless something important doesn't fit.
 - **One concern per commit,** and a linear history: rebase or fast-forward, never merge commits.
-- **Commit and push only when asked.** Small local commits during a task the owner asked for are fine; never push without being asked, because a push to `main` deploys.
-- **Deploy:** `.github/workflows/deploy.yml` runs the same checks and tests as above, then deploys `akskokki/akskokki.github.io` to GitHub Pages, served at https://akskokki.github.io/.
+- **Commit and push only when asked.** Small local commits during a task the owner asked for are fine. Never push unasked: a push to `main` deploys.
+- **Deploy:** `.github/workflows/deploy.yml` runs the checks and tests, then deploys to GitHub Pages at https://akskokki.github.io/.
