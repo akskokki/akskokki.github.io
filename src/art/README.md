@@ -6,7 +6,8 @@ All of it is Microsoft's original Windows XP art, copied from the clones in `../
 
 | File | What it is | Copied from |
 | --- | --- | --- |
-| `bliss.jpg` | Bliss wallpaper, 1920×1080 | `web-xp/public/wallpaper/Bliss.jpg` |
+| `bliss.webp` | Bliss wallpaper, 1920×1080, as lossy WebP at quality 80 | `web-xp/public/wallpaper/Bliss.jpg` |
+| `bliss-preview.webp` | The same scaled down to 32×18, shown blurred while it loads | `web-xp/public/wallpaper/Bliss.jpg` |
 | `start-flag.webp` | Windows flag on the Start button | `web-xp/src/assets/xp/StartFlag.png` |
 | `application-16.webp`, `-32.webp` | Generic program icon (shell32 #2) | `web-xp/src/assets/windowsIcons/shell32-2(16x16).png`, `(32x32)` |
 | `computer-16.webp`, `-32.webp` | My Computer, for the dev-only layout tool | `winXP/src/assets/windowsIcons/676(16x16).png`, `(32x32)` |

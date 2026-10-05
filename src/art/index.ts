@@ -2,7 +2,8 @@
 // means swapping its file or changing its line here.
 import application16 from './application-16.webp';
 import application32 from './application-32.webp';
-import bliss from './bliss.jpg';
+import blissPreview from './bliss-preview.webp';
+import bliss from './bliss.webp';
 import computer16 from './computer-16.webp';
 import computer32 from './computer-32.webp';
 import folder16 from './folder-16.webp';
@@ -19,7 +20,7 @@ import startFlag from './start-flag.webp';
 import users16 from './users-16.webp';
 import users32 from './users-32.webp';
 
-const images = { bliss, startFlag };
+const images = { bliss, blissPreview, startFlag };
 
 const icons = {
   application: { 16: application16, 32: application32 },

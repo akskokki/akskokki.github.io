@@ -1,5 +1,6 @@
 <script lang="ts">
   import { type Component, onMount, untrack } from 'svelte';
+  import { fade } from 'svelte/transition';
 
   import { imageUrl } from '../art';
   import type { ProgramProps, WindowHandle } from '../kit';
@@ -62,8 +63,23 @@
     // Then every other program, once the page has loaded, so a window opened later doesn't wait on
     // the network, and still opens after a deploy has replaced the files it was loaded from.
     await afterLoad();
-    await Promise.all(programs.map(preload));
+    await Promise.all([loadWallpaper(), ...programs.map(preload)]);
   });
+
+  // The wallpaper starts as a tiny Bliss, blurred, which is in the script, and the full one fades
+  // in over it once it has loaded, after the first view.
+  let wallpaper = $state<string>();
+
+  async function loadWallpaper() {
+    const image = new Image();
+    image.src = imageUrl('bliss');
+    try {
+      await image.decode();
+      wallpaper = image.src;
+    } catch {
+      // The blurred one stays.
+    }
+  }
 
   const layoutToolOpen = $derived(
     import.meta.env.DEV && wm.windows.some((win) => win.id === LAYOUT_TOOL),
@@ -215,7 +231,16 @@
   onresize={onResize}
 />
 
-<div class="desktop" style:background-image="url({imageUrl('bliss')})">
+<div class="desktop">
+  <div class="wallpaper preview" style:background-image="url({imageUrl('blissPreview')})"></div>
+  {#if wallpaper}
+    <div
+      class="wallpaper"
+      style:background-image="url({wallpaper})"
+      in:fade={{ duration: 600 }}
+    ></div>
+  {/if}
+
   <div
     class="area"
     bind:this={area}
@@ -295,7 +320,19 @@
     position: fixed;
     inset: 0;
     overflow: hidden;
-    background: var(--xp-desktop) center / cover no-repeat;
+    background: var(--xp-desktop);
+  }
+
+  .wallpaper {
+    position: absolute;
+    inset: 0;
+    background: center / cover no-repeat;
+  }
+
+  /* Reaching past the screen's edges, where the blur would otherwise fade to the colour beneath. */
+  .preview {
+    inset: -40px;
+    filter: blur(24px);
   }
 
   .area {
