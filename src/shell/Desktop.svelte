@@ -1,5 +1,6 @@
 <script lang="ts">
   import { type Component, onMount, tick, untrack } from 'svelte';
+  import { cubicOut } from 'svelte/easing';
   import { fade } from 'svelte/transition';
 
   import { imageUrl } from '../art';
@@ -256,7 +257,7 @@
     <div
       class="wallpaper"
       style:background-image="url({wallpaper})"
-      in:fade={{ duration: 600 }}
+      in:fade={{ duration: 300, easing: cubicOut }}
     ></div>
   {/if}
 
