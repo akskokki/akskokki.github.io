@@ -182,12 +182,13 @@
     text-overflow: ellipsis;
   }
 
-  /* Too narrow for a readable title (many windows, or a phone): just the icon. */
+  /* Too narrow for even a letter and an ellipsis beside the icon (many windows, or a phone): just
+     the icon. */
   .task {
     container-type: inline-size;
   }
 
-  @container (width < 64px) {
+  @container (width < 44px) {
     .task span {
       display: none;
     }
