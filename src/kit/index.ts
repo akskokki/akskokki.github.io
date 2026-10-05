@@ -14,9 +14,10 @@ export interface WindowHandle {
   close(): void;
   /**
    * Opens a window by its path, such as `about` or `projects/some-slug`, or brings it to the
-   * front if it's already open.
+   * front if it's already open. Given an element, such as the button that opens it, a new window
+   * opens centred on that rather than where the layout puts it.
    */
-  open(path: string): void;
+  open(path: string, over?: Element): void;
   /**
    * Makes the window `width` px wider and `height` px taller, or smaller when negative, to fit its
    * contents, as far as the screen allows. Meant for sizing a window as it opens; does nothing to a

@@ -151,7 +151,7 @@
     return location.hash.replace(/^#\/?/, '');
   }
 
-  function open(path: string) {
+  function open(path: string, over?: Element) {
     if (import.meta.env.DEV && path === LAYOUT_TOOL) {
       openWindow(
         LAYOUT_TOOL,
@@ -187,14 +187,15 @@
       placement?.bottom === undefined
         ? fullHeight
         : Math.min(fullHeight, areaHeight - placement.bottom - (placement.y + dy + offset));
-    openWindow(path, {
-      ...program,
-      title: titleOf(resolved),
-      x: (placement ? placement.x + dx : Math.round((areaWidth - width) / 2)) + offset,
-      y: (placement ? placement.y + dy : Math.round((areaHeight - height) / 2)) + offset,
-      width,
-      height,
-    });
+    let x = (placement ? placement.x + dx : Math.round((areaWidth - width) / 2)) + offset;
+    let y = (placement ? placement.y + dy : Math.round((areaHeight - height) / 2)) + offset;
+    if (over) {
+      const box = over.getBoundingClientRect();
+      const origin = area.getBoundingClientRect();
+      x = Math.round(box.left - origin.left + (box.width - width) / 2);
+      y = Math.round(box.top - origin.top + (box.height - height) / 2);
+    }
+    openWindow(path, { ...program, title: titleOf(resolved), x, y, width, height });
   }
 
   // Each program once it has loaded, so its windows from then on draw at once rather than a frame
@@ -237,7 +238,7 @@
       id,
       setTitle: (title) => setTitle(id, title),
       close: () => closeWindow(id),
-      open: (path) => open(path),
+      open: (path, over) => open(path, over),
       fit: (by) => fitWindow(id, by),
     };
   }

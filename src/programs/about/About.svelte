@@ -72,7 +72,9 @@
       <p>Feel free to look around here and open whatever looks interesting.</p>
       <p class="buttons">
         <button class="xp-button" onclick={() => win.open('projects')}>My projects</button>
-        <button class="xp-button" onclick={() => win.open('links')}>Links</button>
+        <button class="xp-button" onclick={(event) => win.open('links', event.currentTarget)}>
+          Links
+        </button>
       </p>
     </div>
   </div>
