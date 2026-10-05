@@ -11,15 +11,13 @@
     <div class="text">
       <h1>Hi, I'm Akseli</h1>
       <p>
-        I'm a software engineer in Helsinki. I work at Toska, the University of Helsinki's own
-        development team, on the open-source systems the university runs on: full-stack TypeScript,
-        React, Node.js and PostgreSQL. Before that I built a marketplace app at Bought, an
-        early-stage startup, and I have a BSc in Computer Science from the University of Helsinki.
+        I'm a software engineer based in Helsinki. I work at Toska, the University of Helsinki's own
+        development team. We build the open-source systems the university runs on, mostly in
+        TypeScript, React, Node.js and PostgreSQL. Before that I was at Bought, an early-stage
+        startup, building its secondhand fashion app. I also did my BSc in Computer Science at the
+        university.
       </p>
-      <p>
-        This site is also where I keep small things I make for fun. Have a look around, open some
-        windows, and say hello.
-      </p>
+      <p>Feel free to look around here and open whatever looks interesting.</p>
       <p class="buttons">
         <button class="xp-button" onclick={() => win.open('projects')}>My projects</button>
         <button class="xp-button" onclick={() => win.open('links')}>Links</button>
