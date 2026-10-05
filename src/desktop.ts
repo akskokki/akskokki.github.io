@@ -135,7 +135,7 @@ export const layouts: Layout[] = [
     windows: {
       about: { x: 90, y: 40, width: 480, height: 364 },
       projects: { x: 590, y: 16, width: projectsNarrow, height: 518 },
-      'projects/*': { x: 300, y: 20 },
+      'projects/*': { x: 120, y: 8, width: 460 },
       links: { x: 180, y: 180 },
       'photos/*': { x: 480, y: 180 },
       'notepad/*': { x: 200, y: 424, width: 340, height: 150 },
@@ -151,7 +151,7 @@ export const layouts: Layout[] = [
     windows: {
       about: { x: 90, y: 30, width: 480, height: 364 },
       projects: { x: 590, y: 8, width: projectsNarrow, height: 453 },
-      'projects/*': { x: 300, y: 10 },
+      'projects/*': { x: 120, y: 8, width: 460 },
       links: { x: 180, y: 150 },
       'photos/*': { x: 480, y: 90 },
       'notepad/*': { x: 280, y: 300, width: 340, height: 150 },
