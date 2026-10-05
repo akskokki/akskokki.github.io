@@ -38,7 +38,7 @@ Out of scope unless the owner asks for it. Don't build these, and don't build ho
 - `src/programs/<name>/` is one program per folder. It imports only `src/kit/`, its own files and npm packages, never the shell, `src/art/` or another program. Keep its files directly in its folder: the lint rule bans every `../` import except `../../kit`.
 - `src/kit/` is everything a program may import (the program contract, art by name, `ScrollArea`, `xp.css`), and nothing in it imports the shell, programs or `desktop.ts`.
 - `src/desktop.ts` is the single, hand-written list of programs, desktop icons and layouts. Nothing is auto-discovered.
-- `src/art/` holds the Microsoft placeholder art and nothing else. Only `src/art/index.ts` imports those files (plus `index.html`, for the favicon); everything else asks for art by name. Each file's origin is listed in `src/art/README.md`.
+- `src/art/` holds the Microsoft placeholder art and nothing else. Only `src/art/index.ts` imports those files; everything else asks for art by name. Each file's origin is listed in `src/art/README.md`.
 - oxlint's `no-restricted-imports` enforces these boundaries.
 
 ### How it fits together
