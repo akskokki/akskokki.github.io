@@ -1,5 +1,6 @@
 import { icons, layouts, programs } from '../src/desktop';
 import { pickLayout } from '../src/shell/layout';
+import { resolve } from '../src/shell/paths';
 import {
   activeTitle,
   activeWindow,
@@ -38,7 +39,10 @@ test('the staged view opens with its front window active and a taskbar button ea
 test('every layout is picked on a screen its size and opens its staged view', async ({ page }) => {
   const ids = new Set(programs.map((program) => program.id));
   for (const layout of layouts) {
-    expect(Object.keys(layout.windows).filter((id) => !ids.has(id))).toEqual([]);
+    const unknown = Object.keys(layout.windows).filter(
+      (key) => !ids.has(key) && !resolve(programs, key),
+    );
+    expect(unknown).toEqual([]);
     expect(pickLayout(layouts, programs, layout.width, layout.height).layout).toBe(layout);
 
     await page.setViewportSize({ width: layout.width, height: layout.height + TASKBAR_HEIGHT });

@@ -53,6 +53,9 @@ export interface Layout {
   height: number;
   /** Window paths opened on load, back to front: the last one is in front. */
   staged: readonly string[];
-  /** Where each program's windows open, by program id. One left out opens in the middle. */
+  /**
+   * Where each program's windows open, by program id, or by a window's own path to place it apart
+   * from the rest of its program's windows. One left out opens in the middle.
+   */
   windows: Readonly<Record<string, Placement>>;
 }

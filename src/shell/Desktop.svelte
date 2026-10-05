@@ -122,16 +122,19 @@
       return;
     }
     const { layout, dx, dy } = picked;
-    const placement = layout.windows[program.id];
+    const own = layout.windows[path];
+    const placement = own ?? layout.windows[program.id];
+    // Windows of the same `id/*` program cascade rather than opening on top of each other, unless
+    // the layout gives this one its own place.
+    const prefix = program.id.slice(0, -1);
+    const offset =
+      arg && !own ? 24 * wm.windows.filter((win) => win.id.startsWith(prefix)).length : 0;
     const width = placement?.width ?? program.width;
     const fullHeight = placement?.height ?? program.height;
     const height =
       placement?.bottom === undefined
         ? fullHeight
-        : Math.min(fullHeight, areaHeight - placement.bottom - (placement.y + dy));
-    // Windows of the same `id/*` program cascade rather than opening on top of each other.
-    const prefix = program.id.slice(0, -1);
-    const offset = arg ? 24 * wm.windows.filter((win) => win.id.startsWith(prefix)).length : 0;
+        : Math.min(fullHeight, areaHeight - placement.bottom - (placement.y + dy + offset));
     openWindow(path, {
       ...program,
       title: titleOf(resolved),
@@ -166,7 +169,7 @@
       setTitle: (title) => setTitle(id, title),
       close: () => closeWindow(id),
       open: (path) => open(path),
-      fit: (height) => fitWindow(id, height),
+      fit: (by) => fitWindow(id, by),
     };
   }
 </script>

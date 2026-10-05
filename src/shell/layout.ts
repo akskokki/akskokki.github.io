@@ -26,7 +26,7 @@ export function pickLayout(
   // The staged windows the layout places, with their programs.
   const staged = layout.staged.flatMap((path) => {
     const program = resolve(programs, path)?.program;
-    const placement = program && layout.windows[program.id];
+    const placement = program && (layout.windows[path] ?? layout.windows[program.id]);
     return placement ? [{ program, placement }] : [];
   });
 

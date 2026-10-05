@@ -25,7 +25,7 @@
   // Before it's first drawn, which the picture's known size allows, and only then, so the window
   // never changes size under the reader.
   onMount(() => {
-    if (scroll && page) win.fit(page.offsetHeight - scroll.clientHeight);
+    if (scroll && page) win.fit({ height: page.offsetHeight - scroll.clientHeight });
   });
 </script>
 

@@ -30,7 +30,7 @@ export type Edge = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 
 const MIN_WIDTH = 160;
 const MIN_HEIGHT = 80;
-/** How close a window fitted to its contents comes to the area's top and bottom. */
+/** How close a window fitted to its contents comes to the area's edges. */
 const FIT_GAP = 8;
 
 const state = $state({
@@ -148,17 +148,24 @@ export function setTitle(id: string, title: string): void {
 }
 
 /**
- * Makes a window `by` px taller, or shorter when negative, as far as the area allows short of its
- * top and bottom. It moves up if it needs the room, and keeps a top already higher than that.
+ * Makes a window `by` px wider and taller, or narrower and shorter when negative, as far as the
+ * area allows short of its edges. It moves left or up if it needs the room, and keeps a side
+ * already closer to the edge than that.
  */
-export function fitWindow(id: string, by: number): void {
+export function fitWindow(id: string, by: { width?: number; height?: number }): void {
   const win = find(id);
   if (!win || win.fixedSize || win.maximized) return;
-  const { y, height } = rectOf(win);
-  const top = Math.min(y, FIT_GAP);
+  // Its size as drawn, but its place as set: drawn, a window too big for its place was moved to
+  // fit, and fitted smaller it may fit where it was meant to be after all.
+  const { width, height } = rectOf(win);
+  const left = Math.min(win.x, FIT_GAP);
+  const right = state.area.width - FIT_GAP;
+  const top = Math.min(win.y, FIT_GAP);
   const bottom = state.area.height - FIT_GAP;
-  win.height = clamp(height + by, MIN_HEIGHT, bottom - top);
-  win.y = clamp(y, top, bottom - win.height);
+  win.width = clamp(width + (by.width ?? 0), MIN_WIDTH, right - left);
+  win.x = clamp(win.x, left, right - win.width);
+  win.height = clamp(height + (by.height ?? 0), MIN_HEIGHT, bottom - top);
+  win.y = clamp(win.y, top, bottom - win.height);
 }
 
 /** Moves a window's top-left corner to (x, y), keeping the whole window on screen. */
