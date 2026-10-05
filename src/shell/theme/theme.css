@@ -2,13 +2,13 @@
 
 @font-face {
   font-family: 'Wine Tahoma';
-  src: url('./fonts/wine-tahoma.ttf') format('truetype');
+  src: url('./fonts/wine-tahoma.woff2') format('woff2');
   font-weight: normal;
 }
 
 @font-face {
   font-family: 'Wine Tahoma';
-  src: url('./fonts/wine-tahoma-bold.ttf') format('truetype');
+  src: url('./fonts/wine-tahoma-bold.woff2') format('woff2');
   font-weight: bold;
 }
 

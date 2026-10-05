@@ -7,6 +7,22 @@
     <!-- One eye of Chubby Knight, the About photo, at whole pixels for each size. -->
     <link rel="icon" type="image/png" sizes="16x16" href="./src/favicon-16.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="./src/favicon-32.png" />
+    <!-- Wine Tahoma, for systems without Tahoma: wanted as soon as there's text, which is only found
+         once the script has drawn it. Small enough that systems that have Tahoma lose little. -->
+    <link
+      rel="preload"
+      href="./src/shell/theme/fonts/wine-tahoma.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="./src/shell/theme/fonts/wine-tahoma-bold.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
   </head>
   <body>
     <div id="app"></div>
