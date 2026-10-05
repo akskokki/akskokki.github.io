@@ -93,11 +93,13 @@
     background: radial-gradient(circle, #0d1b4a, #000 75%);
   }
 
-  /* The triangle sits behind the text rather than clipping it, so long answers still fit. */
+  /* The triangle sits behind the text rather than clipping it, so long answers still fit. Its three
+     corners are the same distance from the window's centre, just inside its edge, so it sits
+     centred in the circle. */
   .window::before {
     content: '';
     position: absolute;
-    inset: 12% 8% 20%;
+    inset: 27% 10% 4%;
     clip-path: polygon(0 0, 100% 0, 50% 100%);
     background: #2440a8;
     transition: opacity 0.3s;
@@ -106,7 +108,7 @@
   .answer {
     position: relative;
     width: 70%;
-    margin-bottom: 22%;
+    margin-bottom: 8%;
     color: white;
     font:
       bold 10px/1.2 Georgia,
