@@ -1,9 +1,8 @@
 // The one file that knows both the shell and the programs: which programs exist, the desktop
 // icons, and the layouts that say which windows open first, and where, on each size of screen.
-import About from './programs/about/About.svelte';
-import Notepad from './programs/notepad/Notepad.svelte';
-import PhotoViewer from './programs/photo-viewer/PhotoViewer.svelte';
-import Projects from './programs/projects/Projects.svelte';
+import type { Component } from 'svelte';
+
+import type { ProgramProps } from './kit';
 import type { IconPlacement, Layout, ProgramDefinition } from './shell/types';
 
 // The Projects folder's two widths: its tiles fit two to a row, even with a scrollbar, or one. Its
@@ -13,8 +12,22 @@ const projectsWide = 560;
 const projectsNarrow = 320;
 
 // The programs the layouts stage come with the page, so the first view doesn't wait on another
-// round of downloads. The rest load as their own files.
-const staged = async <T>(component: T) => ({ default: component });
+// round of downloads; the rest load as their own files. Vite turns this eager glob into imports at
+// the top of this file, while the tests, which read this file in Node, never call it.
+async function withPage(path: string) {
+  const modules = import.meta.glob<{ default: Component<ProgramProps> }>(
+    [
+      './programs/about/About.svelte',
+      './programs/notepad/Notepad.svelte',
+      './programs/photo-viewer/PhotoViewer.svelte',
+      './programs/projects/Projects.svelte',
+    ],
+    { eager: true },
+  );
+  const module = modules[path];
+  if (!module) throw new Error(`${path} isn't in the glob above`);
+  return module;
+}
 
 export const programs: ProgramDefinition[] = [
   {
@@ -23,7 +36,7 @@ export const programs: ProgramDefinition[] = [
     icon: 'users',
     width: 560,
     height: 340,
-    load: () => staged(About),
+    load: () => withPage('./programs/about/About.svelte'),
   },
   {
     id: 'projects',
@@ -31,7 +44,7 @@ export const programs: ProgramDefinition[] = [
     icon: 'folder',
     width: projectsWide,
     height: 325,
-    load: () => staged(Projects),
+    load: () => withPage('./programs/projects/Projects.svelte'),
   },
   {
     // One window for whichever project is open, titled by the project itself.
@@ -59,7 +72,7 @@ export const programs: ProgramDefinition[] = [
     icon: 'pictureViewer',
     width: 400,
     height: 300,
-    load: () => staged(PhotoViewer),
+    load: () => withPage('./programs/photo-viewer/PhotoViewer.svelte'),
   },
   {
     // One window per text file in its folder, such as notepad/now.txt.
@@ -68,7 +81,7 @@ export const programs: ProgramDefinition[] = [
     icon: 'notepad',
     width: 360,
     height: 180,
-    load: () => staged(Notepad),
+    load: () => withPage('./programs/notepad/Notepad.svelte'),
   },
   {
     id: 'eight-ball',
