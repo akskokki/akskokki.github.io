@@ -1,5 +1,9 @@
 // The one file that knows both the shell and the programs: which programs exist, the desktop
 // icons, and the layouts that say which windows open first, and where, on each size of screen.
+import About from './programs/about/About.svelte';
+import Notepad from './programs/notepad/Notepad.svelte';
+import PhotoViewer from './programs/photo-viewer/PhotoViewer.svelte';
+import Projects from './programs/projects/Projects.svelte';
 import type { IconPlacement, Layout, ProgramDefinition } from './shell/types';
 
 // The Projects folder's two widths: its tiles fit two to a row, even with a scrollbar, or one. Its
@@ -8,6 +12,10 @@ import type { IconPlacement, Layout, ProgramDefinition } from './shell/types';
 const projectsWide = 560;
 const projectsNarrow = 320;
 
+// The programs the layouts stage come with the page, so the first view doesn't wait on another
+// round of downloads. The rest load as their own files.
+const staged = async <T>(component: T) => ({ default: component });
+
 export const programs: ProgramDefinition[] = [
   {
     id: 'about',
@@ -15,7 +23,7 @@ export const programs: ProgramDefinition[] = [
     icon: 'users',
     width: 560,
     height: 340,
-    load: () => import('./programs/about/About.svelte'),
+    load: () => staged(About),
   },
   {
     id: 'projects',
@@ -23,7 +31,7 @@ export const programs: ProgramDefinition[] = [
     icon: 'folder',
     width: projectsWide,
     height: 325,
-    load: () => import('./programs/projects/Projects.svelte'),
+    load: () => staged(Projects),
   },
   {
     // One window for whichever project is open, titled by the project itself.
@@ -51,7 +59,7 @@ export const programs: ProgramDefinition[] = [
     icon: 'pictureViewer',
     width: 400,
     height: 300,
-    load: () => import('./programs/photo-viewer/PhotoViewer.svelte'),
+    load: () => staged(PhotoViewer),
   },
   {
     // One window per text file in its folder, such as notepad/now.txt.
@@ -60,7 +68,7 @@ export const programs: ProgramDefinition[] = [
     icon: 'notepad',
     width: 360,
     height: 180,
-    load: () => import('./programs/notepad/Notepad.svelte'),
+    load: () => staged(Notepad),
   },
   {
     id: 'eight-ball',
