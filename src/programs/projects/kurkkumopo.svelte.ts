@@ -8,7 +8,7 @@ import { type Project, projects, toskaLogo } from './projects';
 const hideouts = projects.filter((p) => p.logo === toskaLogo && p.picture);
 export const HIDEOUT = hideouts[Math.floor(Math.random() * hideouts.length)]?.slug;
 
-export const kurkkumopoUrl = new URL('./kurkkumopo.png', import.meta.url).href;
+export const kurkkumopoUrl = new URL('./kurkkumopo.webp', import.meta.url).href;
 
 // Loaded and decoded with the projects, so it's there behind the picture as soon as a window shows
 // it. Kept in a variable so the browser doesn't drop it.

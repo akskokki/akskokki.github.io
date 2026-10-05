@@ -67,6 +67,7 @@ Out of scope unless the owner asks for it. Don't build these, and don't build ho
 - **Fix rather than suppress.** Keep svelte-check and oxlint free of warnings. If a suppression is truly needed, make it targeted and give the reason after `--`: `// oxlint-disable-next-line rule -- why` or `<!-- svelte-ignore code -- why -->`.
 - **Comments say why,** not what. Match the surrounding code's density and style.
 - **Use pointer events** for anything dragged, so mouse and touch share one path.
+- **Images are WebP:** lossless where a PNG would be (icons, pixel art, logos), lossy where a JPEG would be (photos). Logos can be SVG; recordings are WebM and MP4 with a WebP still. The exceptions keep a name or support: the tab icons are PNG, and the cloud pictures keep their `.png` names, which are also their windows' titles.
 - **Tests:** a few Playwright end-to-end tests, each guarding a behaviour that could break by accident (window management, links, the phone layout). No tests for simple or visual things like scrollbars: checking those by hand is enough. There's no unit test setup; don't add one unless asked. Select program contents by role and text, and the shell's elements through the helpers in `tests/fixtures.ts`.
 
 ## Commands

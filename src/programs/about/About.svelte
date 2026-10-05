@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type ProgramProps, ScrollArea } from '../../kit';
-  import knight from './knight.png';
+  import knight from './knight.webp';
 
   let { win }: ProgramProps = $props();
 

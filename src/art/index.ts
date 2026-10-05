@@ -1,23 +1,23 @@
 // The only file that imports art. Everything else asks for art by name, so replacing a placeholder
 // means swapping its file or changing its line here.
-import application16 from './application-16.png';
-import application32 from './application-32.png';
+import application16 from './application-16.webp';
+import application32 from './application-32.webp';
 import bliss from './bliss.jpg';
-import computer16 from './computer-16.png';
-import computer32 from './computer-32.png';
-import folder16 from './folder-16.png';
-import folder32 from './folder-32.png';
-import gameController16 from './game-controller-16.png';
-import gameController32 from './game-controller-32.png';
-import globe16 from './globe-16.png';
-import globe32 from './globe-32.png';
-import notepad16 from './notepad-16.png';
-import notepad32 from './notepad-32.png';
-import pictureViewer16 from './picture-viewer-16.png';
-import pictureViewer32 from './picture-viewer-32.png';
-import startFlag from './start-flag.png';
-import users16 from './users-16.png';
-import users32 from './users-32.png';
+import computer16 from './computer-16.webp';
+import computer32 from './computer-32.webp';
+import folder16 from './folder-16.webp';
+import folder32 from './folder-32.webp';
+import gameController16 from './game-controller-16.webp';
+import gameController32 from './game-controller-32.webp';
+import globe16 from './globe-16.webp';
+import globe32 from './globe-32.webp';
+import notepad16 from './notepad-16.webp';
+import notepad32 from './notepad-32.webp';
+import pictureViewer16 from './picture-viewer-16.webp';
+import pictureViewer32 from './picture-viewer-32.webp';
+import startFlag from './start-flag.webp';
+import users16 from './users-16.webp';
+import users32 from './users-32.webp';
 
 const images = { bliss, startFlag };
 

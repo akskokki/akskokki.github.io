@@ -105,7 +105,7 @@ export const projects: Project[] = [
     where: 'Bought',
     when: '2025–2026',
     summary: 'Secondhand fashion app',
-    logo: new URL('./bought-logo.png', import.meta.url).href,
+    logo: new URL('./bought-logo.webp', import.meta.url).href,
     whatItIs:
       'A marketplace app for secondhand fashion that turns your past online purchases into ready-made listings, and delivers from nearby sellers within hours. I was one of five engineers at the startup.',
     whatIDid:
