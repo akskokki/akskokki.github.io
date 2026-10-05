@@ -1,13 +1,55 @@
 <script lang="ts">
   import { type ProgramProps, ScrollArea } from '../../kit';
-  import avatar from './avatar.png';
+  import knight from './knight.png';
 
   let { win }: ProgramProps = $props();
+
+  // The photo is a close-up of one eye of Chubby Knight, a bit of my pixel art: clicking it zooms
+  // out to the whole knight, and back in.
+  /** The knight is 26×26 pixels; the eye is the 5×5 from (13, 9). */
+  const KNIGHT = 26;
+  const EYE = { x: 13, y: 9 };
+  /** The photo's inside, within its border. */
+  const FRAME = 90;
+  /** Screen px per art pixel: up close the eye fills the frame, zoomed out the whole knight fits. */
+  const CLOSE = 18;
+  const FAR = 3;
+
+  let size = $state(CLOSE);
+  let target = $state(CLOSE);
+
+  // The zoom steps one whole pixel size at a time, so every frame is crisp pixel art, and a click
+  // partway through just turns it around.
+  $effect(() => {
+    if (size === target) return;
+    const step = setTimeout(() => (size += Math.sign(target - size)), 600 / (CLOSE - FAR));
+    return () => clearTimeout(step);
+  });
+
+  // From the eye in the corner to the whole knight centred, on whole pixels throughout.
+  const zoom = $derived((CLOSE - size) / (CLOSE - FAR));
+  const far = (FRAME - KNIGHT * FAR) / 2;
+  const left = $derived(Math.round(-EYE.x * CLOSE + (far + EYE.x * CLOSE) * zoom));
+  const top = $derived(Math.round(-EYE.y * CLOSE + (far + EYE.y * CLOSE) * zoom));
 </script>
 
 <ScrollArea>
   <div class="about">
-    <img class="photo" src={avatar} alt="" />
+    <button
+      class="photo"
+      class:out={target === FAR}
+      aria-label="Chubby Knight"
+      onclick={() => (target = target === CLOSE ? FAR : CLOSE)}
+    >
+      <img
+        src={knight}
+        alt=""
+        draggable="false"
+        style:left="{left}px"
+        style:top="{top}px"
+        style:width="{KNIGHT * size}px"
+      />
+    </button>
     <div class="text">
       <h1>Hi, I'm Akseli</h1>
       <p>
@@ -41,12 +83,27 @@
   }
 
   .photo {
+    position: relative;
     flex: none;
     width: 96px;
     height: 96px;
+    overflow: hidden;
+    padding: 0;
     border: 3px solid white;
     border-radius: 6px;
+    background: #161124;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    cursor: zoom-out;
+  }
+
+  .photo.out {
+    cursor: zoom-in;
+  }
+
+  /* Placed and sized by the zoom above. */
+  .photo img {
+    position: absolute;
+    image-rendering: pixelated;
   }
 
   h1 {
