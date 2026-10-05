@@ -16,6 +16,7 @@ import {
   taskButtons,
   test,
   titleBar,
+  labelOf,
   titleOf,
   windows,
   windowTitled,
@@ -55,7 +56,7 @@ test('every desktop icon opens its program', async ({ page }) => {
   }
   for (const { path } of icons) {
     const title = titleOf(path);
-    await desktopIcon(page, title).dblclick();
+    await desktopIcon(page, labelOf(path)).dblclick();
     const win = windowTitled(page, title);
     await expect(win).toHaveClass(/active/);
     await expect(win.locator(':scope > .body *').first()).toBeVisible();
@@ -129,10 +130,9 @@ test('clicking a window behind brings it to the front', async ({ page }) => {
   const backBox = await boxOf(back);
 
   // Open a second window and drag it so it covers the middle of the first.
-  const other =
-    icons.map(({ path }) => titleOf(path)).find((title) => title !== frontTitle(page)) ?? '';
-  await desktopIcon(page, other).dblclick();
-  const front = windowTitled(page, other);
+  const other = icons.find(({ path }) => titleOf(path) !== frontTitle(page))?.path ?? '';
+  await desktopIcon(page, labelOf(other)).dblclick();
+  const front = windowTitled(page, titleOf(other));
   await expect(front).toHaveClass(/active/);
   const otherTitle = await boxOf(titleBar(front).locator('.title'));
   const target = { x: backBox.x + backBox.width / 2, y: backBox.y + backBox.height / 2 };

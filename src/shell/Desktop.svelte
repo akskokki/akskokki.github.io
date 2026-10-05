@@ -9,6 +9,7 @@
   import { pickLayout } from './layout';
   import { LAYOUT_TOOL, layoutToolSpec } from './layoutTool';
   import LayoutTool from './LayoutTool.svelte';
+  import { labelOf, resolve, titleOf } from './paths';
   import Taskbar from './Taskbar.svelte';
   import type { IconPlacement, Layout, ProgramDefinition } from './types';
   import Window from './Window.svelte';
@@ -33,8 +34,6 @@
   }
 
   let { programs, icons, layouts }: Props = $props();
-
-  const programsById = $derived(new Map(programs.map((program) => [program.id, program])));
 
   // Desktop state, not window state, so it lives here rather than in the window manager.
   let selectedIcon = $state<string | null>(null);
@@ -100,17 +99,6 @@
     return location.hash.replace(/^#\/?/, '');
   }
 
-  /** The program a window path belongs to, and its argument for `id/*` programs. */
-  function resolve(path: string): { program: ProgramDefinition; arg?: string } | undefined {
-    const program = programsById.get(path);
-    // `projects/*` itself names no window, only the pattern for its arguments.
-    if (program && !program.id.endsWith('/*')) return { program };
-    const slash = path.indexOf('/');
-    const withArg = slash > 0 && programsById.get(`${path.slice(0, slash)}/*`);
-    if (withArg && slash < path.length - 1) return { program: withArg, arg: path.slice(slash + 1) };
-    return undefined;
-  }
-
   function open(path: string) {
     if (import.meta.env.DEV && path === LAYOUT_TOOL) {
       openWindow(
@@ -119,7 +107,7 @@
       );
       return;
     }
-    const resolved = resolve(path);
+    const resolved = resolve(programs, path);
     if (!resolved) {
       console.error(`There's no program for the path "${path}".`);
       return;
@@ -127,9 +115,9 @@
     const { program, arg } = resolved;
     const current =
       program.single &&
-      wm.windows.find((win) => win.id !== path && resolve(win.id)?.program === program);
+      wm.windows.find((win) => win.id !== path && resolve(programs, win.id)?.program === program);
     if (current) {
-      replaceWindow(current.id, path, program.title);
+      replaceWindow(current.id, path, titleOf(resolved));
       focusWindow(path);
       return;
     }
@@ -146,6 +134,7 @@
     const offset = arg ? 24 * wm.windows.filter((win) => win.id.startsWith(prefix)).length : 0;
     openWindow(path, {
       ...program,
+      title: titleOf(resolved),
       x: (placement ? placement.x + dx : Math.round((areaWidth - width) / 2)) + offset,
       y: (placement ? placement.y + dy : Math.round((areaHeight - height) / 2)) + offset,
       width,
@@ -203,11 +192,11 @@
     }}
   >
     {#each icons as { path, x, y } (path)}
-      {@const program = resolve(path)?.program}
-      {#if program}
+      {@const resolved = resolve(programs, path)}
+      {#if resolved}
         <DesktopIcon
-          icon={program.icon}
-          label={program.title}
+          icon={resolved.program.icon}
+          label={labelOf(resolved)}
           {x}
           {y}
           selected={selectedIcon === path && wm.activeId === null}
@@ -236,7 +225,7 @@
     {/if}
 
     {#each wm.windows as win (win.id)}
-      {@const resolved = resolve(win.id)}
+      {@const resolved = resolve(programs, win.id)}
       {#if import.meta.env.DEV && win.id === LAYOUT_TOOL}
         <Window {win}>
           <LayoutTool

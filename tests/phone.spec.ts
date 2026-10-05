@@ -9,11 +9,13 @@ import {
   expect,
   frontTitle,
   openDesktop,
+  stagedPaths,
   stagedTitles,
   TASKBAR_HEIGHT,
   taskButton,
   test,
   titleBar,
+  labelOf,
   titleOf,
   windows,
   windowTitled,
@@ -62,8 +64,9 @@ test('closing the windows shows the icons, and one tap opens an icon', async ({ 
   }
   await expect(desktopIcons(page)).toHaveCount(icons.length);
 
-  const title = titleOf(icons.at(-1)?.path ?? '');
-  await desktopIcon(page, title).tap();
+  const path = icons.at(-1)?.path ?? '';
+  const title = titleOf(path);
+  await desktopIcon(page, labelOf(path)).tap();
   await expect(activeTitle(page)).toHaveText(title);
   expectFloating(await boxOf(windowTitled(page, title)));
 });
@@ -72,19 +75,17 @@ test('taskbar taps switch between windows', async ({ page }) => {
   await openDesktop(page);
   const front = frontTitle(page);
   // Minimize every window to reach the icons, then open one that isn't open yet.
-  const other = titleOf(
-    icons.find(({ path }) => !stagedTitles(page).includes(titleOf(path)))?.path ?? '',
-  );
+  const other = icons.find(({ path }) => !stagedPaths(page).includes(path))?.path ?? '';
   while ((await activeWindow(page).count()) > 0) {
     await titleBar(activeWindow(page)).locator('.minimize').tap();
   }
-  await desktopIcon(page, other).tap();
-  await expect(activeTitle(page)).toHaveText(other);
+  await desktopIcon(page, labelOf(other)).tap();
+  await expect(activeTitle(page)).toHaveText(titleOf(other));
 
   await taskButton(page, front).tap();
   await expect(activeTitle(page)).toHaveText(front);
 
   await taskButton(page, front).tap();
   await expect(windowTitled(page, front)).toBeHidden();
-  await expect(activeTitle(page)).toHaveText(other);
+  await expect(activeTitle(page)).toHaveText(titleOf(other));
 });

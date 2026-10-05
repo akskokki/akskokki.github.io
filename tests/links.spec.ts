@@ -75,7 +75,7 @@ test('the hash follows the window in front, and a new hash opens its window', as
 });
 
 test('a link to a missing project says so', async ({ page }) => {
-  await openDesktop(page, '#/projects/no-such-project', titleOf('projects/*'));
+  await openDesktop(page, '#/projects/no-such-project', titleOf('projects/no-such-project'));
   await expect(activeWindow(page)).toContainText('no project called');
 });
 

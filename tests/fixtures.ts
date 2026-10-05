@@ -2,6 +2,7 @@ import { test as base, expect, type Locator, type Page } from '@playwright/test'
 
 import { layouts, programs } from '../src/desktop';
 import { pickLayout } from '../src/shell/layout';
+import * as paths from '../src/shell/paths';
 
 export { expect };
 
@@ -24,11 +25,20 @@ export const test = base.extend<{ failOnConsoleProblems: void }>({
 
 export const TASKBAR_HEIGHT = 30;
 
-/** A program's window title, looked up in desktop.ts so the tests follow its content. */
+function resolve(path: string) {
+  const resolved = paths.resolve(programs, path);
+  if (!resolved) throw new Error(`desktop.ts has no program for "${path}"`);
+  return resolved;
+}
+
+/** A window's title, worked out from desktop.ts as the site does, so the tests follow its content. */
 export function titleOf(path: string): string {
-  const program = programs.find((p) => p.id === path);
-  if (!program) throw new Error(`desktop.ts has no program "${path}"`);
-  return program.title;
+  return paths.titleOf(resolve(path));
+}
+
+/** A desktop icon's label, worked out the same way. */
+export function labelOf(path: string): string {
+  return paths.labelOf(resolve(path));
 }
 
 /** What the staged view opens on this page's screen, back to front, as desktop.ts's layouts say. */

@@ -1,4 +1,5 @@
 // Which layout a screen gets. Apart from the window manager, so the tests can use it too.
+import { resolve } from './paths';
 import type { Layout, ProgramDefinition } from './types';
 
 export interface PickedLayout {
@@ -22,15 +23,20 @@ export function pickLayout(
     layouts.find((l) => l.width <= width && l.height <= height) ?? layouts[layouts.length - 1];
   if (!layout) throw new Error('desktop.ts has no layouts');
 
+  // The staged windows the layout places, with their programs.
+  const staged = layout.staged.flatMap((path) => {
+    const program = resolve(programs, path)?.program;
+    const placement = program && layout.windows[program.id];
+    return placement ? [{ program, placement }] : [];
+  });
+
   // Across, it's the staged windows that are centred on the screen, rather than the whole layout,
   // whose left edge leaves room for the desktop icons. They never move left of where the layout
   // puts them, though, into the icons, nor past the right edge.
   let left = Infinity;
   let right = -Infinity;
-  for (const path of layout.staged) {
-    const placement = layout.windows[path];
-    if (!placement) continue;
-    const windowWidth = placement.width ?? programs.find((p) => p.id === path)?.width ?? 0;
+  for (const { program, placement } of staged) {
+    const windowWidth = placement.width ?? program.width;
     left = Math.min(left, placement.x);
     right = Math.max(right, placement.x + windowWidth);
   }
@@ -39,10 +45,9 @@ export function pickLayout(
 
   // Down, it's centred once the windows that shrink on a short screen have their full height.
   let tallest = layout.height;
-  for (const path of layout.staged) {
-    const placement = layout.windows[path];
-    if (placement?.bottom === undefined) continue;
-    const windowHeight = placement.height ?? programs.find((p) => p.id === path)?.height ?? 0;
+  for (const { program, placement } of staged) {
+    if (placement.bottom === undefined) continue;
+    const windowHeight = placement.height ?? program.height;
     tallest = Math.max(tallest, placement.y + windowHeight + placement.bottom);
   }
 

@@ -1,12 +1,18 @@
 <script lang="ts">
-  import { ScrollArea } from '../../kit';
+  import { type ProgramProps, ScrollArea } from '../../kit';
 
-  // Editable for fun; nothing is saved, so every visit starts with the same note.
-  const text = `back in 5 min — have a look around.
+  let { arg }: ProgramProps = $props();
 
-the icons on the left open more windows,
-and the taskbar switches between them.
-`;
+  // Every .txt file in this folder, by name: notepad/now.txt opens now.txt. Add a file here and
+  // it opens at its own link, or from a desktop icon for its path.
+  const files: Record<string, string> = import.meta.glob('./*.txt', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  });
+
+  // Editable for fun; nothing is saved, so every visit starts with the file as it is.
+  const text = $derived(files[`./${arg}`] ?? `Cannot find the ${arg} file.`);
 </script>
 
 <!-- An editable element rather than a textarea: it grows with its text, so the scroll area around
