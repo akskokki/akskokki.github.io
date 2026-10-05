@@ -63,11 +63,11 @@
     new Promise((done) => setTimeout(done, 1000)),
   ]).catch(() => {});
 
-  // On load, the staged windows pop in one after another, in taskbar order, and a linked one last.
-  // Only while they mount: windows opened later just appear.
+  // On load, the staged windows pop in one after another, each with its taskbar button, in taskbar
+  // order, and a linked one last. Only while they mount: windows opened later just appear.
   let entering = $state(true);
 
-  function entranceOf(path: string): number | undefined {
+  function turnOf(path: string): number | undefined {
     if (!entering) return undefined;
     const index = picked.layout.staged.indexOf(path);
     return index === -1 ? picked.layout.staged.length : index;
@@ -319,7 +319,7 @@
         <!-- Drawn once its program has loaded, so a window never shows empty, and a program that
              fits its window to its contents does so before it's first seen. -->
         {#await load(resolved.program) then Program}
-          <Window {win} entrance={entranceOf(win.id)}>
+          <Window {win} turn={turnOf(win.id)}>
             <Program win={handleFor(win.id)} arg={resolved.arg} />
           </Window>
         {:catch}
@@ -331,7 +331,7 @@
     {/each}
   </div>
 
-  <Taskbar />
+  <Taskbar {turnOf} />
 </div>
 
 <style>

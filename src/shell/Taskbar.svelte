@@ -1,6 +1,10 @@
 <script lang="ts">
   import { iconUrl, imageUrl } from '../art';
+  import { entrance } from './entrance';
   import { toggleWindow, wm } from './windows.svelte';
+
+  /** A window's turn in the entrance on load, which its button pops in with. */
+  let { turnOf }: { turnOf: (id: string) => number | undefined } = $props();
 
   let time = $state(now());
 
@@ -31,6 +35,7 @@
         class:active={wm.activeId === win.id && !win.minimized}
         title={win.title}
         onclick={() => toggleWindow(win.id)}
+        use:entrance={turnOf(win.id)}
       >
         <img src={iconUrl(win.icon, 16)} alt="" draggable="false" />
         <span>{win.title}</span>
