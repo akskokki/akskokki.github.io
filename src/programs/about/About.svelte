@@ -14,33 +14,43 @@
   /** Screen px per art pixel: up close the eye fills the frame, zoomed out the whole knight fits. */
   const CLOSE = 18;
   const FAR = 3;
+  /** The whole zoom, in ms. */
+  const DURATION = 700;
 
   let size = $state(CLOSE);
-  let target = $state(CLOSE);
+  let out = $state(false);
 
-  // The zoom steps one whole pixel size at a time, so every frame is crisp pixel art, and a click
-  // partway through just turns it around.
-  $effect(() => {
-    if (size === target) return;
-    const step = setTimeout(() => (size += Math.sign(target - size)), 600 / (CLOSE - FAR));
-    return () => clearTimeout(step);
-  });
+  // The size changes at a steady rate, which feels slow up close and ever faster further out, as
+  // each step is a smaller part of a big size than of a small one: zooming out speeds up, and
+  // zooming in slows to a finish. A click partway through turns it around from where it is.
+  let frame = 0;
+  $effect(() => () => cancelAnimationFrame(frame));
 
-  // From the eye in the corner to the whole knight centred, on whole pixels throughout.
+  function toggle() {
+    out = !out;
+    const from = size;
+    const to = out ? FAR : CLOSE;
+    const duration = (DURATION * Math.abs(to - from)) / (CLOSE - FAR);
+    const start = performance.now();
+    cancelAnimationFrame(frame);
+    const step = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      size = from + (to - from) * t;
+      if (t < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+  }
+
+  // From the eye in the corner to the whole knight centred.
   const zoom = $derived((CLOSE - size) / (CLOSE - FAR));
   const far = (FRAME - KNIGHT * FAR) / 2;
-  const left = $derived(Math.round(-EYE.x * CLOSE + (far + EYE.x * CLOSE) * zoom));
-  const top = $derived(Math.round(-EYE.y * CLOSE + (far + EYE.y * CLOSE) * zoom));
+  const left = $derived(-EYE.x * CLOSE + (far + EYE.x * CLOSE) * zoom);
+  const top = $derived(-EYE.y * CLOSE + (far + EYE.y * CLOSE) * zoom);
 </script>
 
 <ScrollArea>
   <div class="about">
-    <button
-      class="photo"
-      class:out={target === FAR}
-      aria-label="Chubby Knight"
-      onclick={() => (target = target === CLOSE ? FAR : CLOSE)}
-    >
+    <button class="photo" class:out aria-label="Chubby Knight" onclick={toggle}>
       <img
         src={knight}
         alt=""
