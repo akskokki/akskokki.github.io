@@ -26,10 +26,12 @@ type Named = Resolved<Pick<ProgramDefinition, 'title'>>;
 
 /**
  * A window's title until its program sets one: the program's title, or with an argument
- * "now.txt - Notepad", as XP titled a document's window.
+ * "now.txt - Notepad", as XP titled a document's window. A program with an empty title names its
+ * windows by their argument alone, such as "clouds.png".
  */
 export function titleOf({ program, arg }: Named): string {
-  return arg ? `${arg} - ${program.title}` : program.title;
+  if (!arg) return program.title;
+  return program.title ? `${arg} - ${program.title}` : arg;
 }
 
 /** A desktop icon's label: the program's title, or its argument alone, as XP named a file. */

@@ -4,7 +4,7 @@ A personal homepage that looks like a Windows XP desktop, live at <https://aksko
 
 A few windows are already open when you arrive, desktop icons open more, and the taskbar switches between them. Besides the usual homepage things (about, projects, links), it's a home for small toy programs, each in its own window. Every window has its own link, such as [`#/projects/minesweeper`](https://akskokki.github.io/#/projects/minesweeper). Smaller screens get their own layouts with fewer windows, phones included.
 
-The about text, projects and `now.txt` are real; the Photo window and the XP art are still placeholders.
+Everything on it is real apart from the XP art, which is Microsoft's, standing in.
 
 ## Running it
 
@@ -29,7 +29,7 @@ pnpm format && pnpm lint && pnpm check   # formatting, lint and types
 Svelte 5, Vite and TypeScript, built as a static site. Hash routes keep it working at any address.
 
 - `src/shell/`: the desktop, windows, taskbar and the XP look.
-- `src/programs/`: one folder per program (About, Projects, Links, Photo, Notepad, a Magic 8-Ball).
+- `src/programs/`: one folder per program (About, Projects, Links, Notepad, a photo viewer, a Magic 8-Ball).
 - `src/kit/`: what programs may use, such as XP scrollbars and buttons.
 - `src/desktop.ts`: the hand-written list of programs, desktop icons, and the layouts: which windows open on load, and where, for each size of screen. In `pnpm dev`, the Layouts icon in the bottom-right corner opens a tool for arranging them: while it's open, resizing the browser resets to the layout for the new size, and it copies the windows' positions to hand to an agent.
 - `src/art/`: the placeholder art.

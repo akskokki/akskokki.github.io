@@ -44,12 +44,14 @@ export const programs: ProgramDefinition[] = [
     load: () => import('./programs/links/Links.svelte'),
   },
   {
-    id: 'photo',
-    title: 'Photo',
+    // One window per picture in its folder, such as photos/clouds.png, titled by its file name
+    // alone: no XP picture viewer has a name worth showing.
+    id: 'photos/*',
+    title: '',
     icon: 'pictureViewer',
     width: 400,
     height: 300,
-    load: () => import('./programs/photo/Photo.svelte'),
+    load: () => import('./programs/photo-viewer/PhotoViewer.svelte'),
   },
   {
     // One window per text file in its folder, such as notepad/now.txt.
@@ -76,9 +78,10 @@ export const icons: IconPlacement[] = [
   { path: 'about', x: 8, y: 8 },
   { path: 'projects', x: 8, y: 88 },
   { path: 'links', x: 8, y: 168 },
-  { path: 'photo', x: 8, y: 248 },
-  { path: 'notepad/now.txt', x: 8, y: 328 },
-  { path: 'eight-ball', x: 8, y: 408 },
+  { path: 'photos/clouds.png', x: 8, y: 248 },
+  { path: 'photos/clouds2.png', x: 8, y: 328 },
+  { path: 'notepad/now.txt', x: 8, y: 408 },
+  { path: 'eight-ball', x: 8, y: 488 },
 ];
 
 /**
@@ -90,29 +93,33 @@ export const layouts: Layout[] = [
     // Big screens, wider than 1080p: the same windows, larger and with room around them.
     width: 2000,
     height: 870,
-    staged: ['photo', 'projects', 'notepad/now.txt', 'about'],
+    staged: ['photos/clouds.png', 'photos/clouds2.png', 'projects', 'notepad/now.txt', 'about'],
     windows: {
       about: { x: 320, y: 50, width: 680, height: 436 },
       projects: { x: 1040, y: 0, width: 620, height: 436 },
       'projects/*': { x: 420, y: 0, width: 560 },
       links: { x: 360, y: 300 },
-      photo: { x: 1120, y: 490, width: 500, height: 370 },
+      'photos/*': { x: 1096, y: 466, width: 500, height: 370 },
+      'photos/clouds.png': { x: 1080, y: 500, width: 422, height: 289 },
+      'photos/clouds2.png': { x: 1420, y: 456, width: 222, height: 249 },
       'notepad/*': { x: 520, y: 560, width: 420, height: 210 },
       'eight-ball': { x: 1120, y: 260 },
     },
   },
   {
-    // Laptops up to 1080p. Projects is tall enough for every project, and Photo below it gives up
-    // some height on the shortest screens.
+    // Laptops up to 1080p. Projects is tall enough for every project, and the picture below it
+    // gives up some height on the shortest screens.
     width: 1280,
     height: 620,
-    staged: ['photo', 'projects', 'notepad/now.txt', 'about'],
+    staged: ['photos/clouds.png', 'photos/clouds2.png', 'projects', 'notepad/now.txt', 'about'],
     windows: {
       about: { x: 110, y: 40, width: 560, height: 340 },
       projects: { x: 700, y: 16, width: projectsWide, height: 378 },
       'projects/*': { x: 144, y: 16 },
       links: { x: 200, y: 190 },
-      photo: { x: 740, y: 410, width: 380, height: 270, bottom: 8 },
+      'photos/*': { x: 740, y: 410, width: 380, height: 270, bottom: 8 },
+      'photos/clouds.png': { x: 740, y: 446, width: 422, height: 289 },
+      'photos/clouds2.png': { x: 1038, y: 410, width: 222, height: 249 },
       'notepad/*': { x: 360, y: 430 },
       'eight-ball': { x: 820, y: 110 },
     },
@@ -127,7 +134,7 @@ export const layouts: Layout[] = [
       projects: { x: 590, y: 16, width: projectsNarrow, height: 518 },
       'projects/*': { x: 300, y: 20 },
       links: { x: 180, y: 180 },
-      photo: { x: 480, y: 180 },
+      'photos/*': { x: 480, y: 180 },
       'notepad/*': { x: 200, y: 424, width: 340, height: 150 },
       'eight-ball': { x: 560, y: 100 },
     },
@@ -142,7 +149,7 @@ export const layouts: Layout[] = [
       projects: { x: 590, y: 8, width: projectsNarrow, height: 453 },
       'projects/*': { x: 300, y: 10 },
       links: { x: 180, y: 150 },
-      photo: { x: 480, y: 90 },
+      'photos/*': { x: 480, y: 90 },
       'notepad/*': { x: 280, y: 300, width: 340, height: 150 },
       'eight-ball': { x: 560, y: 60 },
     },
@@ -158,7 +165,7 @@ export const layouts: Layout[] = [
       projects: { x: 80, y: 378, width: projectsWide, height: 378, bottom: 8 },
       'projects/*': { x: 110, y: 60 },
       links: { x: 160, y: 200 },
-      photo: { x: 160, y: 220 },
+      'photos/*': { x: 160, y: 220 },
       'notepad/*': { x: 200, y: 300 },
       'eight-ball': { x: 260, y: 160 },
     },
@@ -172,7 +179,7 @@ export const layouts: Layout[] = [
       projects: { x: 80, y: 8, width: projectsWide, height: 378 },
       'projects/*': { x: 110, y: 8 },
       links: { x: 140, y: 150 },
-      photo: { x: 200, y: 100 },
+      'photos/*': { x: 200, y: 100 },
       'notepad/*': { x: 240, y: 240 },
       'eight-ball': { x: 300, y: 60 },
     },
@@ -187,7 +194,7 @@ export const layouts: Layout[] = [
       projects: { x: 80, y: 0, width: projectsWide, height: 300 },
       'projects/*': { x: 110, y: 0 },
       links: { x: 160, y: 60 },
-      photo: { x: 160, y: 0, height: 300 },
+      'photos/*': { x: 160, y: 0, height: 300 },
       'notepad/*': { x: 200, y: 60 },
       'eight-ball': { x: 260, y: 0 },
     },
@@ -203,7 +210,7 @@ export const layouts: Layout[] = [
       projects: { x: 32, y: 8, width: projectsNarrow, height: 453 },
       'projects/*': { x: 8, y: 8, width: 344 },
       links: { x: 8, y: 180, width: 344, height: 150 },
-      photo: { x: 8, y: 100, width: 344, height: 280 },
+      'photos/*': { x: 8, y: 100, width: 344, height: 280 },
       'notepad/*': { x: 20, y: 280, width: 330, height: 180 },
       'eight-ball': { x: 30, y: 80 },
     },
