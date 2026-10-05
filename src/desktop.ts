@@ -108,10 +108,10 @@ export const layouts: Layout[] = [
     },
   },
   {
-    // Laptops up to 1080p. Projects is tall enough for every project, and the picture below it
-    // gives up some height on the shortest screens.
+    // Laptops up to 1080p. Projects is tall enough for every project, and the pictures below it
+    // end 8 px above the taskbar on the shortest screens.
     width: 1280,
-    height: 620,
+    height: 743,
     staged: ['about', 'projects', 'notepad/now.txt', 'photos/clouds.png', 'photos/clouds2.png'],
     stack: ['photos/clouds.png', 'photos/clouds2.png', 'projects', 'notepad/now.txt', 'about'],
     windows: {
