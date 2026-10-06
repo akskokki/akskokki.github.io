@@ -6,6 +6,8 @@ import blissPreview from './bliss-preview.webp';
 import bliss from './bliss.webp';
 import computer16 from './computer-16.webp';
 import computer32 from './computer-32.webp';
+import dateTime16 from './date-time-16.webp';
+import dateTime32 from './date-time-32.webp';
 import folder16 from './folder-16.webp';
 import folder32 from './folder-32.webp';
 import gameController16 from './game-controller-16.webp';
@@ -28,6 +30,7 @@ const NONE = { 16: '', 32: '' };
 const icons = {
   application: { 16: application16, 32: application32 },
   computer: import.meta.env.DEV ? { 16: computer16, 32: computer32 } : NONE,
+  dateTime: import.meta.env.DEV ? { 16: dateTime16, 32: dateTime32 } : NONE,
   folder: { 16: folder16, 32: folder32 },
   gameController: { 16: gameController16, 32: gameController32 },
   globe: { 16: globe16, 32: globe32 },

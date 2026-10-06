@@ -43,5 +43,6 @@ Every push to `main` runs the checks and tests on GitHub Actions and deploys to 
 ## Credits
 
 - The wallpaper, icons and Start flag are Microsoft's original Windows XP art, used as placeholders. `src/art/README.md` lists where each file came from.
+- The wallpaper's other times of day are Bliss relit with an image model (`src/shell/wallpaper/`).
 - The bundled Tahoma is [Wine](https://www.winehq.org/)'s free version, under the LGPL 2.1 (`src/shell/theme/fonts/`).
 - Colours and sizes come from [XP.css](https://github.com/botoxparty/XP.css), [winXP](https://github.com/ShizukuIchi/winXP) and [web-xp](https://github.com/aduncandev/web-xp).

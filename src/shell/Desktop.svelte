@@ -1,9 +1,6 @@
 <script lang="ts">
   import { type Component, onMount, tick, untrack } from 'svelte';
-  import { cubicOut } from 'svelte/easing';
-  import { fade } from 'svelte/transition';
 
-  import { imageUrl } from '../art';
   import type { ProgramProps, WindowHandle } from '../kit';
   import { afterLoad } from '../kit/afterLoad';
 
@@ -14,7 +11,9 @@
   import LayoutTool from './LayoutTool.svelte';
   import { labelOf, resolve, titleOf } from './paths';
   import Taskbar from './Taskbar.svelte';
+  import TimeTool, { TIME_TOOL, timeToolSpec } from './TimeTool.svelte';
   import type { IconPlacement, Layout, ProgramDefinition } from './types';
+  import Wallpaper from './wallpaper/Wallpaper.svelte';
   import Window from './Window.svelte';
   import {
     closeWindow,
@@ -83,23 +82,11 @@
     // Then every other program, once the page has loaded, so a window opened later doesn't wait on
     // the network, and still opens after a deploy has replaced the files it was loaded from.
     await afterLoad();
-    await Promise.all([loadWallpaper(), ...programs.map(preload)]);
+    await Promise.all(programs.map(preload));
   });
 
-  // The wallpaper starts as a tiny Bliss, blurred, which is in the script, and the full one fades
-  // in over it once it has loaded, after the first view.
-  let wallpaper = $state<string>();
-
-  async function loadWallpaper() {
-    const image = new Image();
-    image.src = imageUrl('bliss');
-    try {
-      await image.decode();
-      wallpaper = image.src;
-    } catch {
-      // The blurred one stays.
-    }
-  }
+  // The time the wallpaper shows instead of now, chosen in the dev-only time tool.
+  let wallpaperTime = $state<Date | null>(null);
 
   const layoutToolOpen = $derived(
     import.meta.env.DEV && wm.windows.some((win) => win.id === LAYOUT_TOOL),
@@ -118,7 +105,7 @@
     await Promise.all([fonts, ...staged.map((path) => preload(programOf(path)))]);
     // A newer restage started while this one loaded, so the view is that one's to open.
     if (run !== restages) return;
-    for (const { id } of wm.windows.filter((win) => win.id !== LAYOUT_TOOL)) closeWindow(id);
+    for (const { id } of wm.windows) if (id !== LAYOUT_TOOL && id !== TIME_TOOL) closeWindow(id);
     for (const path of staged) open(path);
     for (const path of stack) focusWindow(path);
     if (layoutToolOpen) {
@@ -157,6 +144,10 @@
         LAYOUT_TOOL,
         layoutToolSpec({ width: areaWidth, height: areaHeight }, layouts.length),
       );
+      return;
+    }
+    if (import.meta.env.DEV && path === TIME_TOOL) {
+      openWindow(TIME_TOOL, timeToolSpec({ width: areaWidth, height: areaHeight }));
       return;
     }
     const resolved = resolve(programs, path);
@@ -253,14 +244,7 @@
 />
 
 <div class="desktop">
-  <div class="wallpaper preview" style:background-image="url({imageUrl('blissPreview')})"></div>
-  {#if wallpaper}
-    <div
-      class="wallpaper"
-      style:background-image="url({wallpaper})"
-      in:fade={{ duration: 300, easing: cubicOut }}
-    ></div>
-  {/if}
+  <Wallpaper time={wallpaperTime} />
 
   <div
     class="area"
@@ -304,6 +288,18 @@
         }}
         onopen={() => open(LAYOUT_TOOL)}
       />
+      <DesktopIcon
+        icon="dateTime"
+        label="Time of day"
+        x={areaWidth - 84}
+        y={areaHeight - 160}
+        selected={selectedIcon === TIME_TOOL && wm.activeId === null}
+        onselect={() => {
+          deactivate();
+          selectedIcon = TIME_TOOL;
+        }}
+        onopen={() => open(TIME_TOOL)}
+      />
     {/if}
 
     {#each wm.windows as win (win.id)}
@@ -316,6 +312,10 @@
             area={{ width: areaWidth, height: areaHeight }}
             onreset={restage}
           />
+        </Window>
+      {:else if import.meta.env.DEV && win.id === TIME_TOOL}
+        <Window {win}>
+          <TimeTool time={wallpaperTime} onchange={(time) => (wallpaperTime = time)} />
         </Window>
       {:else if resolved}
         <!-- Drawn once its program has loaded, so a window never shows empty, and a program that
@@ -342,18 +342,6 @@
     inset: 0;
     overflow: hidden;
     background: var(--xp-desktop);
-  }
-
-  .wallpaper {
-    position: absolute;
-    inset: 0;
-    background: center / cover no-repeat;
-  }
-
-  /* Reaching past the screen's edges, where the blur would otherwise fade to the colour beneath. */
-  .preview {
-    inset: -40px;
-    filter: blur(24px);
   }
 
   .area {
