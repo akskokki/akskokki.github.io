@@ -27,3 +27,57 @@
   box-shadow: none;
   background: linear-gradient(180deg, #cdcac3 0%, #e3e3db 8%, #e5e5de 94%, #f2f2f1 100%);
 }
+
+/* A drop-down list: a <select> inside an .xp-select, which draws XP's blue drop-down button over
+   the browser's own arrow. The button's art is laid over both of its layers' whole box. */
+.xp-select {
+  position: relative;
+  display: inline-flex;
+}
+
+.xp-select select {
+  flex: 1;
+  min-width: 0;
+  height: 21px;
+  padding: 0 21px 0 3px;
+  border: 1px solid #7f9db9;
+  border-radius: 0;
+  background: white;
+  color: black;
+  font: inherit;
+  appearance: none;
+}
+
+.xp-select select:focus {
+  outline: none;
+}
+
+.xp-select::after {
+  --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 17' shape-rendering='crispEdges'%3E%3Cpath fill='%234d6185' d='M4 6h1v1H4zM10 6h1v1h-1zM3 7h3v1H3zM9 7h3v1H9zM4 8h3v1H4zM8 8h3v1H8zM5 9h5v1H5zM6 10h3v1H6zM7 11h1v1H7z'/%3E%3C/svg%3E");
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 15px;
+  height: 17px;
+  border: 1px solid #bcccf3;
+  border-radius: 2px;
+  background:
+    var(--arrow) border-box,
+    linear-gradient(135deg, #e1eafe 0%, #c9d8fc 45%, #b2cdfb 100%) border-box;
+  pointer-events: none;
+}
+
+.xp-select:hover::after {
+  border-color: #98aee1;
+  background:
+    var(--arrow) border-box,
+    linear-gradient(135deg, #fdffff 0%, #dcedfd 45%, #bde0fb 100%) border-box;
+}
+
+.xp-select:active::after {
+  border-color: #8592d9;
+  background:
+    var(--arrow) border-box,
+    linear-gradient(135deg, #6e8ef1 0%, #93acf2 45%, #b4c7ee 100%) border-box;
+}

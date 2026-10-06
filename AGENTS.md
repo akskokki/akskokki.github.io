@@ -19,7 +19,7 @@ Out of scope unless the owner asks for it. Don't build these, or hooks "for late
 - The Start menu or any other menu, right-click menus included.
 - Sound of any kind.
 - Boot, login, shutdown or welcome screens; screensavers; BSOD jokes.
-- System programs and dialogs (Run, Control Panel, Task Manager, file dialogs, message boxes), a file system or Explorer, a working Recycle Bin, dragging icons.
+- System programs and dialogs (Run, Control Panel, Task Manager, file dialogs, message boxes), a file system or Explorer, a working Recycle Bin, dragging icons. The taskbar clock's time-of-day balloon is the one exception, a toy rather than a setting.
 - Saving any state between visits (`localStorage`, window positions, settings). Every visit starts from the staged view.
 - Programs that live outside windows (such as desktop pets), and other sites embedded in windows.
 - Window animations beyond the entrance on load and XP's own minimize and maximize.
@@ -38,7 +38,7 @@ Out of scope unless the owner asks for it. Don't build these, or hooks "for late
 
 - **Windows are named by path, and the path is also the link:** window `about` is `#/about`. `shell/types.ts` documents programs opened with an argument (`projects/*`). `shell/paths.ts` titles windows and labels icons, for the site and the tests alike. Keep the hash routing and `base: './'`, which keep the build working at any address.
 - **Layouts** in `desktop.ts`, one per screen size, decide which windows open on load and where every window opens; `shell/types.ts` documents them. The owner arranges windows by hand in the layout tool (the Layouts icon, in `pnpm dev` only) and pastes what its Copy layout button gives to have a layout updated: read the paste as the intent, not as exact numbers.
-- **The wallpaper follows the visitor's time of day** (`shell/wallpaper/`): each picture shows alone at a sun height, by the sun where their time zone is, and the wallpaper mixes the two it's between. In `pnpm dev`, the Time of day icon opens a tool with a slider through today, to see any moment's mix.
+- **The wallpaper follows the visitor's time of day** (`shell/wallpaper/`): each picture shows alone at a sun height, by the sun where their time zone is, and the wallpaper mixes the two it's between. Clicking the taskbar clock opens a balloon (`shell/wallpaper/SkyBalloon.svelte`) where visitors drag the sun through today, play the whole day, or pick another place from `places` in `sky.ts` to see its sky on its own clock; `chosen.svelte.ts` holds the time and place shown instead of now and here. In `pnpm dev`, the Time of day icon also opens a tool with a slider and today's moments.
 - **Only `shell/windows.svelte.ts` changes window state.** Components read `wm` and call its functions.
 - **The program contract** is `ProgramProps` in `kit/index.ts`. Grow its `WindowHandle` only when a program needs more.
 - **The first view loads first.** The programs a layout stages come with the page, through `withPage`'s glob in `desktop.ts`; the rest load once the page has, or when their window opens if that's sooner. Anything else that might be wanted later loads after kit's `afterLoad()`, as Projects preloads its pictures and recordings.

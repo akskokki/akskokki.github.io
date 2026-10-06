@@ -85,9 +85,6 @@
     await Promise.all(programs.map(preload));
   });
 
-  // The time the wallpaper shows instead of now, chosen in the dev-only time tool.
-  let wallpaperTime = $state<Date | null>(null);
-
   const layoutToolOpen = $derived(
     import.meta.env.DEV && wm.windows.some((win) => win.id === LAYOUT_TOOL),
   );
@@ -244,7 +241,7 @@
 />
 
 <div class="desktop">
-  <Wallpaper time={wallpaperTime} />
+  <Wallpaper />
 
   <div
     class="area"
@@ -315,7 +312,7 @@
         </Window>
       {:else if import.meta.env.DEV && win.id === TIME_TOOL}
         <Window {win}>
-          <TimeTool time={wallpaperTime} onchange={(time) => (wallpaperTime = time)} />
+          <TimeTool />
         </Window>
       {:else if resolved}
         <!-- Drawn once its program has loaded, so a window never shows empty, and a program that

@@ -3,12 +3,10 @@
   import { fade } from 'svelte/transition';
 
   import { afterLoad } from '../../kit/afterLoad';
-  import { blendAt, here, type Period, pictureOf } from './sky';
+  import { chosen, load, loaded } from './chosen.svelte';
+  import { blendAt, here, pictureOf } from './sky';
 
-  /** A time to show rather than now, from the dev-only time tool. */
-  let { time = null }: { time?: Date | null } = $props();
-
-  const place = here();
+  const place = $derived(chosen.place ?? here());
 
   // Checked every half minute, and each change fades in over a couple of seconds, so even the
   // quickest twilight moves without a visible step. Short fades rather than one that never ends,
@@ -23,36 +21,18 @@
   // The two pictures the sky is between, the second showing through the first as much as it's
   // mixed in. It starts as the tiny pictures, blurred, which are in the script, and the full ones
   // come in over them once they've loaded, after the first view.
+  const time = $derived(chosen.time);
   const blend = $derived(blendAt(time ?? now, place));
   const shown = $derived(blend.from === blend.to ? [blend.from] : [blend.from, blend.to]);
 
   let ready = $state(false);
   void afterLoad().then(() => (ready = true));
 
-  let loaded = $state.raw<ReadonlySet<Period>>(new Set());
-
   $effect(() => {
     if (!ready) return;
     // The pictures it's between first, then the one after, so it's there when it's needed.
     for (const period of [...shown, blend.next]) if (period) void load(period);
   });
-
-  const loads = new Map<Period, Promise<void>>();
-
-  function load(period: Period): Promise<void> {
-    let loading = loads.get(period);
-    if (!loading) {
-      const image = new Image();
-      image.src = pictureOf(period).url;
-      loading = image.decode().then(
-        () => void (loaded = new Set([...loaded, period])),
-        // The blurred one stays.
-        () => {},
-      );
-      loads.set(period, loading);
-    }
-    return loading;
-  }
 </script>
 
 <svelte:document

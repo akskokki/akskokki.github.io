@@ -23,17 +23,24 @@
   // For `pnpm dev` only: shows the wallpaper at any time today, where this browser's time zone
   // says it is, and when each picture shows alone.
   import '../kit/xp.css';
-  import { blendAt, here, keyframesAround, pictureOf } from './wallpaper/sky';
+  import { chosen } from './wallpaper/chosen.svelte';
+  import {
+    blendAt,
+    clockAt,
+    here,
+    keyframesAround,
+    midnightOf,
+    minutesOfDay,
+    pictureOf,
+  } from './wallpaper/sky';
 
-  interface Props {
-    /** The time shown instead of now, if any. */
-    time: Date | null;
-    onchange: (time: Date | null) => void;
+  const time = $derived(chosen.time);
+
+  function onchange(to: Date | null) {
+    chosen.time = to;
   }
 
-  let { time, onchange }: Props = $props();
-
-  const place = here();
+  const place = $derived(chosen.place ?? here());
 
   let now = $state(new Date());
   $effect(() => {
@@ -42,8 +49,8 @@
   });
 
   const shown = $derived(time ?? now);
-  const midnight = $derived(new Date(shown).setHours(0, 0, 0, 0));
-  const minute = $derived(Math.round((shown.getTime() - midnight) / 60_000));
+  const midnight = $derived(midnightOf(shown, place));
+  const minute = $derived(Math.round(minutesOfDay(shown, place)));
 
   const blend = $derived(blendAt(shown, place));
   const mix = $derived(
@@ -64,12 +71,12 @@
   }
 
   function clock(at: number): string {
-    const date = new Date(at);
-    const pad = (n: number) => String(n).padStart(2, '0');
-    return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    return clockAt(new Date(at), place);
   }
 
-  const where = `${Math.abs(place.latitude)}°${place.latitude < 0 ? 'S' : 'N'} ${Math.abs(place.longitude)}°${place.longitude < 0 ? 'W' : 'E'}`;
+  const where = $derived(
+    `${Math.abs(place.latitude)}°${place.latitude < 0 ? 'S' : 'N'} ${Math.abs(place.longitude)}°${place.longitude < 0 ? 'W' : 'E'}`,
+  );
 </script>
 
 <div class="tool">

@@ -30,7 +30,7 @@ const NONE = { 16: '', 32: '' };
 const icons = {
   application: { 16: application16, 32: application32 },
   computer: import.meta.env.DEV ? { 16: computer16, 32: computer32 } : NONE,
-  dateTime: import.meta.env.DEV ? { 16: dateTime16, 32: dateTime32 } : NONE,
+  dateTime: { 16: dateTime16, 32: dateTime32 },
   folder: { 16: folder16, 32: folder32 },
   gameController: { 16: gameController16, 32: gameController32 },
   globe: { 16: globe16, 32: globe32 },

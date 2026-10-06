@@ -1,25 +1,36 @@
 <script lang="ts">
   import { iconUrl, imageUrl } from '../art';
   import { slideIn } from './entrance';
+  import { chosen } from './wallpaper/chosen.svelte';
+  import { clockAt, here } from './wallpaper/sky';
+  import SkyBalloon from './wallpaper/SkyBalloon.svelte';
   import { toggleWindow, wm } from './windows.svelte';
 
   /** A window's turn in the entrance on load, which its button pops in with. */
   let { turnOf }: { turnOf: (id: string) => number | undefined } = $props();
 
-  let time = $state(now());
+  let now = $state(new Date());
 
   $effect(() => {
     // Ticks every second so the minute changes on time; the DOM only updates when the text does.
-    const timer = setInterval(() => (time = now()), 1000);
+    const timer = setInterval(() => (now = new Date()), 1000);
     return () => clearInterval(timer);
   });
 
-  function now(): string {
-    const date = new Date();
-    const pad = (n: number) => String(n).padStart(2, '0');
-    return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
-  }
+  // The time the wallpaper shows, which races round with it while the day plays, on the clock of
+  // the place it shows.
+  const time = $derived(clockAt(chosen.time ?? now, chosen.place ?? here()));
+
+  // The clock opens a balloon for playing with the time of day, which a click elsewhere closes.
+  let balloon = $state(false);
+  let tray: HTMLElement;
 </script>
+
+<svelte:window
+  onpointerdown={(event) => {
+    if (balloon && event.target instanceof Node && !tray.contains(event.target)) balloon = false;
+  }}
+/>
 
 <div class="taskbar">
   <!-- Inert on purpose: the Start menu is on AGENTS.md's "Not now" list. -->
@@ -44,7 +55,12 @@
     {/each}
   </div>
 
-  <div class="tray">{time}</div>
+  <div class="tray" bind:this={tray}>
+    <button class="clock" onclick={() => (balloon = !balloon)}>{time}</button>
+    {#if balloon}
+      <SkyBalloon onclose={() => (balloon = false)} />
+    {/if}
+  </div>
 </div>
 
 <style>
@@ -195,6 +211,7 @@
   }
 
   .tray {
+    position: relative;
     display: flex;
     flex: none;
     align-items: center;
@@ -217,5 +234,11 @@
       #095bc9 100%
     );
     box-shadow: inset 1px 0 1px #18bbff;
+  }
+
+  .clock {
+    padding: 0;
+    background: none;
+    cursor: default;
   }
 </style>

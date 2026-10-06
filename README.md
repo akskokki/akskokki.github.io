@@ -2,7 +2,7 @@
 
 A personal homepage that looks like a Windows XP desktop, live at <https://akskokki.github.io/>.
 
-A few windows are already open when you arrive, desktop icons open more, and the taskbar switches between them. Besides the usual homepage things (about, projects, links), it's a home for small toy programs, each in its own window. Every window has its own link, such as [`#/projects/minesweeper`](https://akskokki.github.io/#/projects/minesweeper). Smaller screens get their own layouts with fewer windows, phones included.
+A few windows are already open when you arrive, desktop icons open more, and the taskbar switches between them. Besides the usual homepage things (about, projects, links), it's a home for small toy programs, each in its own window. Every window has its own link, such as [`#/projects/minesweeper`](https://akskokki.github.io/#/projects/minesweeper). Smaller screens get their own layouts with fewer windows, phones included. The wallpaper is Bliss at your time of day, following the sun where your time zone puts you; click the clock to drag the sun, play the whole day, or see the sky somewhere else.
 
 Everything on it is real apart from the XP art, which is Microsoft's, standing in.
 

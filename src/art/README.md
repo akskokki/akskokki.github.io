@@ -11,7 +11,7 @@ All of it is Microsoft's original Windows XP art, copied from the clones in `../
 | `start-flag.webp` | Windows flag on the Start button | `web-xp/src/assets/xp/StartFlag.png` |
 | `application-16.webp`, `-32.webp` | Generic program icon (shell32 #2) | `web-xp/src/assets/windowsIcons/shell32-2(16x16).png`, `(32x32)` |
 | `computer-16.webp`, `-32.webp` | My Computer, for the dev-only layout tool | `winXP/src/assets/windowsIcons/676(16x16).png`, `(32x32)` |
-| `date-time-16.webp`, `-32.webp` | Date and Time, for the dev-only time tool | `web-xp/src/assets/xp/DateandTime.png` (_scaled_) |
+| `date-time-16.webp`, `-32.webp` | Date and Time, for the clock's time-of-day balloon and the dev-only time tool | `web-xp/src/assets/xp/DateandTime.png` (_scaled_) |
 | `folder-16.webp`, `-32.webp` | Folder | `winXP/src/assets/windowsIcons/318(16x16).png`, `(32x32)` |
 | `notepad-16.webp`, `-32.webp` | Notepad | `winXP/src/assets/windowsIcons/327(16x16).png`, `(32x32)` |
 | `globe-16.webp`, `-32.webp` | Internet shortcut | `web-xp/src/assets/xp/InternetShortcut.png` (_scaled_) |
