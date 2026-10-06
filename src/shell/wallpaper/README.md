@@ -1,6 +1,6 @@
 # Wallpapers
 
-Bliss at nine times of day. Each shows alone at a moment set by how high the sun is, where the visitor's time zone puts them, and in between the wallpaper mixes the two it's between (`sky.ts`). Day is Microsoft's own Bliss, in `src/art/`. The other eight are relit versions of it that the owner made with an image model, each as an edit of the original photo so its clouds stay where they are and the pictures crossfade cleanly, then upscaled to 1920×1080. As over a real landscape, the morning light comes from the right and the evening light from the left.
+Bliss at nine times of day. Each shows alone at a moment set by how high the sun is, where the visitor's time zone puts them, and in between the wallpaper mixes the two it's between (`sky.ts`). Day is Microsoft's own Bliss, in `src/art/`. The other eight are relit versions of it that the owner made with an image model, each as an edit of the original photo so its clouds stay where they are and the pictures crossfade cleanly, then upscaled to 1920×1080; `PROMPTS.md` has the prompts, for redoing one. As over a real landscape, the morning light comes from the right and the evening light from the left.
 
 | Period            | File                     | Made from                                 |
 | ----------------- | ------------------------ | ----------------------------------------- |
