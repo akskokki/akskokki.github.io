@@ -129,7 +129,7 @@ export const projects: Project[] = [
     whatItIs:
       "A plugin for the note-taking app Obsidian that turns a :shortcode: into your own emoji image as you type, the way Discord and Slack do, while the note itself stays plain text. It's in Obsidian's plugin store as Discord-style Custom Emojis.",
     whatIDid:
-      'Made it in a day, because I think in Discord emotes by now and missed them in my notes, and the plugins that were there did far more than I wanted. It stays small on purpose: the emojis are images in a folder in your vault, found with fuzzy autocomplete as you type. About 700 people have downloaded it from the store so far.',
+      'Made it in a day, because I think in Discord emotes by now and missed them in my notes, and the plugins that were there did far more than I wanted. It stays small on purpose: the emojis are images in a folder in your vault, found with fuzzy autocomplete as you type. About 1000 people have downloaded it from the store so far.',
     tags: ['JavaScript', 'Obsidian', 'CodeMirror'],
     picture: {
       video: {
