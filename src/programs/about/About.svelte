@@ -63,13 +63,13 @@
     <div class="text">
       <h1>Hi, I'm Akseli</h1>
       <p>
-        I'm a software engineer based in Helsinki. I work at Toska, the University of Helsinki's own
-        development team. We build the open-source systems the university runs on, mostly in
+        I'm a software engineer based in Helsinki. I work at Toska, the University of Helsinki's internal
+        software development team. We build the open-source systems the university runs on, mostly using
         TypeScript, React, Node.js and PostgreSQL. Before that I was at Bought, an early-stage
         startup, building its secondhand fashion app. I also did my BSc in Computer Science at the
-        university.
+        university, and am currently working towards an MSc.
       </p>
-      <p>Feel free to look around here and open whatever looks interesting.</p>
+      <p>Feel free to look around here and open whatever looks interesting. I'm open to work, starting April of next year at the earliest.</p>
       <p class="buttons">
         <button class="xp-button" onclick={() => win.open('projects')}>My projects</button>
         <button class="xp-button" onclick={(event) => win.open('links', event.currentTarget)}>
